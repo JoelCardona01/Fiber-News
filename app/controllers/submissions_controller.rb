@@ -1,5 +1,5 @@
 class SubmissionsController < ApplicationController
-  before_action :set_submission, only: [:show, :edit, :update, :vote, :destroy]
+  before_action :set_submission, only: [:show, :edit, :update, :destroy, :vote]
 
   # GET /submissions
   # GET /submissions.json
@@ -12,6 +12,7 @@ class SubmissionsController < ApplicationController
   def show
   end
 
+  
   # GET /submissions/new
   def new
     @submission = Submission.new
@@ -19,6 +20,11 @@ class SubmissionsController < ApplicationController
 
   # GET /submissions/1/edit
   def edit
+  end
+  
+  def newest
+        @submissions = Submission.all.order(created_at: :desc)
+
   end
 
   # POST /submissions
@@ -62,15 +68,20 @@ class SubmissionsController < ApplicationController
   end
   
   def vote
+    ##respond_to do |format|
     @submission.votes = @submission.votes+1
     @submission.save
-    format.html { redirect_to root-path, notice: 'Tweet was successfully voted.' }
+    redirect_to root_path
+    ##format.html { redirect_to root-path, notice: 'Tweet was successfully voted.' }
+    
   end
+  
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_submission
-      @submission = Submission.find(params[:id])
+      @submissions = Submission.where(id: params[:id]).first
     end
 
     # Only allow a list of trusted parameters through.
