@@ -13,7 +13,7 @@
                             <tr>
 
                                 <td style="width:18px;padding-right:4px">
-                                    <img src="LogoFiberNews.png" width="18" height="18" style="border:1px white solid;">
+                                    <img src="/app/assets/images/LogoFiberNews.png" width="18" height="18" style="border:1px white solid;">
                                 </td>
 
                                 <td style="line-height:12pt; height:10px;">
@@ -54,24 +54,26 @@
                 <tr>
                     <td>
                         <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
-              
+                     <% @submissions.each do |submission| %>
+                        
                             <!-- Inici esquelet ítem (exemple) -->
-                            <tr class='athing' id='30763522'>
+                            
+                            <tr class='athing'>
                                 <td align="right" valign="top" class="title">
                                     <span class="rank">1.</span>
                                 </td>
 
                                 <td valign="top" class="votelinks"><center>
-                                    <a id='up_30763522'href='vote?id=30763522&amp;how=up&amp;goto=news'>
+                                    <a rel="" data-method="put" href="/submissions/<%= submission.id %>/vote">vote</a>
                                         <div class='votearrow' title='upvote'></div>
-                                    </a>
+                    
                                 </center></td>
 
                                 <td class="title">
-                                    <a href="https://www.roadandtrack.com/news/a39481699/what-happens-if-mercedes-drivepilot-causes-a-crash/" class="titlelink">Mercedes Drive Pilot Beats Tesla Autopilot by Taking Legal Responsibility</a>
-                                    <span class="sitebit comhead"> 
+                                    <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
+                                        <span class="sitebit comhead"> 
                                         (<a href="from?site=roadandtrack.com">
-                                            <span class="sitestr">roadandtrack.com</span>
+                                            <span class="sitestr"><% submission.url %></span>
                                         </a>)
                                     </span>
                                 </td>
@@ -79,7 +81,7 @@
                             <tr>
                                 <td colspan="2"></td>
                                 <td class="subtext">
-                                    <span class="score" id="score_30763522">158 points</span> 
+                                    <span class="score"><%= submission.votes%> votes</span> 
                                     by <a href="user?id=gscott" class="hnuser">gscott</a> 
                                     <span class="age" title="2022-03-22T07:31:44">
                                         <a href="item?id=30763522">1 hour ago</a>
@@ -91,7 +93,7 @@
                             </tr>
                             <tr class="spacer" style="height:5px"></tr>
                             <!-- Fi esquelet ítem (exemple) -->
-
+                            <%end%>
     
                             <!-- Botó de More -->
                             <tr class="morespace" style="height:10px"></tr>

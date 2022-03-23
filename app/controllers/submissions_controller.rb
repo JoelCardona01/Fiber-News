@@ -1,5 +1,5 @@
 class SubmissionsController < ApplicationController
-  before_action :set_submission, only: [:show, :edit, :update, :destroy]
+  before_action :set_submission, only: [:show, :edit, :update, :vote, :destroy]
 
   # GET /submissions
   # GET /submissions.json
@@ -59,6 +59,12 @@ class SubmissionsController < ApplicationController
       format.html { redirect_to submissions_url, notice: 'Submission was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+  
+  def vote
+    @submission.votes = @submission.votes+1
+    @submission.save
+    format.html { redirect_to root-path, notice: 'Tweet was successfully voted.' }
   end
 
   private
