@@ -25,7 +25,7 @@
                                           <a href=<%=newest_submissions_path%>> new</a>
                                         | <a href="front">past</a> 
                                         | <a href="newcomments">comments</a> 
-                                        | <a href="ask">ask</a> 
+                                        | <a href=<%=ask_submissions_path%>>ask</a> 
                                         | <a href="show">show</a> 
                                         | <a href="jobs">jobs</a> 
                                         |  <%= link_to 'submit', new_submission_path %>
@@ -54,13 +54,12 @@
                 <tr>
                     <td>
                         <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
-                     <% @submissions.each do |submission| %>
-                        
+                            <% @submissions.each_with_index do |submission, index| %>                        
                             <!-- Inici esquelet ítem (exemple) -->
                             
                             <tr class='athing'>
                                 <td align="right" valign="top" class="title">
-                                    <span class="rank">1.</span>
+                                    <span class="rank"><%=index+1%>. </span>
                                 </td>
 
                                 <td valign="top" class="votelinks"><center>
@@ -70,12 +69,17 @@
                                 </center></td>
 
                                 <td class="title">
-                                    <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
+                                    <% if submission.url!=""%>
+                                        <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
                                         <span class="sitebit comhead"> 
                                         (<a href=<% submission.url %>>
                                             <span class="sitestr"><%= URI.parse(submission.url).host %></span>
                                         </a>)
-                                    </span>
+                                        </span>
+                                    <% else %>
+                                        <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
+                                    <% end %>
+                                        
                                 </td>
                             </tr>
                             <tr>

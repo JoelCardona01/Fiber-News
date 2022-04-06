@@ -17,6 +17,8 @@ class SubmissionsController < ApplicationController
   def new
     @submission = Submission.new
   end
+  
+
 
   # GET /submissions/1/edit
   def edit
@@ -27,6 +29,9 @@ class SubmissionsController < ApplicationController
 
   end
 
+  def ask
+      @submissions = Submission.all.where(:url=>"").order(votes: :desc)
+  end
   # POST /submissions
   # POST /submissions.json
   def create
