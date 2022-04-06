@@ -65,7 +65,7 @@
 
                                 <td valign="top" class="votelinks"><center>
 
-                                  <p><a rel="" data-method="put" href="/submissions/<%= submission.id %>/vote">vote</a></p>
+                                  <%= link_to 'Vote', vote_submission_path(submission.id), method: :put %>
 
                                         <div class='votearrow' title='upvote'></div>
                     
