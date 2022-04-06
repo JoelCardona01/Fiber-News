@@ -53,26 +53,26 @@
                 <tr>
                     <td>
                         <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
-                     <% @submissions.each do |submission| %>
-                        
+                     <% @submissions.each_with_index do |submission, index| %>
+                    
+
                             <!-- Inici esquelet ítem (exemple) -->
                             
                             <tr class='athing'>
                                 <td align="right" valign="top" class="title">
-                                    <span class="rank">1.</span>
+                                    <span class="rank"><%=index+1%>. </span>
                                 </td>
 
                                 <td valign="top" class="votelinks"><center>
-                                        
+                                  <p><a rel="" data-method="put" href="/submissions/<%= submission.id %>/vote">vote</a></p>
                                         <div class='votearrow' title='upvote'></div>
                     
                                 </center></td>
 
                                 <td class="title">
                                     <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
-                                        <span class="sitebit comhead"> 
-                                        (<a href="from?site=roadandtrack.com">
-                                            <span class="sitestr"><% submission.url %></span>
+                                        (<a href=<%= submission.url %>>
+                                            <span class="sitestr"><%= URI.parse(submission.url).host %></span>
                                         </a>)
                                     </span>
                                 </td>
@@ -91,6 +91,7 @@
                                 </td>
                             </tr>
                             <tr class="spacer" style="height:5px"></tr>
+                            <%index = index+1%>
                             <!-- Fi esquelet ítem (exemple) -->
                             <%end%>
     
@@ -133,4 +134,3 @@
             </table>
     
     </center></body>
-

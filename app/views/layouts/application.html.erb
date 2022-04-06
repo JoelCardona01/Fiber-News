@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html>
-     <head>
-        <meta name="referrer" content="origin">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="rss">
+  <head>
+    <title>Waslab05</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
 
-        <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-        
-        <%= favicon_link_tag %>
-        <title>Fiber News</title>
-    </head>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
 
   <body>
     <%= yield %>
