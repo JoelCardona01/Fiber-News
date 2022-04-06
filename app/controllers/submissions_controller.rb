@@ -38,14 +38,17 @@ class SubmissionsController < ApplicationController
     @submission = Submission.new(submission_params)
 
     respond_to do |format|
-      if @submission.save
-        format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
-       ## format.json { render :show, status: :created, location: @submission }
+      if @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } 
       else
-        format.html { render :new }
-        format.json { render json: @submission.errors, status: :unprocessable_entity }
+        if @submission.save
+          format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
+          ## format.json { render :show, status: :created, location: @submission }
+        else
+          format.html { render :new }
+         format.json { render json: @submission.errors, status: :unprocessable_entity }
+        end
       end
-    end
+    end 
   end
 
   # PATCH/PUT /submissions/1
