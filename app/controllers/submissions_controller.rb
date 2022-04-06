@@ -4,7 +4,7 @@ class SubmissionsController < ApplicationController
   # GET /submissions
   # GET /submissions.json
   def index
-    @submissions = Submission.all
+    @submissions = Submission.all.order(votes: :desc)
   end
 
   # GET /submissions/1
@@ -68,20 +68,18 @@ class SubmissionsController < ApplicationController
   end
   
   def vote
-    ##respond_to do |format|
     @submission.votes = @submission.votes+1
     @submission.save
-    redirect_to root_path
-    ##format.html { redirect_to root-path, notice: 'Tweet was successfully voted.' }
-    
+    redirect_to request.referrer
+
   end
   
   
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_submission
-      @submissions = Submission.where(id: params[:id]).first
+     def set_submission
+      @submission = Submission.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
