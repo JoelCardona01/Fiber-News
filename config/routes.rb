@@ -5,4 +5,9 @@ Rails.application.routes.draw do
   end
   resources :users
   root 'submissions#index'
+  
+  # Routes for Google authentication
+    get ‘auth/:provider/callback’, to: ‘sessions#googleAuth’
+    get ‘auth/failure’, to: redirect(‘/’)
 end
+

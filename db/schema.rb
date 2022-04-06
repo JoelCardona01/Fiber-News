@@ -20,4 +20,19 @@ ActiveRecord::Schema.define(version: 2022_04_06_154543) do
     t.integer "votes", default: 0
   end
 
+
+  create_table "users", force: :cascade do |t|
+    t.string "username"
+    t.string "password"
+    t.string "about", default: ""
+    t.string "email"
+    t.string "uid"
+    t.string "google_token"
+    t.string "google_refresh_token"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "karma", default: 1
+    
+  end
+
 end
