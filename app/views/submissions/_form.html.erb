@@ -10,6 +10,12 @@
       </ul>
     </div>
   <% end %>
+  
+  <% if !alert.nil? %>
+		    <div >
+        <p style="color:grey" id="alert"><%= alert %></p>
+        </div>
+  <%end%>
 
   <div class="field">
     <%= form.label :title %>
