@@ -12,15 +12,22 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :url %>
-    <%= form.text_field :url %>
-  </div>
-
-  <div class="field">
     <%= form.label :title %>
     <%= form.text_field :title %>
   </div>
 
+  <div class="field">
+    <%= form.label :url %>
+    <%= form.text_field :url %>
+  </div>
+
+  <div> or </div>
+  
+    <div class="field">
+    <%= form.label :text %>
+    <%= form.text_field :text %>
+  </div>
+  
   <div class="actions">
     <%= form.submit %>
   </div>

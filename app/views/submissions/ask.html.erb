@@ -53,7 +53,7 @@
                 <tr>
                     <td>
                         <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
-                     <% @submissions.each_with_index do |submission, index| %>
+                             <% @submissions.each_with_index do |submission, index| %>
                     
 
                             <!-- Inici esquelet ítem (exemple) -->
@@ -72,16 +72,8 @@
                                 </center></td>
 
                                 <td class="title">
-                                    <% if submission.url!=""%>
-                                        <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
-                                        <span class="sitebit comhead"> 
-                                        (<a href=<% submission.url %>>
-                                            <span class="sitestr"><%= URI.parse(submission.url).host %></span>
-                                        </a>)
-                                        </span>
-                                    <% else %>
-                                        <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
-                                    <% end %>
+                                    <a href= <%=  %> class="titlelink"><%= submission.title%></a>
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
