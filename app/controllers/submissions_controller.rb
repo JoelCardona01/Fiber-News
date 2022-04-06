@@ -68,12 +68,10 @@ class SubmissionsController < ApplicationController
   end
   
   def vote
-    ##respond_to do |format|
     @submission.votes = @submission.votes+1
     @submission.save
-    redirect_to root_path
-    ##format.html { redirect_to root-path, notice: 'Tweet was successfully voted.' }
-    
+    redirect_to request.referrer
+
   end
   
   
