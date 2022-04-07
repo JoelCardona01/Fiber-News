@@ -25,7 +25,6 @@
                                         | <a href="front">past</a> 
                                         | <a href="newcomments">comments</a> 
                                         | <a href=<%=ask_submissions_path%>>ask</a> 
-                                        | <a href="show">show</a> 
                                         | <a href="jobs">jobs</a> 
                                         |  <%= link_to 'submit', new_submission_path %>
 
@@ -72,7 +71,7 @@
                                 </center></td>
 
                                 <td class="title">
-                                    <a href= <%=  %> class="titlelink"><%= submission.title%></a>
+                                        <a href= <%= submission_path(submission.id) %> class="titlelink"><%= submission.title%></a>
                                     </span>
                                 </td>
                             </tr>
