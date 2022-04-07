@@ -1,34 +1,80 @@
-<%= form_with(model: submission) do |form| %>
-  <% if submission.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(submission.errors.count, "error") %> prohibited this submission from being saved:</h2>
+<body><center>
 
-      <ul>
-        <% submission.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+            <!-- Taula amb 3 files: una pel menu
+                                    una que conté una taula generada dinàmicament on surten els ítems
+                                    una amb els links del final de la pàgina
+            -->
+            <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
 
-  <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
-  </div>
+                <!-- Fila menu -->
+                <tr>
+                    <td bgcolor="#ff6600">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                            <tr>
+                                <td style="width:18px;padding-right:4px">
+                                    <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+                                </td>
 
-  <div class="field">
-    <%= form.label :url %>
-    <%= form.text_field :url %>
-  </div>
+                                <td style="line-height:12pt; height:10px;">
+                                   <span class="pagetop">
+                                       <b class="hnname">
+                                              <a href=<%=submissions_path%>> Fiber News</a>
+                                       </b>
 
-  <div> or </div>
-  
-    <div class="field">
-    <%= form.label :text %>
-    <%= form.text_field :text %>
-  </div>
-  
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>
+                                   </span>
+                                </td>
+                                
+                                <td style="text-align:right;padding-right:4px;">
+                                   <span class="pagetop">
+                                       <a href="login?goto=news">login</a>
+                                   </span>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                  <td>
+                    <%= form_with(model: submission) do |form| %>
+                      <% if submission.errors.any? %>
+                        <div id="error_explanation">
+                          <h2><%= pluralize(submission.errors.count, "error") %> prohibited this submission from being saved:</h2>
+                    
+                          <ul>
+                            <% submission.errors.each do |error| %>
+                              <li><%= error.full_message %></li>
+                            <% end %>
+                          </ul>
+                        </div>
+                      <% end %>
+                    
+                      <div class="field">
+                        <%= form.label :title %>
+                        <%= form.text_field :title %>
+                      </div>
+                    
+                      <div class="field">
+                        <%= form.label :url %>
+                        <%= form.text_field :url %>
+                      </div>
+                    
+                      <div> or </div>
+                      
+                        <div class="field">
+                        <%= form.label :text %>
+                        <%= form.text_field :text %>
+                      </div>
+                      
+                      <div class="actions">
+                        <%= form.submit %>
+                      </div>
+                    <% end %>
+
+                  </td>
+                </tr>
+</center></body>
+
+
+
+
