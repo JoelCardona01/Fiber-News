@@ -24,8 +24,7 @@
                                           <a href=<%=newest_submissions_path%>> new</a>
                                         | <a href="front">past</a> 
                                         | <a href="newcomments">comments</a> 
-                                        | <a href="ask">ask</a> 
-                                        | <a href="show">show</a> 
+                                        | <a href=<%=ask_submissions_path%>>ask</a> 
                                         | <a href="jobs">jobs</a> 
                                         |  <%= link_to 'submit', new_submission_path %>
 
@@ -72,11 +71,16 @@
                                 </center></td>
 
                                 <td class="title">
-                                    <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
-                                        (<a href=<%= submission.url %>>
+                                    <% if submission.url!=""%>
+                                        <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
+                                        <span class="sitebit comhead"> 
+                                        (<a href=<% submission.url %>>
                                             <span class="sitestr"><%= URI.parse(submission.url).host %></span>
                                         </a>)
-                                    </span>
+                                        </span>
+                                    <% else %>
+                                        <a href= <%= submission_path(submission.id) %> class="titlelink"><%= submission.title%></a>
+                                    <% end %>
                                 </td>
                             </tr>
                             <tr>

@@ -19,7 +19,6 @@
                                    <span class="pagetop">
                                        <b class="hnname">
                                               <a href=<%=submissions_path%>> Fiber News</a>
-
                                        </b>
 
                                           <a href=<%=newest_submissions_path%>> new</a>
@@ -53,7 +52,9 @@
                 <tr>
                     <td>
                         <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
-                            <% @submissions.each_with_index do |submission, index| %>                        
+                             <% @submissions.each_with_index do |submission, index| %>
+                    
+
                             <!-- Inici esquelet ítem (exemple) -->
                             
                             <tr class='athing'>
@@ -62,23 +63,16 @@
                                 </td>
 
                                 <td valign="top" class="votelinks"><center>
-                                     <%=  link_to 'vote' , vote_submission_path(submission.id), method: :put%>
+
+                                  <%= link_to 'Vote', vote_submission_path(submission.id), method: :put %>
+
                                         <div class='votearrow' title='upvote'></div>
                     
                                 </center></td>
 
                                 <td class="title">
-                                    <% if submission.url!=""%>
-                                        <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
-                                        <span class="sitebit comhead"> 
-                                        (<a href=<% submission.url %>>
-                                            <span class="sitestr"><%= URI.parse(submission.url).host %></span>
-                                        </a>)
-                                        </span>
-                                    <% else %>
                                         <a href= <%= submission_path(submission.id) %> class="titlelink"><%= submission.title%></a>
-                                    <% end %>
-                                        
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -95,6 +89,7 @@
                                 </td>
                             </tr>
                             <tr class="spacer" style="height:5px"></tr>
+                            <%index = index+1%>
                             <!-- Fi esquelet ítem (exemple) -->
                             <%end%>
     

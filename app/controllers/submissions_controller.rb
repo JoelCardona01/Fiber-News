@@ -17,6 +17,8 @@ class SubmissionsController < ApplicationController
   def new
     @submission = Submission.new
   end
+  
+
 
   # GET /submissions/1/edit
   def edit
@@ -27,20 +29,26 @@ class SubmissionsController < ApplicationController
 
   end
 
+  def ask
+      @submissions = Submission.all.where(:url=>"").order(votes: :desc)
+  end
   # POST /submissions
   # POST /submissions.json
   def create
     @submission = Submission.new(submission_params)
 
     respond_to do |format|
-      if @submission.save
-        format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
-       ## format.json { render :show, status: :created, location: @submission }
+      if @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } 
       else
-        format.html { render :new }
-        format.json { render json: @submission.errors, status: :unprocessable_entity }
+        if @submission.save
+          format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
+          ## format.json { render :show, status: :created, location: @submission }
+        else
+          format.html { render :new }
+         format.json { render json: @submission.errors, status: :unprocessable_entity }
+        end
       end
-    end
+    end 
   end
 
   # PATCH/PUT /submissions/1
@@ -84,6 +92,6 @@ class SubmissionsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def submission_params
-      params.require(:submission).permit(:url, :title)
+      params.require(:submission).permit(:url, :title, :text)
     end
 end
