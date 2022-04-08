@@ -64,10 +64,8 @@
 
                                 <td valign="top" class="votelinks"><center>
 
-                                  <%= link_to 'Vote', vote_submission_path(submission.id), method: :put %>
+                                   <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.id), method: :put, class: "votearrow"  %>
 
-                                        <div class='votearrow' title='upvote'></div>
-                    
                                 </center></td>
 
                                 <td class="title">
