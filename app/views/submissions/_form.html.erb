@@ -34,6 +34,8 @@
                         </table>
                     </td>
                 </tr>
+                
+                <!-- form -->
                 <tr>
                   <td>
                     <%= form_with(model: submission) do |form| %>
@@ -48,31 +50,50 @@
                           </ul>
                         </div>
                       <% end %>
-                    
-                      <div class="field">
-                        <%= form.label :title %>
-                        <%= form.text_field :title %>
-                      </div>
-                    
-                      <div class="field">
-                        <%= form.label :url %>
-                        <%= form.text_field :url %>
-                      </div>
-                    
-                      <div> or </div>
                       
-                        <div class="field">
-                        <%= form.label :text %>
-                        <%= form.text_field :text %>
-                      </div>
+                <table border="0"><tbody>
+              
+                  <tr>
+                    <tr style="height:10px">  </tr>
+                      <tr> 
+                         <td> <%= form.label "title" %> </td> 
+                         <td><%= form.text_field :title, size: 40 %></td> 
+                      </tr>
+                       
+                    <tr> 
+                      <td><%= form.label "url" %></td>
+                      <td><%= form.text_field :url, size: 40%></td> 
+                    </tr>
+                    <tr>                     
+                      <td></td>
+                        <td> <b>or</b></td> 
+                    </tr>
                       
-                      <div class="actions">
-                        <%= form.submit %>
-                      </div>
+                      <tr>   
+                          <td><%= form.label "text" %></td>
+                          <td ><%= form.text_area :text, size: "39x3" %> </td>
+                      </tr>
+                      
+                      <tr>
+                        <td></td>
+                        <td>
+                          <%= form.submit "Submit"%>
+                        </td>
+                      </tr>
+                  </tr>  
+                 </tbody></table>
+                      <tr>
+                        <tr style="height:20px"></tr>                        
+                        <td>
+                          <label>Leave url blank to submit a question for discussion. If there is no url, the text (if any) will appear at the top of the thread. </label>
+                        </td>
+                      </tr>
                     <% end %>
 
                   </td>
                 </tr>
+                
+        </table>
 </center></body>
 
 
