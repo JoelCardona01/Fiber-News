@@ -25,7 +25,6 @@
                                         | <a href="front">past</a> 
                                         | <a href="newcomments">comments</a> 
                                         | <a href=<%=ask_submissions_path%>>ask</a> 
-                                        | <a href="show">show</a> 
                                         | <a href="jobs">jobs</a> 
                                         |  <%= link_to 'submit', new_submission_path %>
 
@@ -65,14 +64,12 @@
 
                                 <td valign="top" class="votelinks"><center>
 
-                                  <%= link_to 'Vote', vote_submission_path(submission.id), method: :put %>
+                                   <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.id), method: :put, class: "votearrow"  %>
 
-                                        <div class='votearrow' title='upvote'></div>
-                    
                                 </center></td>
 
                                 <td class="title">
-                                    <a href= <%=  %> class="titlelink"><%= submission.title%></a>
+                                        <a href= <%= submission_path(submission.id) %> class="titlelink"><%= submission.title%></a>
                                     </span>
                                 </td>
                             </tr>
