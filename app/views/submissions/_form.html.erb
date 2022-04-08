@@ -52,6 +52,13 @@
                         </div>
                       <% end %>
                       
+                      
+                <% if !alert.nil? %>
+		              <div >
+                    <p style="color:grey" id="alert"><%= alert %></p>
+                  </div>
+                 <%end%>    
+                      
                 <table border="0"><tbody>
               
                   <tr>
