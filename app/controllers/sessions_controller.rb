@@ -1,5 +1,10 @@
 class SessionsController < ApplicationController
   
+  def logout
+    session[:user_id] = nil
+    redirect_to submissions_path
+  end
+  
   def omniauth
     @user = User.from_omniauth(auth)
     @user.save
