@@ -1,6 +1,48 @@
-<h1>Editing User</h1>
+<body><center>
+<div class="profileform">
+<%= form_for @user, url: {action: "update"} do |form| %>
 
-<%= render 'form', user: @user %>
+  <table border="0"><tbody>
+  
+    <tr>
+      <tr style="height:10px">  </tr>
+        <tr> 
+           <td> <%= form.label :name %> </td> 
+           <td><%= @user.name %></td> 
+        </tr>
+         
+      <tr> 
+        <td><%= form.label :email %></td>
+        <td><%= @user.email %></td>
+      </tr>
+      
+      <tr> 
+        <td><%= form.label :created %></td>
+        <td><%= form.label time_ago_in_words(@user.created_at) %></td> 
+      </tr>
+      
+      <tr> 
+        <td><%= form.label :karma %></td>
+        <td><%= form.label @user.karma %></td> 
+      </tr>
+        
+        <tr>   
+            <td><%= form.label :about %></td>
+            <td ><%= form.text_area :about, size: "39x3" %> </td>
+        </tr>
+        
+        <tr>
+          <td></td>
+          <td>
+            <%= form.submit "Update"%>
+          </td>
+        </tr>
+    </tr>  
+   </tbody></table>
+  
+<% end %>
+</div>
 
 <%= link_to 'Show', @user %> |
-<%= link_to 'Back', users_path %>
+<%= link_to 'Back', submissions_path %>
+</center></body>
