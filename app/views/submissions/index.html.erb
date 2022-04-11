@@ -40,7 +40,7 @@
                                        <%else%>
                                        <!-- Canviar aquest link per el del perfil quan estigui -->
                                        <%= link_to User.find_by(id: session[:user_id]).name, submissions_path %>
-                                       <%= link_to 'Logout' , '/sessions/logout' %>
+                                       <%= link_to ' | Logout' , '/sessions/logout' %>
                                        <%end%>
                                    </span>
                                 </td>
