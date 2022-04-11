@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_09_153546) do
+ActiveRecord::Schema.define(version: 2022_04_11_153916) do
 
   create_table "submissions", force: :cascade do |t|
     t.string "url"
@@ -26,6 +26,8 @@ ActiveRecord::Schema.define(version: 2022_04_09_153546) do
     t.string "email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "karma", default: 0
+    t.string "about", default: ""
   end
 
 end
