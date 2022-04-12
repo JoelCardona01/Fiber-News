@@ -97,7 +97,9 @@
                     <input type="hidden" name="comment[parentid]" value="0">
                     <input type="hidden" name="comment[likes]" value="1">
                     <textarea name="comment[text]" rows="6" cols="60"></textarea>
-                    <br><br>    
+                    <br><br>
+                    <span>If you haven't already, would you mind reading about HN's <a href=""><u>approach to comments</u></a> and <a href=""><u>site guidelines</u></a>? </span>
+                    <br><br>
                     <input type="submit" value="add comment">
                   </form>
                 </td>
@@ -125,7 +127,7 @@
                           </div>
                           <div class="reply">     
                             <p><font size="1">
-                              <u><a href="">reply</a></u>
+                              <u><%=link_to "reply", comment_path(comment.id), method: :get%></u>
                             </font></p>
                             <tr style="height:7px" ></tr>
                           </div>
