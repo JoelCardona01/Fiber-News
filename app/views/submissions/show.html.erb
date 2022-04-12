@@ -1,69 +1,65 @@
- <body><center>
- <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+<body><center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
 
-                <!-- Fila menu -->
-                <tr>
-                    <td bgcolor="#ff6600">
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
-                            <tr>
-                                <td style="width:18px;padding-right:4px">
-                                    <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
-                                </td>
+ <!-- Fila menu -->
+  <tr>
+    <td bgcolor="#ff6600">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+        <tr>
+          <td style="width:18px;padding-right:4px">
+            <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+          </td>
 
-                                <td style="line-height:12pt; height:10px;">
-                                   <span class="pagetop">
-                                       <b class="hnname">
-                                              <a href=<%=submissions_path%>> Fiber News</a>
-                                       </b>
+          <td style="line-height:12pt; height:10px;">
+            <span class="pagetop">
+              <b class="hnname">
+                <a href=<%=submissions_path%>> Fiber News</a>
+              </b>
 
-                                          <a href=<%=newest_submissions_path%>> new</a>
-                                        | <a href="front">past</a> 
-                                        | <a href="newcomments">comments</a> 
-                                        | <a href=<%=ask_submissions_path%>>ask</a> 
-                                        | <a href="jobs">jobs</a> 
-                                        |  <%= link_to 'submit', new_submission_path %>
-
-
-                                   </span>
-                                </td>
+              <a href=<%=newest_submissions_path%>> new</a>
+              | <a href="front">past</a> 
+              | <a href="newcomments">comments</a> 
+              | <a href=<%=ask_submissions_path%>>ask</a> 
+              | <a href="jobs">jobs</a> 
+              |  <%= link_to 'submit', new_submission_path %>
+            </span>
+          </td>
                                 
-                                <td style="text-align:right;padding-right:4px;">
-                                   <span class="pagetop">
-                                       <a href="login?goto=news">login</a>
-                                   </span>
-                                </td>
+          <td style="text-align:right;padding-right:4px;">
+            <span class="pagetop">
+              <a href="login?goto=news">login</a>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
 
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
 
-
-<p id="notice"><%= notice %></p>
- <tr>
+  <p id="notice"><%= notice %></p>
+  <tr>
     <tr style = "height:10px"></tr>
-    <td>
-      <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
-           <tr class='athing'>
+      <td>
+        <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
+          <tr class='athing'>
             <td valign="top" class="votelinks"><center>
               <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(@submission.id), method: :put, class: "votearrow"  %>
-
-             </center></td>
+            </center></td>
         
-           <td class="title">
-            <% if @submission.url!=""%>
-            <td>
-              <a href= <%= @submission.url %> class="titlelink"><%= @submission.title%></a>
-              <span class="sitebit comhead"> 
-                (<a href=<% @submission.url %>>
-                <span class="sitestr"><%= URI.parse(@submission.url).host %></span>
-                </a>)
-              </span>
-              </td>
-            <% else %>
+            <td class="title">
+              <% if @submission.url!=""%>
+                <td>
+                  <a href= <%= @submission.url %> class="titlelink"><%= @submission.title%></a>
+                  <span class="sitebit comhead"> 
+                    (<a href=<% @submission.url %>>
+                      <span class="sitestr"><%= URI.parse(@submission.url).host %></span>
+                    </a>)
+                  </span>
+                </td>
+              <% else %>
                <td class= "title" ><%= @submission.title%> </td>
-             <% end %>
-          </td>
+              <% end %>
+            </td>
           </tr>
         
           <tr>
@@ -80,19 +76,71 @@
             </td>
           </tr>
         
-        <tr style = "height:10px"></tr>
+          <tr style = "height:10px"></tr>
         
-       <tr>
-         <td>
-          <td>
+          <tr>
+            <td>
+            <td>
               <td class="text"> 
               <%= @submission.text %> </td>
-          </td>
-          </td>
-        </tr>
+            </td>
+            </td>
+          </tr>
         
-      </table>
-    </td>
+          <tr style ="height:10px" ></tr>
+            <tr>
+              <td colspan="2"></td>
+                <td>
+                  <form method="post" action="comment">
+                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                    <input type="hidden" name="comment[postid]" value="<%= @submission.id%>">
+                    <input type="hidden" name="comment[parentid]" value="0">
+                    <input type="hidden" name="comment[likes]" value="1">
+                    <textarea name="comment[text]" rows="6" cols="60"></textarea>
+                    <br><br>    
+                    <input type="submit" value="add comment">
+                  </form>
+                </td>
+            </tr>
+        </table>
+
+        <table>
+          <% @comments.each do |comment| %>
+          <tr class="athing comtr" id= <%comment.id%> >
+            <td>
+              <table border="0">
+                <tbody>
+                  <tr>
+                    <td valign="top" class="votelinks"><center>
+                      <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(comment.id), method: :put, class: "votearrow"  %>
+                    </center></td>
+                    <td class="default">
+                      <div style="margin-top:2px; margin-bottom:-10px;">
+                        <span class="comhead">
+                          <a href="" class="hnuser">comentUser PERFER</a> 
+                          <span class="age"><a href=""> <%=time_ago_in_words(comment.created_at)%> ago</a></span> 
+                          </span>
+                          <div class="comment">
+                            <span class="commtext c00"> <%=comment.text%></span>
+                          </div>
+                          <div class="reply">     
+                            <p><font size="1">
+                              <u><a href="">reply</a></u>
+                            </font></p>
+                            <tr style="height:7px" ></tr>
+                          </div>
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <% end %>
+        </table>
+      </td>
   </tr>
-    </center></body>
+</table>
+</center></body>
 
