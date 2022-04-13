@@ -1,2 +1,8 @@
+<% if User.find_by(id: session[:user_id]).nil? then%>
+<%=flash[:alert] = "You have to be logged in to submit."%>
+<%= controller.redirect_to submissions_path%>
+<%end%>
+
+
 
 <%= render 'form', submission: @submission %>
