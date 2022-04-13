@@ -37,18 +37,22 @@ class SubmissionsController < ApplicationController
   # POST /submissions.json
   def create
     @submission = Submission.new(submission_params)
-
+    
     respond_to do |format|
-      if @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } 
-      else
+      if @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } ##Comprovem que el titol no es buit
+      elsif Submission.find_by(url: @submission.url).nil? ##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
         if @submission.save
           format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
           ## format.json { render :show, status: :created, location: @submission }
         else
           format.html { render :new }
-         format.json { render json: @submission.errors, status: :unprocessable_entity }
+          format.json { render json: @submission.errors, status: :unprocessable_entity }
         end
+      else ##Ja existia una submission amb el mateix url de manera que redirigim a la submission amb el mateix url.
+        @submission2 = Submission.find_by(url: @submission.url)
+        format.html {redirect_to @submission2 }
       end
+       
     end 
   end
 
