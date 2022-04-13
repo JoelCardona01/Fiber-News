@@ -87,7 +87,7 @@
                           <td><%= form.label "text" %></td>
                           <td ><%= form.text_area :text, size: "39x3" %> </td>
                       </tr>
-                      
+                          <%= form.hidden_field :user_id, value: session[:user_id] %>
                       <tr>
                         <td></td>
                         <td>
