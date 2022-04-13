@@ -40,7 +40,7 @@ class SubmissionsController < ApplicationController
     
     respond_to do |format|
       if @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } ##Comprovem que el titol no es buit
-      elsif @submission.url=="" || !@submission.url!="" && Submission.find_by(url: @submission.url).nil? ##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
+      elsif ((@submission.url!="" && Submission.find_by(url: @submission.url).nil?) ||  (@submission.url==""))##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
         if @submission.save
           format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
           ## format.json { render :show, status: :created, location: @submission }
