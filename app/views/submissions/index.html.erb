@@ -36,8 +36,7 @@
                                        <% if User.find_by(id: session[:user_id]).nil? then%>
                                        <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
                                        <%else%>
-                                       <!-- Canviar aquest link per el del perfil quan estigui -->
-                                       <%= link_to User.find_by(id: session[:user_id]).name, submissions_path %>
+                                       <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
                                        <%= link_to ' | Logout' , '/sessions/logout' %>
                                        <%end%>
                                    </span>
@@ -88,7 +87,7 @@
                                 <td colspan="2"></td>
                                 <td class="subtext">
                                     <span class="score"><%= submission.votes%> votes</span> 
-                                    by <a href="" class="hnuser">SoyHardcoded</a> 
+                                    by <a href=<%=user_path(submission.user)%> class="hnuser"><%= submission.user.name%></a> 
                                     <span class="age">
                                         <a href=""><%=time_ago_in_words(submission.created_at)%> ago</a>
                                     </span> 

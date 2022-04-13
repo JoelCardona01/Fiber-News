@@ -1,26 +1,78 @@
+<% if not User.find_by(id: session[:user_id]).nil? and session[:user_id] == @user.id then%>
+<%=controller.redirect_to edit_user_path(@user)%>
+<%end%>
 
 
+<body><center>
+  <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
 
-
-
-
-  <table border="0"><tbody>
+    <!-- Fila menu -->
     <tr>
-      <tr style="height:10px">  </tr>
-        <tr> 
-           <td> <strong>Name:</strong> </td> 
-           <td>  <%= @user.name %></td> 
-        </tr>
-      
-      <tr> 
-        <td> <strong>Karma:</strong> </td>
-        <td><%= @user.karma %></td> 
-      </tr>
-        
-        <tr>   
-            <td> <strong>About:</strong> </td>
-            <td ><%= @user.about %></td>
-        </tr>
-        
-    </tr>  
-   </tbody></table>
+      <td bgcolor="#ff6600">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+              <tr>
+                  <td style="width:18px;padding-right:4px">
+                      <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+                  </td>
+                  <td style="line-height:12pt; height:10px;">
+                     <span class="pagetop">
+                       <b class="hnname">
+                          <a href=<%=submissions_path%>> Fiber News</a>
+                       </b>
+                          <a href=<%=newest_submissions_path%>> new</a>
+                        | <a href="front">past</a> 
+                        | <a href="newcomments">comments</a> 
+                        | <a href=<%=ask_submissions_path%>>ask</a> 
+                        | <a href="jobs">jobs</a> 
+                        |  <%= link_to 'submit', new_submission_path %>
+                      </span>
+                  </td>
+    
+                  <td style="text-align:right;padding-right:4px;">
+                     <span class="pagetop">
+                         <!-- <a href="login?goto=news">login</a> -->
+                         <% if User.find_by(id: session[:user_id]).nil? then%>
+                         <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+                         <%else%>
+                         <!-- Canviar aquest link per el del perfil quan estigui -->
+                         <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                         <%= link_to ' | Logout' , '/sessions/logout' %>
+                         <%end%>
+                      </span>
+                  </td>
+              </tr>
+            </table>
+         </td>
+    </tr>
+
+
+
+
+
+    <tr>
+        <td>
+            <table border="0">
+                <tr class='athing'>
+                    <td valign="top">user:</td>
+                    <td><a href=<%=user_path(@user)%> class="hnuser"><%= @user.name %></a></td>
+                </tr>
+                <tr>
+                    <td valign="top">created:</td>
+                    <td><!--<a href="">--><%=time_ago_in_words(@user.created_at) %></a></td>
+                </tr>
+                <tr>
+                    <td valign="top">karma:</td>
+                    <td>
+                        <%= @user.karma %> </td>
+                </tr>
+                <tr>
+                    <td valign="top">about:</td>
+                    <td style="overflow:hidden;">
+                        <%= @user.about %> </td>
+                </tr>
+            </table>
+            <br><br>
+        </td>
+    </tr>
+
+     </center></body>
