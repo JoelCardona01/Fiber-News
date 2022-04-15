@@ -93,7 +93,6 @@ class SubmissionsController < ApplicationController
       @comment = Comment.new(params[:comment])
       respond_to do |format|
         if @comment.save
-          user = "SoyHardcoded"
           format.html { redirect_to "/submissions/"+@comment.postid.to_s, notice: 'Comment was successfully created.' }
           format.json { render :show, status: :created, location: @comment }
         else
