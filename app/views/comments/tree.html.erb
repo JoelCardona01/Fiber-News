@@ -15,6 +15,10 @@
               <b class="hnname">
                 <a href=<%=submissions_path%>> Fiber News </a>
               </b>
+              
+              <a href=<%=newest_submissions_path%>> new</a>
+              | <a href=<%=ask_submissions_path%>>ask</a> 
+              |  <%= link_to 'submit', new_submission_path %>
             </span>
           </td>
                                 
@@ -44,7 +48,7 @@
               <td class="default">
                 <div style="margin-top:2px; margin-bottom:-10px;">
                   <span class="comhead">
-                    <a href="LINK" class="hnuser"> nomUser </a>
+                    <a href=<%=user_path(@comment.user)%> class="hnuser"> <%= @comment.user.name%> </a>
                           <span class="age"><a href="/comments/<%=@comment.id%>/tree"> <%=time_ago_in_words(@comment.created_at)%> ago</a></span> 
                     <span class="navs">
                       |
@@ -75,11 +79,10 @@
                     <form method="post" action="comment">
                       <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                       <input type="hidden" name="comment[postid]" value="<%= @submission.id%>">
+                      <input type="hidden" name="comment[user_id]" value="<%= session[:user_id]%>">
                       <input type="hidden" name="comment[parentid]" value="<%= @comment.id %>" >
                       <input type="hidden" name="comment[likes]" value="1">
                       <textarea name="comment[text]" rows="6" cols="60"></textarea>
-                      <br><br>  
-                      <span>If you haven't already, would you mind reading about HN's <a href=""><u>approach to comments</u></a> and <a href=""><u>site guidelines</u></a>? </span>
                       <br><br>
                       <input type="submit" value="reply">
                     </form>
@@ -131,7 +134,7 @@
                     <td class="default">
                       <div style="margin-top:2px; margin-bottom:-10px;">
                         <span class="comhead">
-                          <a href="" class="hnuser">comentUser PERFER</a> 
+                          <a href=<%=user_path(@comments[i].user)%> class="hnuser"> <%= @comments[i].user.name%> </a>
                           <span class="age"><a href="/comments/<%=@comments[i].id%>/tree"> <%=time_ago_in_words(@comments[i].created_at)%> ago</a></span> 
                           <div class="comment">
                             <span class="commtext c00"> <%=@comments[i].text%></span>
