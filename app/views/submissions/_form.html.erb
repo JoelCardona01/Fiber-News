@@ -19,15 +19,8 @@
                                 <td style="line-height:12pt; height:10px;">
                                    <span class="pagetop">
                                        <b class="hnname">
-                                              <a href=<%=submissions_path%>> Fiber News</a>
+                                              <a href=<%=submissions_path%>> Submit </a>
                                        </b>
-
-                                          <a href=<%=newest_submissions_path%>> new</a>
-                                        | <a href="front">past</a> 
-                                        | <a href="newcomments">comments</a> 
-                                        | <a href=<%=ask_submissions_path%>>ask</a> 
-                                        | <a href="jobs">jobs</a> 
-                                        |  <%= link_to 'submit', new_submission_path %>
 
 
                                    </span>
@@ -94,7 +87,7 @@
                           <td><%= form.label "text" %></td>
                           <td ><%= form.text_area :text, size: "39x3" %> </td>
                       </tr>
-                      
+                          <%= form.hidden_field :user_id, value: session[:user_id] %>
                       <tr>
                         <td></td>
                         <td>

@@ -1,4 +1,4 @@
-<%= form_with(model: user) do |form| %>
+<%= form_for @user, url: {action: "update"} , html: {class: "profileform"} do |form| %>
   <% if user.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -9,19 +9,41 @@
         <% end %>
       </ul>
     </div>
-  <% end %>
+  <%end%>
+    
+  <table border="0">
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
+        <tr class='athing'> 
+          <td valign="top">user:</td>
+            <td><a href=<%=edit_user_path(@user)%> class="hnuser">
+              <font color="#3c963c"><%= @user.name %></font>
+            </a></td>
+        </tr>
+         
+        <tr>
+          <td valign="top">created:</td>
+            <td><%=time_ago_in_words(@user.created_at)%></td>
+        </tr>
+         
+         
+        <tr>
+          <td valign="top">karma:</td>
+          <td><%=@user.karma %> </td>
+        </tr>
+         
+        <tr>
+          <td valign="top">about:</td>
+          <td style="overflow:hidden;">
+            <%= form.text_area :about, size: "60x5" %>
+          </td>
+        </tr>
+        
+        <tr>
+          <td valign="top">email:</td>
+          <td><%= @user.email %></td>
+        </tr>
 
-  <div class="field">
-    <%= form.label :email %>
-    <%= form.text_field :email %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+   </table>
+  <br><%= form.submit "Update"%>
 <% end %>
+</div>

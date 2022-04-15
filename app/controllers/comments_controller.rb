@@ -10,6 +10,7 @@ class CommentsController < ApplicationController
   # GET /comments/1
   # GET /comments/1.json
   def show
+    @submission = Submission.find(@comment.postid)
   end
 
   # GET /comments/new
@@ -19,6 +20,17 @@ class CommentsController < ApplicationController
 
   # GET /comments/1/edit
   def edit
+  end
+  
+  def tree
+    @comment = Comment.find_by(:id => params[:id])
+    @comments = Comment.all.where(:parentid => @comment.id).order(:parentid)
+    @commentsAux = @comments.to_a
+    for i in 0..@commentsAux.length-1
+      @commentsAux.push(Comment.all.where(:parentid => @commentsAux[i].id))
+      @comments = @comments + (Comment.all.where(:parentid => @commentsAux[i].id))
+    end
+    @submission = Submission.find_by(:id => @comment.postid)
   end
 
   # POST /comments
@@ -66,6 +78,23 @@ class CommentsController < ApplicationController
     @comment.save
     redirect_to request.referrer
   end
+  
+  def comment
+    params.permit!
+    if !params[:comment][:text].blank? ##Si el text no es buit, aleshores creem el comentari.
+      @comment = Comment.new(params[:comment])
+      respond_to do |format|
+        if @comment.save
+          user = "SoyHardcoded"
+          format.html { redirect_to "/submissions/"+@comment.postid.to_s, notice: 'Comment was successfully created.' }
+          format.json { render :show, status: :created, location: @comment }
+        else
+          format.html { render :new }
+          format.json { render json: @comment.errors, status: :unprocessable_entity }
+        end
+      end
+    end
+  end 
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -75,6 +104,6 @@ class CommentsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def comment_params
-      params.require(:comment).permit(:text, :postid, :parentid, :likes)
+      params.require(:comment).permit(:text, :postid, :parentid, :likes, :user_id)
     end
 end

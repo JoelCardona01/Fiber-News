@@ -5,6 +5,7 @@
 <table>
   <thead>
     <tr>
+      <th>User</th>
       <th>Text</th>
       <th>Postid</th>
       <th>Parentid</th>
@@ -16,6 +17,8 @@
   <tbody>
     <% @comments.each do |comment| %>
       <tr>
+        <!-- Enllaç a l'usuari creador del comentari-->
+        <a href=<%=user_path(comment.user)%> class="hnuser"><%= comment.user.name%></a>
         <td><%= comment.text %></td>
         <td><%= comment.postid %></td>
         <td><%= comment.parentid %></td>

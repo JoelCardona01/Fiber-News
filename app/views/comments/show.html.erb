@@ -1,24 +1,95 @@
-<p id="notice"><%= notice %></p>
+<body><center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
 
-<p>
-  <strong>Text:</strong>
-  <%= @comment.text %>
-</p>
+ <!-- Fila menu -->
+  <tr>
+    <td bgcolor="#ff6600">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+        <tr>
+          <td style="width:18px;padding-right:4px">
+            <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+          </td>
 
-<p>
-  <strong>Postid:</strong>
-  <%= @comment.postid %>
-</p>
+          <td style="line-height:12pt; height:10px;">
+            <span class="pagetop">
+              <b class="hnname">
+                <% if User.find_by(id: session[:user_id]).nil? then%>
+                <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+                <%else%>
+                <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                <%= link_to ' | Logout' , '/sessions/logout' %>
+                <%end%>
+              </b>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
 
-<p>
-  <strong>Parentid:</strong>
-  <%= @comment.parentid %>
-</p>
 
-<p>
-  <strong>Likes:</strong>
-  <%= @comment.likes %>
-</p>
+  <p id="notice"><%= notice %></p>
+  <tr>
+    <tr style = "height:10px"></tr>
+      <td>
+        <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
+          <tbody>
+            <tr class='athing'>
+              <td class="ind"></td>
+              <td valign="top" class="votelinks"><center>
+                <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comment.id), method: :put, class: "votearrow"  %>
+              </center></td>
+          
+              <td class="default">
+                <div style="margin-top:2px; margin-bottom:-10px;">
+                  <span class="comhead">
+                    <a href=<%=user_path(comment.user)%> class="hnuser"> <%= @comment.user.name%> </a>
+                    <span class="age">
+                      <a href="/comments/<%=@comment.id%>/tree"><%=time_ago_in_words(@comment.created_at)%> ago</a>
+                    </span>
+                    <span class="navs">
+                      |
+                      <a href="">parent</a>
+                      |
+                      <a href="" rel="nofollow">context</a>
+                    </span>
+                    <span class="onstory">
+                      | on: 
+                      <%= link_to @submission.title, submission_path(@submission.id), method: :get%>
+                    </span>
+                  </span>
+                </div>
+                <br>
+                <div class="comment">
+                  <span class="commtext c00">
+                    <%=@comment.text%>
+                    <div class="reply"></div>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          
+            <tr style ="height:10px" ></tr>
+              <tr>
+                <td colspan="2"></td>
+                  <td>
+                    <form method="post" action="comment">
+                      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                      <input type="hidden" name="comment[postid]" value="<%= @submission.id%>">
+                      <input type="hidden" name="comment[parentid]" value="<%= @comment.id %>" >
+                      <input type="hidden" name="comment[likes]" value="1">
+                      <textarea name="comment[text]" rows="6" cols="60"></textarea>
+                      <br><br>  
+                      <span>If you haven't already, would you mind reading about HN's <a href=""><u>approach to comments</u></a> and <a href=""><u>site guidelines</u></a>? </span>
+                      <br><br>
+                      <input type="submit" value="reply">
+                    </form>
+                  </td>
+              </tr>
+            </tbody>
+        </table>
+      </td>
+  </tr>
+</table>
+</center></body>
 
-<%= link_to 'Edit', edit_comment_path(@comment) %> |
-<%= link_to 'Back', comments_path %>
