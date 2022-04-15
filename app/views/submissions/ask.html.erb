@@ -84,7 +84,7 @@
                                     <span class="score"><%= submission.votes%> votes</span> 
                                     by <a href= <%=user_path(submission.user)%> class="hnuser"><%= submission.user.name%></a> 
                                     <span class="age">
-                                        <a href=""><%=time_ago_in_words(submission.created_at)%> ago</a>
+                                        <a href= <%= submission_path(submission.id) %>><%=time_ago_in_words(submission.created_at)%> ago</a>
                                     </span> 
                                     <span id=""></span> 
                                     | <a href="">hide</a> 
