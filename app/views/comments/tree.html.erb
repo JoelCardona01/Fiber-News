@@ -2,7 +2,7 @@
 <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
 
  <!-- Fila menu -->
-  <tr>
+  <tr> 
     <td bgcolor="#ff6600">
       <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
         <tr>
@@ -13,15 +13,8 @@
           <td style="line-height:12pt; height:10px;">
             <span class="pagetop">
               <b class="hnname">
-                <a href=<%=submissions_path%>> Fiber News</a>
+                <a href=<%=submissions_path%>> Fiber News </a>
               </b>
-
-              <a href=<%=newest_submissions_path%>> new</a>
-              | <a href="front">past</a> 
-              | <a href="newcomments">comments</a> 
-              | <a href=<%=ask_submissions_path%>>ask</a> 
-              | <a href="jobs">jobs</a> 
-              |  <%= link_to 'submit', new_submission_path %>
             </span>
           </td>
                                 
@@ -41,82 +34,70 @@
     <tr style = "height:10px"></tr>
       <td>
         <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
-          <tr class='athing'>
-            <td valign="top" class="votelinks"><center>
-              <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(@submission.id), method: :put, class: "votearrow"  %>
-            </center></td>
-        
-            <td class="title">
-              <% if @submission.url!=""%>
-                <td>
-                  <a href= <%= @submission.url %> class="titlelink"><%= @submission.title%></a>
-                  <span class="sitebit comhead"> 
-                    (<a href=<% @submission.url %>>
-                      <span class="sitestr"><%= URI.parse(@submission.url).host %></span>
-                    </a>)
-                  </span>
-                </td>
-              <% else %>
-               <td class= "title" ><%= @submission.title%> </td>
-              <% end %>
-            </td>
-          </tr>
-        
-          <tr>
-            <td colspan="2"></td>
-              <td class="subtext">
-                <span class="score"><%= @submission.votes%> votes</span> 
-                by <a href="" class="hnuser">SoyHardcoded</a> 
-                <span class="age">
-                  <a href= <%= submission_path(@submission.id) %>><%=time_ago_in_words(@submission.created_at)%> ago</a>
-                </span> 
-              <span id=""></span> 
-              | <a href="">hide</a> 
-              | <a href=""> x comments</a>              
-            </td>
-          </tr>
-        
-          <tr style = "height:10px"></tr>
-        
-          <tr>
-            <td>
-            <td>
-              <td class="text"> 
-              <%= @submission.text %> </td>
-            </td>
-            </td>
-          </tr>
-        
-          <tr style ="height:10px" ></tr>
-            <tr>
-              <td colspan="2"></td>
-                <td>
-                  <form method="post" action="comment">
-                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-                    <input type="hidden" name="comment[postid]" value="<%= @submission.id%>">
-                    <input type="hidden" name="comment[parentid]" value="0">
-                    <input type="hidden" name="comment[likes]" value="1">
-                    <textarea name="comment[text]" rows="6" cols="60"></textarea>
-                    <br><br>
-                    <span>If you haven't already, would you mind reading about HN's <a href=""><u>approach to comments</u></a> and <a href=""><u>site guidelines</u></a>? </span>
-                    <br><br>
-                    <input type="submit" value="add comment">
-                  </form>
-                </td>
-            </tr>
-        </table>
-
-        <table>
+          <tbody>
+            <tr class='athing'>
+              <td class="ind"></td>
+              <td valign="top" class="votelinks"><center>
+                <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comment.id), method: :put, class: "votearrow"  %>
+              </center></td>
           
+              <td class="default">
+                <div style="margin-top:2px; margin-bottom:-10px;">
+                  <span class="comhead">
+                    <a href="LINK" class="hnuser"> nomUser </a>
+                          <span class="age"><a href="/comments/<%=@comment.id%>/tree"> <%=time_ago_in_words(@comment.created_at)%> ago</a></span> 
+                    <span class="navs">
+                      |
+                      <a href="">parent</a>
+                      |
+                      <a href="" rel="nofollow">context</a>
+                    </span>
+                    <span class="onstory">
+                      | on: 
+                      <%= link_to @submission.title, submission_path(@comment.postid), method: :get%>
+                    </span>
+                  </span>
+                </div>
+                <br>
+                <div class="comment">
+                  <span class="commtext c00">
+                    <%=@comment.text%>
+                    <div class="reply"></div>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          
+            <tr style ="height:10px" ></tr>
+              <tr>
+                <td colspan="2"></td>
+                  <td>
+                    <form method="post" action="comment">
+                      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                      <input type="hidden" name="comment[postid]" value="<%= @submission.id%>">
+                      <input type="hidden" name="comment[parentid]" value="<%= @comment.id %>" >
+                      <input type="hidden" name="comment[likes]" value="1">
+                      <textarea name="comment[text]" rows="6" cols="60"></textarea>
+                      <br><br>  
+                      <span>If you haven't already, would you mind reading about HN's <a href=""><u>approach to comments</u></a> and <a href=""><u>site guidelines</u></a>? </span>
+                      <br><br>
+                      <input type="submit" value="reply">
+                    </form>
+                  </td>
+              </tr>
+            </tbody>
+        </table>
+        <table>
           <%
+
             #Representam l'arbre de comentaris com un array, i cream un altre array per saber el nivell de cada comentari (inicialment tots els comentaris tenen nivell 0)
             @comments = @comments.to_a
             nivellComment = Array.new(@comments.size, 0)
             
             #Per a tot comentari, si te pare...
             for i in 0..@comments.length-1
-              if @comments[i].parentid != 0
-                
+              if @comments[i].parentid != @comment.id
+              
                 #...cercam la posicio del comentari pare
                 p = 0
                 while @comments[p].id != @comments[i].parentid and p < @comments.length do

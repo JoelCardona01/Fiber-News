@@ -21,6 +21,17 @@ class CommentsController < ApplicationController
   # GET /comments/1/edit
   def edit
   end
+  
+  def tree
+    @comment = Comment.find_by(:id => params[:id])
+    @comments = Comment.all.where(:parentid => @comment.id).order(:parentid)
+    @commentsAux = @comments.to_a
+    for i in 0..@commentsAux.length-1
+      @commentsAux.push(Comment.all.where(:parentid => @commentsAux[i].id))
+      @comments = @comments + (Comment.all.where(:parentid => @commentsAux[i].id))
+    end
+    @submission = Submission.find_by(:id => @comment.postid)
+  end
 
   # POST /comments
   # POST /comments.json
