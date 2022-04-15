@@ -13,13 +13,19 @@
           <td style="line-height:12pt; height:10px;">
             <span class="pagetop">
               <b class="hnname">
-                <% if User.find_by(id: session[:user_id]).nil? then%>
-                <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
-                <%else%>
-                <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
-                <%= link_to ' | Logout' , '/sessions/logout' %>
-                <%end%>
+                 Add Comment
               </b>
+             <td style="text-align:right;padding-right:4px;">
+                                   <span class="pagetop">
+                                       <!-- <a href="login?goto=news">login</a> -->
+                                       <% if User.find_by(id: session[:user_id]).nil? then%>
+                                       <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+                                       <%else%>
+                                       <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                       <%= link_to ' | Logout' , '/sessions/logout' %>
+                                       <%end%>
+                                   </span>
+                                </td>
             </span>
           </td>
         </tr>
@@ -43,7 +49,7 @@
               <td class="default">
                 <div style="margin-top:2px; margin-bottom:-10px;">
                   <span class="comhead">
-                    <a href=<%=user_path(comment.user)%> class="hnuser"> <%= @comment.user.name%> </a>
+                    <a href=<%=user_path(@comment.user)%> class="hnuser"> <%= @comment.user.name%> </a>
                     <span class="age">
                       <a href="/comments/<%=@comment.id%>/tree"><%=time_ago_in_words(@comment.created_at)%> ago</a>
                     </span>
@@ -77,10 +83,9 @@
                       <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                       <input type="hidden" name="comment[postid]" value="<%= @submission.id%>">
                       <input type="hidden" name="comment[parentid]" value="<%= @comment.id %>" >
+                      <input type="hidden" name="comment[user_id]" value="<%= session[:user_id]%>">
                       <input type="hidden" name="comment[likes]" value="1">
                       <textarea name="comment[text]" rows="6" cols="60"></textarea>
-                      <br><br>  
-                      <span>If you haven't already, would you mind reading about HN's <a href=""><u>approach to comments</u></a> and <a href=""><u>site guidelines</u></a>? </span>
                       <br><br>
                       <input type="submit" value="reply">
                     </form>
