@@ -30,6 +30,8 @@
     <%= form.label :likes %>
     <%= form.number_field :likes %>
   </div>
+  
+  </tr><%= form.hidden_field :user_id, value: session[:user_id] %><tr>
 
   <div class="actions">
     <%= form.submit %>

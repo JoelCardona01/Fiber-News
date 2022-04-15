@@ -1,5 +1,6 @@
 class User < ApplicationRecord
-    
+    has_many :submissions
+    has_many :comments
     
     def self.from_omniauth(auth)
       where(email: auth.info.email).first_or_initialize do |user|
