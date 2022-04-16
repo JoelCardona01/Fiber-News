@@ -39,15 +39,39 @@ class SubmissionsController < ApplicationController
     @submission = Submission.new(submission_params)
     
     respond_to do |format|
+      
       if @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } ##Comprovem que el titol no es buit
-      elsif ((@submission.url!="" && Submission.find_by(url: @submission.url).nil?) ||  (@submission.url==""))##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
+      elsif (@submission.url=="") 
         if @submission.save
-          format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
-          ## format.json { render :show, status: :created, location: @submission }
+            format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
+            format.json { render :show, status: :created, location: @submission }
+          else
+            format.html { render :new }
+            format.json { render json: @submission.errors, status: :unprocessable_entity }
+          end
+      elsif ((@submission.url!="" && Submission.find_by(url: @submission.url).nil?))##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
+        if @submission.text!=""
+          text = @submission.text
+          @submission.text=""
+          if @submission.save
+            @comment= Comment.new(:text => text, :user_id =>@submission.user_id, :postid => @submission.id, :parentid => "0", :likes => 0)
+            @comment.save
+            format.html { redirect_to submission_path(@submission.id), notice: 'Submission was successfully created.' }
+            format.json { render :show, status: :created, location: @submission }
+          else
+            format.html { render :new }
+            format.json { render json: @submission.errors, status: :unprocessable_entity }
+          end
         else
-          format.html { render :new }
-          format.json { render json: @submission.errors, status: :unprocessable_entity }
+          if @submission.save
+            format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
+            format.json { render :show, status: :created, location: @submission }
+          else
+            format.html { render :new }
+            format.json { render json: @submission.errors, status: :unprocessable_entity }
+          end
         end
+       
       else ##Ja existia una submission amb el mateix url de manera que redirigim a la submission amb el mateix url.
         @submission2 = Submission.find_by(url: @submission.url)
         format.html {redirect_to @submission2 }
