@@ -19,7 +19,11 @@ class SubmissionsController < ApplicationController
     @submission = Submission.new
   end
   
-
+  #GET /submissions/user/:id
+  def submFromUser
+    @submissions = Submission.all.where(:user_id => params[:user_id])
+    render "index"
+  end
 
   # GET /submissions/1/edit
   def edit

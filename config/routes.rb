@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     get '/sessions/logout', to: 'sessions#logout', as: 'logout_sessions'
     get '/comments/:id/tree', to: 'comments#tree', as: 'comments_tree'
     post 'comments/comment', to: 'comments#comment', as: 'comments_comment'
+    get '/submissions/user/:user_id', to: 'submissions#submFromUser', as: 'subm_user'
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'
 
