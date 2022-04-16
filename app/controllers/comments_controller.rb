@@ -17,7 +17,11 @@ class CommentsController < ApplicationController
   def new
     @comment = Comment.new
   end
-
+  
+  def commFromUser
+    @comments = Comment.all.where(:user_id => params[:user_id])
+    render "index"
+  end
   # GET /comments/1/edit
   def edit
   end

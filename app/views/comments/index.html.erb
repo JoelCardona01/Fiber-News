@@ -1,21 +1,75 @@
-<p id="notice"><%= notice %></p>
 
-<h1>Comments</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>Text</th>
-      <th>Postid</th>
-      <th>Parentid</th>
-      <th>Likes</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+                 <!-- Fila menu -->
+                <tr>
+                    <td bgcolor="#ff6600">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                            <tr>
+                                <td style="width:18px;padding-right:4px">
+                                    <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+                                </td>
 
-  <tbody>
-    <% @comments.each do |comment| %>
+                                <td style="line-height:12pt; height:10px;">
+                                   <span class="pagetop">
+                                       <b class="hnname">
+                                              <a href=<%=submissions_path%>> Fiber News</a>
+                                       </b>
+                                          <a href=<%=newest_submissions_path%>> new</a>
+                                        | <a href=<%=ask_submissions_path%>>ask</a> 
+                                        |  <%= link_to 'submit', new_submission_path %>
+
+
+                                   </span>
+                                </td>
+
+                                <td style="text-align:right;padding-right:4px;">
+                                   <span class="pagetop">
+                                       <!-- <a href="login?goto=news">login</a> -->
+                                       <% if User.find_by(id: session[:user_id]).nil? then%>
+                                       <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+                                       <%else%>
+                                       <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                       <%= link_to ' | Logout' , '/sessions/logout' %>
+                                       <%end%>
+                                   </span>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            <tr>
+                <td>
+                    <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
+
+    <% @comments.each_with_index do |comment, index| %>
+    
+      <tr class='athing'>
+        <td align="right" valign="top" class="title">
+            <span class="rank"><%=index+1%>. </span>
+        </td>
+  
+        <td valign="top" class="votelinks"><center>
+           <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.id), method: :put, class: "votearrow"  %>
+        </center></td>
+        <div style="margin-top:2px; margin-bottom:-10px;"><span class="comhead">
+        <a href="user?id=cercatrova" class="hnuser">cercatrova</a> <span class="age"
+            title="2022-04-16T15:48:11"><a href="item?id=31053250">0 minutes
+                ago</a></span> <span id="unv_31053250"></span><span class="navs"> | <a
+                href="item?id=31053192">parent</a> | <a href="context?id=31053250"
+                rel="nofollow">context</a> | <a href="newcomments?next=31053216"
+                aria-hidden="true">next</a></span><span class="onstory"> | on: <a
+                href="item?id=31052029">Zig self hosted compiler is now capable of
+                buildin...</a></span> </span>
+        </div><br>
+        
+        
+        
+        
+        
+        </tr>
+      
       <tr>
         <!-- Enllaç a l'usuari creador del comentari-->
         <a href=<%=user_path(comment.user)%> class="hnuser"><%= comment.user.name%></a>
@@ -28,7 +82,7 @@
         <td><%= link_to 'Destroy', comment, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
-  </tbody>
+
 </table>
 
 <br>
