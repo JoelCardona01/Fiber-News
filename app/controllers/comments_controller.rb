@@ -70,9 +70,10 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   # DELETE /comments/1.json
   def destroy
+    user_idComment = @comment.user_id
     @comment.destroy
     respond_to do |format|
-      format.html { redirect_to comments_url, notice: 'Comment was successfully destroyed.' }
+      format.html { redirect_to comm_user_path(user_idComment), notice: 'Comment was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
