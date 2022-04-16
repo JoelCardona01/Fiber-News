@@ -72,10 +72,15 @@
                 <span class="age">
                   <a href= <%= submission_path(@submission.id) %>><%=time_ago_in_words(@submission.created_at)%> ago</a>
                 </span> 
-              <span id=""></span> 
-              | <a href="">hide</a> 
-              | <a href=""> x comments</a>              
-            </td>
+                <span id=""></span> 
+                | <a href="">hide</a> 
+                | <a href=<%=submission_path(@submission.id)%>> <% size = Comment.all.where(:postid => @submission.id).length %> 
+                    <% if size == 0 %> discuss
+                    <% elsif size < 2 %> <%= size%> comment
+                    <% else %> <%= size%> comments
+                    <%end%>
+                  </a>             
+              </td>
           </tr>
         
           <tr style = "height:10px"></tr>
