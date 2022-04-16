@@ -40,65 +40,90 @@
                     </table>
                 </td>
             </tr>
-            <tr>
+             <tr>
                 <td>
                     <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
-
-                        <% @comments.each_with_index do |comment, index| %>
-                            <tr class='athing comtr'>
-                                <td>
-                                    <table border='0'>
-                                        <tr>
-                                            <td class="default">
-                                                <div style="margin-top:2px; margin-bottom:-10px;"><span class="comhead">
-                                                        <span class="score" id=comment>
-                                                            <%=comment.likes%> points
-                                                        </span> by <a href=<%=edit_user_path(comment.user)%>
-                                                            class="hnuser">
-                                                            <font color="#3c963c">
-                                                                <%= comment.user.name%>
-                                                            </font>
-                                                        </a> <span class="age"><a href=<%=comment_path(comment.id) %>>
-                                                                <%=time_ago_in_words(comment.created_at)%> ago
-                                                            </a></span> <span class="navs"> | <a
-                                                                href=<%=comment_path(comment.parentid)%>>parent</a> | <a
-                                                                href=<%=submissions_path(comment.postid) %>
-                                                                >context</a></span>
-                                                        <% if comment.user_id == session[:user_id] then %>   
-                                                        <a href=<%=edit_comment_path(comment)%>>| edit</a> | 
-                                                        <%= link_to "delete", comment_path(comment.id), method: :delete %>
-                                                        <%end%>
-                                                        <span class="onstory"> | on: <a
-                                                                href=<%=submissions_path(comment.postid) %>>Ask FN: <%=
-                                                                    truncate(Submission.find_by(id:comment.postid).title)%>
-                                                            </a></span> 
-                                                </span></div>
-                                                <br>
-
-                                                <div class="comment">
-                                                    <span class="commtext c00">
-                                                        <%=comment.text%>
-                                                    </span>
-                                                </div>
-                                                <div class='reply'>
-                                                    <p>
-                                                        <font size="1">
-                                                            <u><a href=<%=comment_path(comment.id) %>>reply</a></u>
-                                                        </font>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-
-                            <% end %>
-
-                    </table>
-                </td>
-            </tr>
-        </table>
-
-        <br>
-    </center>
-</body>
+                        <%
+                        #Representam l'arbre de comentaris com un array, i cream un altre array per saber el nivell de cada comentari (inicialment tots els comentaris tenen nivell 0)
+                        @comments = @comments.to_a
+                        nivellComment = Array.new(@comments.size, 0)
+                        
+                        #Per a tot comentari, si te pare...
+                        for i in 0..@comments.length-1
+                          if @comments[i].parentid != 0
+                            
+                            #...cercam la posicio del comentari pare
+                            p = 0
+                            while p < @comments.length and @comments[p].id != @comments[i].parentid do
+                              p += 1
+                            end
+                            #Quan sortim del bucle, "p" sera la posicio del pare
+                            if (p == @comments.length) then p-=1 end
+                            if(@comments[p].id==@comments[i].parentid) 
+                              #Movem el comentari de la posicio "i", a la posicio seguent a la del seu pare i actualitzam el seu nivell (un mes que el seu pare)
+                              @comments.insert(p+1, @comments.delete_at(i))
+                              nivellComment.insert(p+1, nivellComment.delete_at(i))
+                              nivellComment[p+1] = nivellComment[p]+1
+                              i -= 1
+                            end
+                            
+                          end
+                        end
+                        %>
+                        <% for i in 0..@comments.length-1%>
+                        <tr class="athing comtr" id= <%=@comments[i].id%> >
+                          <td>
+                            <table border="0">
+                                <tr>
+                                    <td class="ind"><img src="s.gif" height="1" width="<%=40*nivellComment[i]%>"></td>
+                                    <td class="default">
+                                        <div style="margin-top:2px; margin-bottom:-10px;"><span class="comhead">
+                                            <span class="score" id=comment>
+                                                <%=@comments[i].likes%> points
+                                            </span> by 
+                                            <a href="<%=edit_user_path(@comments[i].user)%>" class="hnuser">
+                                                <font color="#3c963c">
+                                                    <%= @comments[i].user.name%>
+                                                </font>
+                                            </a> 
+                                            <span class="age"><a href=<%=comment_path(@comments[i].id) %>>
+                                                <%=time_ago_in_words(@comments[i].created_at)%> ago
+                                            </a></span>
+                                            <span class="navs"> | 
+                                                <a
+                                                    href=<%=comment_path(@comments[i].parentid)%>>parent</a> | 
+                                                    <a href="/submissions/<%=@comments[i].postid%>" >context</a>
+                                            </span>
+                                            <% if @comments[i].user_id == session[:user_id] then %>   
+                                                <a href=<%=edit_comment_path(@comments[i])%>>| edit</a> | 
+                                                <%= link_to "delete", comment_path(@comments[i].id), method: :delete %>
+                                            <%end%>
+                                            <span class="onstory"> | on: 
+                                                <a href="/submissions/<%=@comments[i].postid%>">Ask FN: <%=truncate(Submission.find_by(id:@comments[i].postid).title)%>
+                                                </a>
+                                            </span> 
+                                        </span></div>
+                                        <br>
+                                        <div class="comment">
+                                            <span class="commtext c00">
+                                                <%=@comments[i].text%>
+                                            </span>
+                                        </div>
+                                        <div class='reply'>
+                                            <p>
+                                                <font size="1">
+                                                    <u><a href=<%=comment_path(@comments[i].id) %>>reply</a></u>
+                                                </font>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                <%end%>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <br>
+</center></body>

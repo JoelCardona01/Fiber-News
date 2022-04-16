@@ -11,29 +11,20 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :text %>
-    <%= form.text_field :text %>
-  </div>
-
-  <div class="field">
-    <%= form.label :postid %>
-    <%= form.number_field :postid %>
-  </div>
-
-  <div class="field">
-    <%= form.label :parentid %>
-    <%= form.number_field :parentid %>
-  </div>
-
-  <div class="field">
-    <%= form.label :likes %>
-    <%= form.number_field :likes %>
-  </div>
-  
-  </tr><%= form.hidden_field :user_id, value: session[:user_id] %><tr>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+  <table border="0">
+    <tr>
+      <td valign="top">text:</td>
+      <td style="overflow:hidden;">
+        <%= form.text_area :text, size: "60x5" %>
+      </td>
+    </tr>
+    
+    <tr><td><%= form.hidden_field :user_id, value: session[:user_id] %></td></tr>
+    <br>
+    <tr><td>
+    <div class="actions">
+      <%= form.submit "update" %>
+    </div>
+    </td></tr>
+  </table>
 <% end %>
