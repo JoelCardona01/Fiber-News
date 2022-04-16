@@ -16,5 +16,4 @@
 https://tree.taiga.io/project/simonhelmutholiva-fiber-news/timeline
 
 ## Heroku
-https://nameless-escarpment-95528.herokuapp.com/
-
+https://quiet-savannah-70886.herokuapp.com/
