@@ -63,11 +63,15 @@
                                 <td align="right" valign="top" class="title">
                                     <span class="rank"><%=index+1%>. </span>
                                 </td>
-
-                                <td valign="top" class="votelinks"><center>
-                                   <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.id), method: :put, class: "votearrow"  %>
-                                </center></td>
-
+                                <% if submission.user_id != session[:user_id] and (@likedsubmissions.nil? or @likedsubmissions.find_by(:submission_id =>submission.id).nil?) %>
+                                    <td valign="top" class="votelinks"><center>
+                                       <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.id), method: :put, class: "votearrow"  %>
+                                    </center></td>
+                                <%else %>
+                                    <td valign="top" class="votelinks"><center>
+                                       
+                                    </center></td>
+                                <% end%>
                                 <td class="title">
                                     <% if submission.url!=""%>
                                         <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
