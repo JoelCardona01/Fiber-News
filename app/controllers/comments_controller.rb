@@ -22,6 +22,12 @@ class CommentsController < ApplicationController
     @comments = Comment.all.where(:user_id => params[:user_id])
     render "index"
   end
+  
+  def userUpvoted
+    @comments = Comment.all #CANVIAR
+    render "index"
+  end
+  
   # GET /comments/1/edit
   def edit
   end

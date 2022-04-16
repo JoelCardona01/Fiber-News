@@ -24,6 +24,11 @@ class SubmissionsController < ApplicationController
     @submissions = Submission.all.where(:user_id => params[:user_id])
     render "index"
   end
+  
+  def userUpvoted
+    @submissions = Submission.all #CANVIAR
+    render "index"
+  end
 
   # GET /submissions/1/edit
   def edit
