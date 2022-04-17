@@ -92,6 +92,9 @@
                                         <a href= <%= submission_path(submission.id) %>><%=time_ago_in_words(submission.created_at)%> ago</a>
                                     </span> 
                                     <span id=""></span> 
+                                     <% if submission.user_id != session[:user_id] and !@likedsubmissions.nil? and !@likedsubmissions.find_by(:submission_id =>submission.id).nil? %>
+                                       | <%= link_to 'unvote', unvote_submission_path(submission.id), method: :put%>
+                                    <% end %>
                                     | <a href="">hide</a> 
                                     | <a href=""> x comments</a>              
                                 </td>
