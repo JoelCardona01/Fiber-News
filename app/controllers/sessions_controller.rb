@@ -2,7 +2,7 @@ class SessionsController < ApplicationController
   
   def logout
     session[:user_id] = nil
-    redirect_to submissions_path
+    redirect_to request.referrer
   end
   
   def omniauth

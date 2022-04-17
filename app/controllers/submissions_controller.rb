@@ -5,12 +5,18 @@ class SubmissionsController < ApplicationController
   # GET /submissions.json
   def index
     @submissions = Submission.all.order(votes: :desc)
+    if !session[:user_id].nil?
+      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    end
   end
 
   # GET /submissions/1
   # GET /submissions/1.json
   def show
     @comments= Comment.all.where(:postid => params[:id]).order(:parentid)
+    if !session[:user_id].nil?
+      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    end
   end
 
   
@@ -31,11 +37,17 @@ class SubmissionsController < ApplicationController
   
   def newest
         @submissions = Submission.all.order(created_at: :desc)
+        if !session[:user_id].nil?
+          @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+        end
 
   end
 
   def ask
       @submissions = Submission.all.where(:url=>"").order(votes: :desc)
+      if !session[:user_id].nil?
+        @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+      end
   end
   # POST /submissions
   # POST /submissions.json
@@ -110,7 +122,10 @@ class SubmissionsController < ApplicationController
   
   def vote
     @submission.votes = @submission.votes+1
-    @submission.save
+    if @submission.save
+      @likedsubmission = Likedsubmission.new(:submission_id => @submission.id, :user_id => session[:user_id])
+      @likedsubmission.save
+    end
     redirect_to request.referrer
 
   end

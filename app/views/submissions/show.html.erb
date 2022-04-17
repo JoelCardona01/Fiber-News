@@ -44,10 +44,18 @@
       <td>
         <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
           <tr class='athing'>
-            <td valign="top" class="votelinks"><center>
-              <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(@submission.id), method: :put, class: "votearrow"  %>
-            </center></td>
-        
+            <% if @submission.user_id != session[:user_id] and (@likedsubmissions.nil? or @likedsubmissions.find_by(:submission_id =>@submission.id).nil?) %>
+              <td valign="top" class="votelinks"><center>
+                <% if User.find_by(id: session[:user_id]).nil? %>
+                  <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
+                <% else %>
+                  <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(@submission.id), method: :put, class: "votearrow"  %>
+                <% end %>
+              </center></td>
+            <% else %>
+              <td valign="top" class="votelinks"><center>
+              </center></td>
+            <% end%>
             <td class="title">
               <% if @submission.url!=""%>
                 <td>
