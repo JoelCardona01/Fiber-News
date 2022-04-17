@@ -1,5 +1,5 @@
 class SubmissionsController < ApplicationController
-  before_action :set_submission, only: [:show, :edit, :update, :destroy, :vote]
+  before_action :set_submission, only: [:show, :edit, :update, :destroy, :vote, :unvote]
 
   # GET /submissions
   # GET /submissions.json
@@ -128,6 +128,15 @@ class SubmissionsController < ApplicationController
     end
     redirect_to request.referrer
 
+  end
+  
+  def unvote
+    @submission.votes = @submission.votes - 1
+    if @submission.save
+      @likedsubmission = Likedsubmission.find_by(:submission_id => @submission.id, :user_id => session[:user_id])
+      @likedsubmission.destroy
+    end
+    redirect_to request.referrer
   end
   
   def comment
