@@ -95,8 +95,9 @@
                                      <% if submission.user_id != session[:user_id] and !@likedsubmissions.nil? and !@likedsubmissions.find_by(:submission_id =>submission.id).nil? %>
                                        | <%= link_to 'unvote', unvote_submission_path(submission.id), method: :put%>
                                     <% end %>
-                                    | <a href="">hide</a> 
-                                    | <a href=<%=submission_path(submission.id)%>> <% size = Comment.all.where(:postid => submission.id).length %> 
+                                    <% if submission.user_id == session[:user_id] %>
+                                        | <a href="<%=edit_submission_path(submission)%>">edit</a> 
+                                    <%end%>                                    | <a href=<%=submission_path(submission.id)%>> <% size = Comment.all.where(:postid => submission.id).length %> 
                                     <% if size == 0 %> discuss
                                     <% elsif size < 2 %> <%= size%> comment
                                     <% else %> <%= size%> comments
