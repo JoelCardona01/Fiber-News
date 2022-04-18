@@ -99,7 +99,7 @@
                                                 <%= link_to "delete", comment_path(@comments[i].id), method: :delete %>
                                             <%end%>
                                             <span class="onstory"> | on: 
-                                                <a href="/submissions/<%=@comments[i].postid%>">Ask FN: <%=truncate(Submission.find_by(id:@comments[i].postid).title)%>
+                                                <a href="/submissions/<%=@comments[i].postid%>"> <%=truncate(Submission.find_by(id:@comments[i].postid).title)%>
                                                 </a>
                                             </span> 
                                         </span></div>
