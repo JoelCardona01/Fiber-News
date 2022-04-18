@@ -42,7 +42,7 @@ class CommentsController < ApplicationController
     end
     @comment = Comment.find_by(:id => params[:id])
     @comments = Comment.all.where(:parentid => @comment.id).order(:parentid)
-    @commentsAux = @comments.to<_a
+    @commentsAux = @comments.to_a
     for i in 0..@commentsAux.length-1
       @commentsAux.push(Comment.all.where(:parentid => @commentsAux[i].id))
       @comments = @comments + (Comment.all.where(:parentid => @commentsAux[i].id))
@@ -71,7 +71,7 @@ class CommentsController < ApplicationController
   def update
     respond_to do |format|
       if @comment.update(comment_params)
-        format.html { redirect_to @comment, notice: 'Comment was successfully updated.' }
+        format.html { redirect_to request.referrer, notice: 'Comment was successfully updated.' }
         format.json { render :show, status: :ok, location: @comment }
       else
         format.html { render :edit }

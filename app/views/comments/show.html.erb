@@ -72,6 +72,10 @@
                       |
                       <a href="" rel="nofollow">context</a>
                     </span>
+                        <% if @comment.user_id == session[:user_id] then %>   
+                          <a href=<%=edit_comment_path(@comment)%>>| edit</a> | 
+                          <%= link_to "delete", comment_path(@comment.id), method: :delete %>
+                        <%end%>
                     <span class="onstory">
                       | on: 
                       <%= link_to @submission.title, submission_path(@submission.id), method: :get%>

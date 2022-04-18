@@ -183,6 +183,10 @@
                           <% if @comments[i].user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comments[i].id).nil? %>
                             | <%= link_to 'unvote', unvote_comment_path(@comments[i].id), method: :put%>
                           <% end %>
+                          <% if @comments[i].user_id == session[:user_id] then %>   
+                            <a href=<%=edit_comment_path(@comments[i])%>>| edit</a> | 
+                            <%= link_to "delete", comment_path(@comments[i].id), method: :delete %>
+                          <%end%>
                           <div class="comment">
                             <span class="commtext c00"> <%=@comments[i].text%></span>
                           </div>
