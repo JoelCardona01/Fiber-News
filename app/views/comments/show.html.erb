@@ -42,9 +42,19 @@
           <tbody>
             <tr class='athing'>
               <td class="ind"></td>
-              <td valign="top" class="votelinks"><center>
-                <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comment.id), method: :put, class: "votearrow"  %>
-              </center></td>
+                <% if @comment.user_id != session[:user_id] and (@likedcomments.nil? or @likedcomments.find_by(:comment_id =>@comment.id).nil?) %>
+                  <td valign="top" class="votelinks"><center>
+                  <% if User.find_by(id: session[:user_id]).nil? %>
+                    <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
+                  <% else %>
+                    <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comment.id), method: :put, class: "votearrow"  %>
+                  <% end %>
+                  </center></td>
+                <% else %>
+                  <td valign="top" class="votelinks"><center>
+                  <div class="votearrow" title="upvote"></div>
+                  </center></td>
+                <% end%>
           
               <td class="default">
                 <div style="margin-top:2px; margin-bottom:-10px;">
@@ -53,6 +63,9 @@
                     <span class="age">
                       <a href="/comments/<%=@comment.id%>/tree"><%=time_ago_in_words(@comment.created_at)%> ago</a>
                     </span>
+                    <% if @comment.user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comment.id).nil? %>
+                      | <%= link_to 'unvote', unvote_comment_path(@comment.id), method: :put%>
+                    <% end %>
                     <span class="navs">
                       |
                       <a href="">parent</a>

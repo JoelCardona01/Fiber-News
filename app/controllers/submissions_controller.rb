@@ -16,6 +16,7 @@ class SubmissionsController < ApplicationController
     @comments= Comment.all.where(:postid => params[:id]).order(:parentid)
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+      @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
     end
   end
 
@@ -28,6 +29,9 @@ class SubmissionsController < ApplicationController
   #GET /submissions/user/:id
   def submFromUser
     @submissions = Submission.all.where(:user_id => params[:user_id])
+    if !session[:user_id].nil?
+      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    end
     render "index"
   end
 
