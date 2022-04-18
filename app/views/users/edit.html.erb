@@ -55,7 +55,11 @@
     <td><u><%= link_to "comments", comm_user_path(@user)%></u></td>
     </tr>
     <tr>
-    <td><u><%= link_to "favorites", user_submissions_favorites_url(@user)%></u></td>
+    <td><u><%= link_to "upvoted submissions", user_submissions_upvotes_url(@user)%></u></td>
+    </tr>
+    
+    <tr>
+    <td><u><%= link_to "upvoted comments", user_comments_upvotes_url(@user)%></u></td>
     </tr>
 
     

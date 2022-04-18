@@ -26,9 +26,9 @@ class CommentsController < ApplicationController
     render "index"
   end
   
-  def userFavorites
+  def userUpvotes
       @comments = Likedcomments.all.where(:user_id => session[:user_id])
-      render :favorites
+      render :upvotes
     
   end
   
