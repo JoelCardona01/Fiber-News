@@ -26,9 +26,10 @@ class CommentsController < ApplicationController
     render "index"
   end
   
-  def userUpvoted
-    @comments = Comment.all #CANVIAR
-    render "index"
+  def userFavorites
+      @comments = Likedcomments.all.where(:user_id => session[:user_id])
+      render :favorites
+    
   end
   
   # GET /comments/1/edit

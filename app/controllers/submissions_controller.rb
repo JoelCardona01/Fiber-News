@@ -35,9 +35,9 @@ class SubmissionsController < ApplicationController
     render "index"
   end
   
-  def userUpvoted
-    @submissions = Submission.all #CANVIAR
-    render "index"
+  def userFavorites
+    @submissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    render :favorites
   end
 
   # GET /submissions/1/edit
