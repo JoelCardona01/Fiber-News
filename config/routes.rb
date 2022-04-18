@@ -8,6 +8,9 @@ Rails.application.routes.draw do
     get '/comments/:id/tree', to: 'comments#tree', as: 'comments_tree'
     post 'comments/comment', to: 'comments#comment', as: 'comments_comment'
     get '/submissions/user/:user_id', to: 'submissions#submFromUser', as: 'subm_user'
+    get '/comments/user/:user_id', to: 'comments#commFromUser', as: 'comm_user'
+    get '/submissions/upvoted/:user_id', to: 'submissions#userUpvoted', as: 'subm_upv_user'
+     get '/comments/upvoted/:user_id', to: 'comments#userUpvoted', as: 'comm_upv_user'
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'
 

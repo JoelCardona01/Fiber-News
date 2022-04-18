@@ -20,7 +20,17 @@ class CommentsController < ApplicationController
   def new
     @comment = Comment.new
   end
-
+  
+  def commFromUser
+    @comments = Comment.all.where(:user_id => params[:user_id])
+    render "index"
+  end
+  
+  def userUpvoted
+    @comments = Comment.all #CANVIAR
+    render "index"
+  end
+  
   # GET /comments/1/edit
   def edit
   end
@@ -31,7 +41,7 @@ class CommentsController < ApplicationController
     end
     @comment = Comment.find_by(:id => params[:id])
     @comments = Comment.all.where(:parentid => @comment.id).order(:parentid)
-    @commentsAux = @comments.to_a
+    @commentsAux = @comments.to<_a
     for i in 0..@commentsAux.length-1
       @commentsAux.push(Comment.all.where(:parentid => @commentsAux[i].id))
       @comments = @comments + (Comment.all.where(:parentid => @commentsAux[i].id))
@@ -72,9 +82,10 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   # DELETE /comments/1.json
   def destroy
+    user_idComment = @comment.user_id
     @comment.destroy
     respond_to do |format|
-      format.html { redirect_to comments_url, notice: 'Comment was successfully destroyed.' }
+      format.html { redirect_to comm_user_path(user_idComment), notice: 'Comment was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
