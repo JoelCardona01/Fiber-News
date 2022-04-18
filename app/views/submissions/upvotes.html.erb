@@ -53,18 +53,9 @@
                 <tr>
                     <td>
                         <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
-                            <tr style="height:6px"></tr>
-                            <tr>
-                                <td colspan="2"></td>
-                                <td>
-                                    <%= link_to "submissions", user_submissions_favorites_path(session[:user_id])%>
-                                    |
-                                    <%= link_to "comments", user_comments_favorites_url(session[:user_id])%>
-                                </td>
-                            </tr>
-                            <td></td>
                             <tr style="height:12px"></tr>
                             <td></td>
+                            
                      <% @submissions.each_with_index do |submission, index| %>
                     
 

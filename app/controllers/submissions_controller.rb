@@ -35,9 +35,9 @@ class SubmissionsController < ApplicationController
     render "index"
   end
   
-  def userFavorites
+  def userUpvotes
     @submissions = Likedsubmission.all.where(:user_id => session[:user_id])
-    render :favorites
+    render :upvotes
   end
 
   # GET /submissions/1/edit
