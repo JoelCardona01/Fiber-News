@@ -1,5 +1,5 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: [:show, :edit, :update, :destroy, :like]
+  before_action :set_comment, only: [:show, :edit, :update, :destroy, :like, :unvote]
 
   # GET /comments
   # GET /comments.json
@@ -11,6 +11,9 @@ class CommentsController < ApplicationController
   # GET /comments/1.json
   def show
     @submission = Submission.find(@comment.postid)
+     if !session[:user_id].nil?
+      @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
+    end
   end
 
   # GET /comments/new
@@ -23,6 +26,9 @@ class CommentsController < ApplicationController
   end
   
   def tree
+    if !session[:user_id].nil?
+      @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
+    end
     @comment = Comment.find_by(:id => params[:id])
     @comments = Comment.all.where(:parentid => @comment.id).order(:parentid)
     @commentsAux = @comments.to_a
@@ -75,7 +81,19 @@ class CommentsController < ApplicationController
   
   def like
     @comment.likes = @comment.likes+1
-    @comment.save
+    if @comment.save
+      @likedcomment = Likedcomments.new(:comment_id => @comment.id, :user_id => session[:user_id])
+      @likedcomment.save
+    end 
+    redirect_to request.referrer
+  end
+  
+  def unvote
+    @comment.likes = @comment.likes - 1
+    if @comment.save
+      @likedcomment = Likedcomment.find_by(:comment_id => @comment.id, :user_id => session[:user_id])
+      @likedcomment.destroy
+    end
     redirect_to request.referrer
   end
   

@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
   resources :comments do
       put 'like', on: :member
+      put 'unvote', on: :member
   end
 
   resources :submissions do
