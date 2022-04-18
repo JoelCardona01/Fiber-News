@@ -83,10 +83,14 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   # DELETE /comments/1.json
   def destroy
-    user_idComment = @comment.user_id
+    commentliked = Likedcomments.all.where(:comment_id => @comment.id)
+    commentliked = commentliked.to_a
+    for i in 0..commentliked.length-1
+      commentliked[i].destroy
+    end
     @comment.destroy
     respond_to do |format|
-      format.html { redirect_to comm_user_path(user_idComment), notice: 'Comment was successfully destroyed.' }
+      format.html { redirect_to request.referrer, notice: 'Comment was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
