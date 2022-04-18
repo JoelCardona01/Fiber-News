@@ -9,8 +9,8 @@ Rails.application.routes.draw do
     post 'comments/comment', to: 'comments#comment', as: 'comments_comment'
     get '/submissions/user/:user_id', to: 'submissions#submFromUser', as: 'subm_user'
     get '/comments/user/:user_id', to: 'comments#commFromUser', as: 'comm_user'
-    get '/submissions/upvoted/:user_id', to: 'submissions#userUpvoted', as: 'subm_upv_user'
-     get '/comments/upvoted/:user_id', to: 'comments#userUpvoted', as: 'comm_upv_user'
+    get '/submissions/favorites/:user_id', to: 'submissions#userFavorites', as: 'user_submissions_favorites'
+    get '/comments/favorites/:user_id', to: 'comments#userFavorites', as: 'user_comments_favorites'
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'
 
