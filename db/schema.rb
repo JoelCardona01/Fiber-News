@@ -25,10 +25,10 @@ ActiveRecord::Schema.define(version: 2022_04_18_140455) do
 
   create_table "likedcomments", force: :cascade do |t|
     t.integer "user_id"
-    t.integer "submission_id"
+    t.integer "comment_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["submission_id"], name: "index_likedcomments_on_submission_id"
+    t.index ["comment_id"], name: "index_likedcomments_on_comment_id"
     t.index ["user_id"], name: "index_likedcomments_on_user_id"
   end
 
