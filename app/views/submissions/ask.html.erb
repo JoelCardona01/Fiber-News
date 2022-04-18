@@ -96,7 +96,12 @@
                                        | <%= link_to 'unvote', unvote_submission_path(submission.id), method: :put%>
                                     <% end %>
                                     | <a href="">hide</a> 
-                                    | <a href=""> x comments</a>              
+                                    | <a href=<%=submission_path(submission.id)%>> <% size = Comment.all.where(:postid => submission.id).length %> 
+                                    <% if size == 0 %> discuss
+                                    <% elsif size < 2 %> <%= size%> comment
+                                    <% else %> <%= size%> comments
+                                    <%end%>
+                                    </a>            
                                 </td>
                             </tr>
                             <tr class="spacer" style="height:5px"></tr>
