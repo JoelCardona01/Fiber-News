@@ -22,7 +22,6 @@
                                        <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
                                        <%else%>
                                        <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
-                                       (<%= User.find_by(id: session[:user_id]).karma %>)
                                        <%= link_to ' | Logout' , '/sessions/logout' %>
                                        <%end%>
                                    </span>
@@ -58,11 +57,11 @@
                 <% end%>
           
               <td class="default">
-                <div style="margin-top:2px; margin-bottom:-10px;">
+                <div style="margin-top:2px; <marg></marg>in-bottom:-10px;">
                   <span class="comhead">
                     <a href=<%=user_path(@comment.user)%> class="hnuser"> <%= @comment.user.name%> </a>
                     <span class="age">
-                      <a href="/comments/tree/<%=@comment.id%>"><%=time_ago_in_words(@comment.created_at)%> ago</a>
+                      <a href="/comments/<%=@comment.id%>/tree"><%=time_ago_in_words(@comment.created_at)%> ago</a>
                     </span>
                     <% if @comment.user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comment.id).nil? %>
                       | <%= link_to 'unvote', unvote_comment_path(@comment.id), method: :put%>
