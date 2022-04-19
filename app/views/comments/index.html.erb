@@ -29,8 +29,8 @@
                                     <% if User.find_by(id: session[:user_id]).nil? then%>
                                         <%= link_to "Log In with Google" , '/auth/google_oauth2' , method: :post %>
                                     <%else%>
-                                        <%= link_to User.find_by(id: session[:user_id]).name,
-                                        edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        (<%= User.find_by(id: session[:user_id]).karma %>)
                                         <%= link_to ' | Logout' , '/sessions/logout' %>
                                     <%end%>
                                 </span>
