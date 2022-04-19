@@ -88,7 +88,7 @@
                 <% end %>
                 <% if  @submission.user_id == session[:user_id] then %>
                 | <a href="">edit</a> 
-                | <%= link_to "delete", submission_path(@submission), method: :delete %> 
+                | <%= link_to "delete", submission_path(@submission), method: :delete, :data => {:confirm => 'Are you sure?'} %> 
                 <%end%>
                 | <a href=<%=submission_path(@submission.id)%>> <% size = Comment.all.where(:postid => @submission.id).length %> 
                     <% if size == 0 %> discuss
