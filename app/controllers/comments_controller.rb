@@ -10,7 +10,7 @@ class CommentsController < ApplicationController
   # GET /comments/1
   # GET /comments/1.json
   def show
-    @submission = Submission.find(@comment.postid)
+    @submission = Submission.find_by(id: @comment.postid)
      if !session[:user_id].nil?
       @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
     end

@@ -63,22 +63,28 @@
                     <% if @comment.user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comment.id).nil? %>
                       | <%= link_to 'unvote', unvote_comment_path(@comment.id), method: :put%>
                     <% end %>
+                    <% if not @submission.nil? %>
                     <span class="navs">
                       |
                       <a href="">parent</a>
                       |
                       <a href="" rel="nofollow">context</a>
                     </span>
-                        <% if @comment.user_id == session[:user_id] then %>   
+                    <%end%>
+                        <% if @comment.user_id == session[:user_id] then %>
+                        <% if not @submission.nil? %>
                           <a href=<%=edit_comment_path(@comment)%>>| edit</a>  
+                        <%end%>
                           <% if Comment.find_by(:parentid => @comment.id).nil?%>
                           |  <%= link_to "delete", comment_path(@comment.id), method: :delete %>
                           <%end%>
                         <%end%>
+                    <% if not @submission.nil? %>
                     <span class="onstory">
                       | on: 
                       <%= link_to @submission.title, submission_path(@comment.postid), method: :get%>
                     </span>
+                    <%end%>
                   </span>
                 </div>
                 <br>
@@ -90,8 +96,9 @@
                 </div>
               </td>
             </tr>
-          
+            
             <tr style ="height:10px" ></tr>
+            <% if not @submission.nil? %>
               <tr>
                 <td colspan="2"></td>
                   <td>
@@ -107,6 +114,7 @@
                     </form>
                   </td>
               </tr>
+              <% end %>
             </tbody>
         </table>
         <table>
