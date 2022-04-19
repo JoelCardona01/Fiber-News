@@ -59,7 +59,7 @@
                 <div style="margin-top:2px; margin-bottom:-10px;">
                   <span class="comhead">
                     <a href=<%=user_path(@comment.user)%> class="hnuser"> <%= @comment.user.name%> </a>
-                          <span class="age"><a href="/comments/<%=@comment.id%>/tree"> <%=time_ago_in_words(@comment.created_at)%> ago</a></span> 
+                          <span class="age"><a href="/comments/tree/<%=@comment.id%>"> <%=time_ago_in_words(@comment.created_at)%> ago</a></span> 
                     <% if @comment.user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comment.id).nil? %>
                       | <%= link_to 'unvote', unvote_comment_path(@comment.id), method: :put%>
                     <% end %>
@@ -72,7 +72,7 @@
                         <% if @comment.user_id == session[:user_id] then %>   
                           <a href=<%=edit_comment_path(@comment)%>>| edit</a>  
                           <% if Comment.find_by(:parentid => @comment.id).nil?%>
-                          |  <%= link_to "delete", comment_path(@comment.id), method: :delete %>
+                          |  <%= link_to "delete", comment_path(@comment.id), method: :delete, :data => {:confirm => 'Are you sure?'} %>
                           <%end%>
                         <%end%>
                     <span class="onstory">
@@ -172,7 +172,7 @@
                               <% if @comments[i].user_id == session[:user_id] then %>   
                                 <a href=<%=edit_comment_path(@comments[i])%>>| edit</a>
                                 <% if Comment.find_by(:parentid => @comments[i].id).nil?%>
-                                  |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete %>
+                                  |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete, :data => {:confirm => 'Are you sure?'} %>
                                 <%end%>    
                               <%end%>
                           <div class="comment">

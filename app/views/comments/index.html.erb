@@ -98,7 +98,7 @@
                                             <% if @comments[i].user_id == session[:user_id] then %>   
                                                 <a href=<%=edit_comment_path(@comments[i])%>>| edit</a> 
                                                 <% if Comment.find_by(:parentid => @comments[i].id).nil?%>
-                                                  |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete %>
+                                                  |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete,  :data => {:confirm => 'Are you sure?'} %>
                                                 <%end%>
                                             <%end%>
                                             <span class="onstory"> | on: 
