@@ -29,8 +29,8 @@
                                     <% if User.find_by(id: session[:user_id]).nil? then%>
                                         <%= link_to "Log In with Google" , '/auth/google_oauth2' , method: :post %>
                                     <%else%>
-                                        <%= link_to User.find_by(id: session[:user_id]).name,
-                                        edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        (<%= User.find_by(id: session[:user_id]).karma %>)
                                         <%= link_to ' | Logout' , '/sessions/logout' %>
                                     <%end%>
                                 </span>
@@ -90,9 +90,10 @@
                                                 <%=time_ago_in_words(@comments[i].created_at)%> ago
                                             </a></span>
                                             <span class="navs"> | 
-                                                <a
-                                                    href=<%=comment_path(@comments[i].parentid)%>>parent</a> | 
-                                                    <a href="/submissions/<%=@comments[i].postid%>" >context</a>
+                                                <% if not Comment.find_by(id: @comments[i].parentid).nil? then%>
+                                                <a href=<%=comment_path(@comments[i].parentid)%>>parent</a> | 
+                                                <%end%>
+                                                <a href="/submissions/<%=@comments[i].postid%>" >context</a>
                                             </span>
                                             <% if @comments[i].user_id == session[:user_id] then %>   
                                                 <a href=<%=edit_comment_path(@comments[i])%>>| edit</a> 

@@ -35,6 +35,7 @@
                                        <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
                                        <%else%>
                                        <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                       (<%= User.find_by(id: session[:user_id]).karma %>)
                                        <%= link_to ' | Logout' , '/sessions/logout' %>
                                        <%end%>
                                    </span>
@@ -53,9 +54,7 @@
                 <tr>
                     <td>
                         <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
-                            <tr style="height:12px"></tr>
-                            <td></td>
-                            
+         
                      <% @submissions.each_with_index do |submission, index| %>
                     
 
@@ -120,9 +119,7 @@
                             <tr class="morespace" style="height:10px"></tr>
                             <tr>
                                 <td colspan="2"></td>
-                                <td class='title'>
-                                    <a href='news?p=2' class='morelink' rel='next'>More</a>
-                                </td>
+                            
                             </tr>
 
                         </table>

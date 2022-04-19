@@ -57,7 +57,7 @@ class CommentsController < ApplicationController
 
     respond_to do |format|
       if @comment.save
-        format.html { redirect_to @comment, notice: 'Comment was successfully created.' }
+        format.html { redirect_to @comment }
         format.json { render :show, status: :created, location: @comment }
       else
         format.html { render :new }
@@ -71,7 +71,7 @@ class CommentsController < ApplicationController
   def update
     respond_to do |format|
       if @comment.update(comment_params)
-        format.html { redirect_to request.referrer, notice: 'Comment was successfully updated.' }
+        format.html { redirect_to request.referrer }
         format.json { render :show, status: :ok, location: @comment }
       else
         format.html { render :edit }
@@ -88,9 +88,10 @@ class CommentsController < ApplicationController
     for i in 0..commentliked.length-1
       commentliked[i].destroy
     end
+    @sub = Submission.find(@comment.postid)
     @comment.destroy
     respond_to do |format|
-      format.html { redirect_to request.referrer, notice: 'Comment was successfully destroyed.' }
+      format.html { redirect_to submission_path(@sub.id) }
       format.json { head :no_content }
     end
   end
@@ -119,7 +120,7 @@ class CommentsController < ApplicationController
       @comment = Comment.new(params[:comment])
       respond_to do |format|
         if @comment.save
-          format.html { redirect_to "/submissions/"+@comment.postid.to_s, notice: 'Comment was successfully created.' }
+          format.html { redirect_to "/submissions/"+@comment.postid.to_s }
           format.json { render :show, status: :created, location: @comment }
         else
           format.html { render :new }
@@ -128,6 +129,22 @@ class CommentsController < ApplicationController
       end
     end
   end 
+
+def treecomment
+     params.permit!
+    if !params[:comment][:text].blank? ##Si el text no es buit, aleshores creem el comentari.
+      @comment = Comment.new(params[:comment])
+      respond_to do |format|
+        if @comment.save
+          format.html { redirect_to "/submissions/"+@comment.postid.to_s }
+          format.json { render :show, status: :created, location: @comment }
+        else
+          format.html { render :new }
+          format.json { render json: @comment.errors, status: :unprocessable_entity }
+        end
+      end
+    end
+end
 
   private
     # Use callbacks to share common setup or constraints between actions.
