@@ -65,7 +65,7 @@
                 <div style="margin-top:2px; margin-bottom:-10px;">
                   <span class="comhead">
                     <a href=<%=user_path(@comment.user)%> class="hnuser"> <%= @comment.user.name%> </a>
-                          <span class="age"><a href="/comments/<%=@comment.id%>/tree"> <%=time_ago_in_words(@comment.created_at)%> ago</a></span> 
+                          <span class="age"><a href="/comments/tree/<%=@comment.id%>"> <%=time_ago_in_words(@comment.created_at)%> ago</a></span> 
                     <% if @comment.user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comment.id).nil? %>
                       | <%= link_to 'unvote', unvote_comment_path(@comment.id), method: :put%>
                     <% end %>
@@ -171,7 +171,7 @@
                       <div style="margin-top:2px; margin-bottom:-10px;">
                         <span class="comhead">
                           <a href=<%=user_path(@comments[i].user)%> class="hnuser"> <%= @comments[i].user.name%> </a>
-                          <span class="age"><a href="/comments/<%=@comments[i].id%>/tree"> <%=time_ago_in_words(@comments[i].created_at)%> ago</a></span> 
+                          <span class="age"><a href="/comments/tree/<%=@comments[i].id%>"> <%=time_ago_in_words(@comments[i].created_at)%> ago</a></span> 
                           <% if @comments[i].user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comments[i].id).nil? %>
                             | <%= link_to 'unvote', unvote_comment_path(@comments[i].id), method: :put%>
                           <% end %>
