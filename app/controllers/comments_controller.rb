@@ -10,7 +10,7 @@ class CommentsController < ApplicationController
   # GET /comments/1
   # GET /comments/1.json
   def show
-    @submission = Submission.find(@comment.postid)
+    @submission = Submission.find_by(id: @comment.postid)
      if !session[:user_id].nil?
       @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
     end
@@ -89,9 +89,21 @@ class CommentsController < ApplicationController
       commentliked[i].destroy
     end
     @sub = Submission.find(@comment.postid)
+    id = @comment.id
     @comment.destroy
     respond_to do |format|
-      format.html { redirect_to submission_path(@sub.id) }
+      format.html { 
+        referrerPath = URI(request.referrer).path
+        if  referrerPath == comment_path(id) or referrerPath == comments_tree_path(id)
+          if !@sub.id.nil?
+            redirect_to submission_path(@sub.id) 
+          else 
+            redirect_to submissions_path
+          end
+        else 
+          redirect_to request.referrer
+        end
+      }
       format.json { head :no_content }
     end
   end
@@ -136,7 +148,7 @@ def treecomment
       @comment = Comment.new(params[:comment])
       respond_to do |format|
         if @comment.save
-          format.html { redirect_to "/submissions/"+@comment.postid.to_s }
+          format.html { redirect_to request.referrer }
           format.json { render :show, status: :created, location: @comment }
         else
           format.html { render :new }

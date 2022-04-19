@@ -78,10 +78,12 @@
                            | <%= link_to "delete", comment_path(@comment.id), method: :delete, :data => {:confirm => 'Are you sure?'} %>
                           <%end%>
                         <%end%>
+                    <% if not @submission.nil? %>
                     <span class="onstory">
                       | on: 
                       <%= link_to @submission.title, submission_path(@submission.id), method: :get%>
                     </span>
+                    <% end %>
                   </span>
                 </div>
                 <br>
@@ -93,7 +95,7 @@
                 </div>
               </td>
             </tr>
-          
+            <% if not @submission.nil? %>
             <tr style ="height:10px" ></tr>
               <tr>
                 <td colspan="2"></td>
@@ -110,6 +112,9 @@
                     </form>
                   </td>
               </tr>
+              <%else%>
+              <tr><td><br></td></tr>
+              <%end%>
             </tbody>
         </table>
       </td>
