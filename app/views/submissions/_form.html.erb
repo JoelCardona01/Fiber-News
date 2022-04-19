@@ -74,11 +74,16 @@
                          <td><%= form.text_field :title, size: 40 %></td> 
                       </tr>
                        
-                    <tr>
-                      <td><%= form.label "url" %></td>
-                      <% if submission.id.nil? or (submission.title != "" and submission.url !="")  %>     <!-- Si estem editant un comentari que te url o estem creant un de nou, mostrem per editar la url -->
+                      <% if submission.id.nil? %>     <!-- Si estem editant un comentari que te url o estem creant un de nou, mostrem per editar la url -->
+                        <td><%= form.label "url" %></td>
                         <td><%= form.text_field :url, size: 40%></td> 
-                      <% end%>
+                      <% elsif (submission.title != "" and submission.url !="")%>
+                        <tr></tr>
+                        <td><%= form.label "url" %> <%=submission.url%></td>
+                      <%else%>
+                       <td><%= form.label "url" %></td>
+                      <%end%>
+
                     </tr>
                     
                     <% if submission.id.nil? or (submission.title!="" and submission.url=="") %>    <!-- Si estem editant un comentari que te text o estem creant un de nou, mostrem per editar el text-->
