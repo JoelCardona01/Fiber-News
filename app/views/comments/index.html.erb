@@ -106,7 +106,7 @@
                                                 <a href=<%=edit_comment_path(@comments[i])%>>| edit</a> 
                                                 <%end%>
                                                 <% if Comment.find_by(:parentid => @comments[i].id).nil?%>
-                                                  |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete %>
+                                                  |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete,  :data => {:confirm => 'Are you sure?'} %>
                                                 <%end%>
                                             <%end%>
                                                 

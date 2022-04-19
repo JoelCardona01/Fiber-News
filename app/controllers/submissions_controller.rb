@@ -68,7 +68,7 @@ class SubmissionsController < ApplicationController
       if @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } ##Comprovem que el titol no es buit
       elsif (@submission.url=="") 
         if @submission.save
-            format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
+            format.html { redirect_to submissions_path }
             format.json { render :show, status: :created, location: @submission }
           else
             format.html { render :new }
@@ -81,7 +81,7 @@ class SubmissionsController < ApplicationController
           if @submission.save
             @comment= Comment.new(:text => text, :user_id =>@submission.user_id, :postid => @submission.id, :parentid => "0", :likes => 0)
             @comment.save
-            format.html { redirect_to submission_path(@submission.id), notice: 'Submission was successfully created.' }
+            format.html { redirect_to submissions_path }
             format.json { render :show, status: :created, location: @submission }
           else
             format.html { render :new }
@@ -89,7 +89,7 @@ class SubmissionsController < ApplicationController
           end
         else
           if @submission.save
-            format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
+            format.html { redirect_to submissions_path }
             format.json { render :show, status: :created, location: @submission }
           else
             format.html { render :new }
