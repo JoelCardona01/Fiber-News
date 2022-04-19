@@ -110,7 +110,7 @@ class SubmissionsController < ApplicationController
   def update
     respond_to do |format|
       if @submission.update(submission_params)
-        format.html { redirect_to @submission, notice: 'Submission was successfully updated.' }
+        format.html { redirect_to @submission }
         format.json { render :show, status: :ok, location: @submission }
       else
         format.html { render :edit }
@@ -124,7 +124,7 @@ class SubmissionsController < ApplicationController
   def destroy
     @submission.destroy
     respond_to do |format|
-      format.html { redirect_to submissions_url, notice: 'Submission was successfully destroyed.' }
+      format.html { redirect_to submissions_url }
       format.json { head :no_content }
     end
   end
@@ -154,7 +154,7 @@ class SubmissionsController < ApplicationController
       @comment = Comment.new(params[:comment])
       respond_to do |format|
         if @comment.save
-          format.html { redirect_to "/submissions/"+@comment.postid.to_s, notice: 'Comment was successfully created.' }
+          format.html { redirect_to "/submissions/"+@comment.postid.to_s }
           format.json { render :show, status: :created, location: @comment }
         else
           format.html { render :new }
