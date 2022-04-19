@@ -122,9 +122,22 @@ class SubmissionsController < ApplicationController
   # DELETE /submissions/1
   # DELETE /submissions/1.json
   def destroy
+    submissionliked = Likedsubmission.all.where(:submission_id => @submission.id)
+    submissionliked = submissionliked.to_a
+    for i in 0..submissionliked.length-1
+      submissionliked[i].destroy
+    end
+    id = @submission.id
     @submission.destroy
     respond_to do |format|
-      format.html { redirect_to submissions_url }
+      format.html { 
+         referrerPath = URI(request.referrer).path
+        if  referrerPath == submission_path(id)
+            redirect_to submissions_path
+        else 
+          redirect_to request.referrer
+        end
+      }
       format.json { head :no_content }
     end
   end
