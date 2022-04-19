@@ -104,9 +104,9 @@
                                        | <%= link_to 'unvote', unvote_submission_path(submission.id), method: :put%>
                                     <% end %>
                                     | <a href="">hide</a> 
-                                    <% if  submission.user_id == session[:user_id] then %>
-                                    | <a href="">edit</a> 
-                                    | <%= link_to "delete", submission_path(submission), method: :delete, :data => {:confirm => 'Are you sure?'} %> 
+                                    <% if  submission.user_id == session[:user_id] %>
+                                      | <a href="<%=edit_submission_path(submission)%>">edit</a> 
+                                      | <%= link_to "delete", submission_path(submission), method: :delete, :data => {:confirm => 'Are you sure?'} %> 
                                     <%end%>
                                     | <a href=<%=submission_path(submission.id)%>> <% size = Comment.all.where(:postid => submission.id).length %> 
                                     <% if size == 0 %> discuss

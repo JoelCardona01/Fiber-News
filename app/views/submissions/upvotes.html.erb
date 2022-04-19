@@ -100,8 +100,7 @@
                                         <a href= <%= submission_path(submission.submission_id) %>><%=time_ago_in_words(Submission.find(submission.submission_id).created_at)%> ago</a>
                                     </span> 
                                     <span id=""></span> 
-                                    
-                                   
+
                                     | <a href=<%=submission_path(submission.submission_id)%>> <% size = Comment.all.where(:postid => submission.submission_id).length %> 
                                     <% if size == 0 %> discuss
                                     <% elsif size < 2 %> <%= size%> comment
