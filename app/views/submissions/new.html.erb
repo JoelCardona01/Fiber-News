@@ -1,6 +1,54 @@
-<% if User.find_by(id: session[:user_id]).nil? then%>
-<%=flash[:alert] = "You have to be logged in to submit."%>
-<%= controller.redirect_to submissions_path%>
-<%end%>
+          <body><center>
 
-<%= render 'form', submission: @submission %>
+            <!-- Taula amb 3 files: una pel menu
+                                    una que conté una taula generada dinàmicament on surten els ítems
+                                    una amb els links del final de la pàgina
+            -->
+            <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+
+                <!-- Fila menu -->
+                <tr>
+                    <td bgcolor="#ff6600">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                            <tr>
+                                <td style="width:18px;padding-right:4px">
+                                    <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+                                </td>
+
+                                <td style="line-height:12pt; height:10px;">
+                                   <span class="pagetop">
+                                       <b class="hnname">
+                                              <a href=<%=submissions_path%>> Submit </a>
+                                       </b>
+
+
+                                   </span>
+                                </td>
+                                
+                                <td style="text-align:right;padding-right:4px;">
+                                   <span class="pagetop">
+                                       <!-- <a href="login?goto=news">login</a> -->
+                                       <% if User.find_by(id: session[:user_id]).nil? then%>
+                                       <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+                                       <%else%>
+                                       <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                       <%= link_to ' | Logout' , '/sessions/logout' %>
+                                       <%end%>
+                                   </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                
+
+
+                <% if User.find_by(id: session[:user_id]).nil? then%>
+                <%=flash[:alert] = "You have to be logged in to submit."%>
+                <%= controller.redirect_to submissions_path%>
+                <%end%>
+                
+                <%= render 'form', submission: @submission %>
+                
+            </table>
+          </center></boody>
