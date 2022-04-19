@@ -36,6 +36,7 @@
                                        <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
                                        <%else%>
                                        <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                       (<%= User.find_by(id: session[:user_id]).karma %>)
                                        <%= link_to ' | Logout' , '/sessions/logout' %>
                                        <%end%>
                                    </span>
@@ -101,9 +102,12 @@
                                     <% if submission.user_id != session[:user_id] and !@likedsubmissions.nil? and !@likedsubmissions.find_by(:submission_id =>submission.id).nil? %>
                                        | <%= link_to 'unvote', unvote_submission_path(submission.id), method: :put%>
                                     <% end %>
-                                    <% if submission.user_id == session[:user_id] %>
+                                    | <a href="">hide</a> 
+                                      <% if  submission.user_id == session[:user_id] %>
                                         | <a href="<%=edit_submission_path(submission)%>">edit</a> 
-                                    <%end%>                                    | <a href=<%=submission_path(submission.id)%>> <% size = Comment.all.where(:postid => submission.id).length %> 
+                                        | <%= link_to "delete", submission_path(submission), method: :delete, :data => {:confirm => 'Are you sure?'} %> 
+                                    <%end%>
+                                    | <a href=<%=submission_path(submission.id)%>> <% size = Comment.all.where(:postid => submission.id).length %> 
                                     <% if size == 0 %> discuss
                                     <% elsif size < 2 %> <%= size%> comment
                                     <% else %> <%= size%> comments

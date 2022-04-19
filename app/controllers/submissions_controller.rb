@@ -68,7 +68,7 @@ class SubmissionsController < ApplicationController
       if @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } ##Comprovem que el titol no es buit
       elsif (@submission.url=="") 
         if @submission.save
-            format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
+            format.html { redirect_to submissions_path }
             format.json { render :show, status: :created, location: @submission }
           else
             format.html { render :new }
@@ -81,7 +81,7 @@ class SubmissionsController < ApplicationController
           if @submission.save
             @comment= Comment.new(:text => text, :user_id =>@submission.user_id, :postid => @submission.id, :parentid => "0", :likes => 0)
             @comment.save
-            format.html { redirect_to submission_path(@submission.id), notice: 'Submission was successfully created.' }
+            format.html { redirect_to submissions_path }
             format.json { render :show, status: :created, location: @submission }
           else
             format.html { render :new }
@@ -89,7 +89,7 @@ class SubmissionsController < ApplicationController
           end
         else
           if @submission.save
-            format.html { redirect_to submissions_path, notice: 'Submission was successfully created.' }
+            format.html { redirect_to submissions_path }
             format.json { render :show, status: :created, location: @submission }
           else
             format.html { render :new }
@@ -122,9 +122,22 @@ class SubmissionsController < ApplicationController
   # DELETE /submissions/1
   # DELETE /submissions/1.json
   def destroy
+    submissionliked = Likedsubmission.all.where(:submission_id => @submission.id)
+    submissionliked = submissionliked.to_a
+    for i in 0..submissionliked.length-1
+      submissionliked[i].destroy
+    end
+    id = @submission.id
     @submission.destroy
     respond_to do |format|
-      format.html { redirect_to submissions_url, notice: 'Submission was successfully destroyed.' }
+      format.html { 
+         referrerPath = URI(request.referrer).path
+        if  referrerPath == submission_path(id)
+            redirect_to submissions_path
+        else 
+          redirect_to request.referrer
+        end
+      }
       format.json { head :no_content }
     end
   end
@@ -154,7 +167,7 @@ class SubmissionsController < ApplicationController
       @comment = Comment.new(params[:comment])
       respond_to do |format|
         if @comment.save
-          format.html { redirect_to "/submissions/"+@comment.postid.to_s, notice: 'Comment was successfully created.' }
+          format.html { redirect_to "/submissions/"+@comment.postid.to_s }
           format.json { render :show, status: :created, location: @comment }
         else
           format.html { render :new }

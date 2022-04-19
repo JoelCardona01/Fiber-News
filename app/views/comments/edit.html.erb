@@ -32,8 +32,8 @@
                                     <% if User.find_by(id: session[:user_id]).nil? then%>
                                         <%= link_to "Log In with Google" , '/auth/google_oauth2' , method: :post %>
                                     <%else%>
-                                        <%= link_to User.find_by(id: session[:user_id]).name,
-                                        edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        <%= link_to User.find_by(id: session[:user_id]).name,edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        (<%= User.find_by(id: session[:user_id]).karma %>)
                                         <%= link_to ' | Logout' , '/sessions/logout' %>
                                     <%end%>
                                 </span>
@@ -70,7 +70,7 @@
                                                 </span>
                                                 <% if @comment.user_id == session[:user_id] then %>   
                                                     <a href=<%=edit_comment_path(@comment)%>>| edit</a> | 
-                                                    <%= link_to "delete", comment_path(@comment.id), method: :delete %>
+                                                    <%= link_to "delete", comment_path(@comment.id), method: :delete, :data => {:confirm => 'Are you sure?'} %>
                                                 <%end%>
                                                 <span class="onstory"> | on: 
                                                     <a href="/submissions/<%=@comment.postid%>">Ask FN: <%=truncate(Submission.find_by(id:@comment.postid).title)%>

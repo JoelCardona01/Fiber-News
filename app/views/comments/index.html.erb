@@ -29,8 +29,8 @@
                                     <% if User.find_by(id: session[:user_id]).nil? then%>
                                         <%= link_to "Log In with Google" , '/auth/google_oauth2' , method: :post %>
                                     <%else%>
-                                        <%= link_to User.find_by(id: session[:user_id]).name,
-                                        edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        (<%= User.find_by(id: session[:user_id]).karma %>)
                                         <%= link_to ' | Logout' , '/sessions/logout' %>
                                     <%end%>
                                 </span>
@@ -86,22 +86,35 @@
                                                     <%= @comments[i].user.name%>
                                                 </font>
                                             </a> 
-                                            <span class="age"><a href=<%=comment_path(@comments[i].id) %>>
+                                            <span class="age"><a href=<%=comments_tree_path(@comments[i].id) %>>
                                                 <%=time_ago_in_words(@comments[i].created_at)%> ago
                                             </a></span>
-                                            <span class="navs"> | 
-                                                <a
-                                                    href=<%=comment_path(@comments[i].parentid)%>>parent</a> | 
-                                                    <a href="/submissions/<%=@comments[i].postid%>" >context</a>
+                                            <% if Submission.find_by(id:@comments[i].postid).nil? %>
+                                            [flagged]
+                                            <%end%>
+                                            
+                                            <span class="navs">
+                                                <% if not Comment.find_by(id: @comments[i].parentid).nil? then%>
+                                                | <a href=<%=comments_tree_path(@comments[i].parentid)%>>parent</a>
+                                                <%end%>
+                                                <% if not Submission.find_by(id: @comments[i].postid).nil? %>
+                                                | <a href="/submissions/<%=@comments[i].postid%>" >context</a>
+                                                <%end%>
                                             </span>
                                             <% if @comments[i].user_id == session[:user_id] then %>   
+                                                <% if not Submission.find_by(id: @comments[i].postid).nil? %>
                                                 <a href=<%=edit_comment_path(@comments[i])%>>| edit</a> 
+                                                <%end%>
                                                 <% if Comment.find_by(:parentid => @comments[i].id).nil?%>
-                                                  |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete %>
+                                                  |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete,  :data => {:confirm => 'Are you sure?'} %>
                                                 <%end%>
                                             <%end%>
+                                                
+                                            <% if not Submission.find_by(id:@comments[i].postid).nil? %>
                                             <span class="onstory"> | on: 
+                                                
                                                 <a href="/submissions/<%=@comments[i].postid%>"> <%=truncate(Submission.find_by(id:@comments[i].postid).title)%>
+                                                <%end%>
                                                 </a>
                                             </span> 
                                         </span></div>
@@ -114,7 +127,7 @@
                                         <div class='reply'>
                                             <p>
                                                 <font size="1">
-                                                    <u><a href=<%=comment_path(@comments[i].id) %>>reply</a></u>
+                                                    <u><a href=<%=comments_tree_path(@comments[i].id) %>>reply</a></u>
                                                 </font>
                                         </div>
                                     </td>
