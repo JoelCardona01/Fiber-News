@@ -1,5 +1,5 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: [:show, :edit, :update, :destroy, :like]
+  before_action :set_comment, only: [:show, :edit, :update, :destroy, :like, :unvote]
 
   # GET /comments
   # GET /comments.json
@@ -11,6 +11,9 @@ class CommentsController < ApplicationController
   # GET /comments/1.json
   def show
     @submission = Submission.find(@comment.postid)
+     if !session[:user_id].nil?
+      @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
+    end
   end
 
   # GET /comments/new
@@ -23,9 +26,10 @@ class CommentsController < ApplicationController
     render "index"
   end
   
-  def userUpvoted
-    @comments = Comment.all #CANVIAR
-    render "index"
+  def userUpvotes
+      @comments = Likedcomments.all.where(:user_id => session[:user_id])
+      render :upvotes
+    
   end
   
   # GET /comments/1/edit
@@ -33,9 +37,12 @@ class CommentsController < ApplicationController
   end
   
   def tree
+    if !session[:user_id].nil?
+      @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
+    end
     @comment = Comment.find_by(:id => params[:id])
     @comments = Comment.all.where(:parentid => @comment.id).order(:parentid)
-    @commentsAux = @comments.to<_a
+    @commentsAux = @comments.to_a
     for i in 0..@commentsAux.length-1
       @commentsAux.push(Comment.all.where(:parentid => @commentsAux[i].id))
       @comments = @comments + (Comment.all.where(:parentid => @commentsAux[i].id))
@@ -64,7 +71,7 @@ class CommentsController < ApplicationController
   def update
     respond_to do |format|
       if @comment.update(comment_params)
-        format.html { redirect_to @comment, notice: 'Comment was successfully updated.' }
+        format.html { redirect_to request.referrer, notice: 'Comment was successfully updated.' }
         format.json { render :show, status: :ok, location: @comment }
       else
         format.html { render :edit }
@@ -76,17 +83,33 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   # DELETE /comments/1.json
   def destroy
-    user_idComment = @comment.user_id
+    commentliked = Likedcomments.all.where(:comment_id => @comment.id)
+    commentliked = commentliked.to_a
+    for i in 0..commentliked.length-1
+      commentliked[i].destroy
+    end
     @comment.destroy
     respond_to do |format|
-      format.html { redirect_to comm_user_path(user_idComment), notice: 'Comment was successfully destroyed.' }
+      format.html { redirect_to request.referrer, notice: 'Comment was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
   
   def like
     @comment.likes = @comment.likes+1
-    @comment.save
+    if @comment.save
+      @likedcomment = Likedcomments.new(:comment_id => @comment.id, :user_id => session[:user_id])
+      @likedcomment.save
+    end 
+    redirect_to request.referrer
+  end
+  
+  def unvote
+    @comment.likes = @comment.likes - 1
+    if @comment.save
+      @likedcomment = Likedcomment.find_by(:comment_id => @comment.id, :user_id => session[:user_id])
+      @likedcomment.destroy
+    end
     redirect_to request.referrer
   end
   

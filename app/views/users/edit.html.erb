@@ -36,6 +36,7 @@
                          <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
                          <%else%>
                          <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                         (<%= User.find_by(id: session[:user_id]).karma %>)
                          <%= link_to ' | Logout' , '/sessions/logout' %>
                          <%end%>
                       </span>
@@ -55,11 +56,13 @@
     <td><u><%= link_to "comments", comm_user_path(@user)%></u></td>
     </tr>
     <tr>
-    <td><u><%= link_to "upvoted submissions", subm_upv_user_path(@user)%></u></td>
+    <td><u><%= link_to "upvoted submissions", user_submissions_upvotes_url(@user)%></u></td>
     </tr>
+    
     <tr>
-    <td><u><%= link_to "upvoted comments", comm_upv_user_path(@user)%></u></td>
+    <td><u><%= link_to "upvoted comments", user_comments_upvotes_url(@user)%></u></td>
     </tr>
+
     
 </table>
 

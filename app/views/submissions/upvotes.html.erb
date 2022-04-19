@@ -1,9 +1,10 @@
     <body><center>
-
-            <!-- Taula amb 3 files: una pel menu
+                            <!-- Taula amb 3 files: una pel menu
                                     una que conté una taula generada dinàmicament on surten els ítems
                                     una amb els links del final de la pàgina
+                                    
             -->
+            
             <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
 
                 <!-- Fila menu -->
@@ -20,15 +21,13 @@
                                        <b class="hnname">
                                               <a href=<%=submissions_path%>> Fiber News</a>
                                        </b>
-
                                           <a href=<%=newest_submissions_path%>> new</a>
                                         | <a href=<%=ask_submissions_path%>>ask</a> 
                                         |  <%= link_to 'submit', new_submission_path %>
 
-
                                    </span>
                                 </td>
-                                
+
                                 <td style="text-align:right;padding-right:4px;">
                                    <span class="pagetop">
                                        <!-- <a href="login?goto=news">login</a> -->
@@ -41,33 +40,36 @@
                                        <%end%>
                                    </span>
                                 </td>
+
                             </tr>
                         </table>
                     </td>
                 </tr>
 
-
                 <!-- Padding -->
                 <tr id="pagespace" title="" style="height:10px"></tr>
-                
+                <tr><%=flash[:alert]%></tr>
 
                 <!-- Fila amb la llista d'ítems -->
                 <tr>
                     <td>
                         <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
-                            <% @submissions.each_with_index do |submission, index| %>                        
+         
+                     <% @submissions.each_with_index do |submission, index| %>
+                    
+
                             <!-- Inici esquelet ítem (exemple) -->
                             
                             <tr class='athing'>
                                 <td align="right" valign="top" class="title">
                                     <span class="rank"><%=index+1%>. </span>
                                 </td>
-                                   <% if submission.user_id != session[:user_id] and (@likedsubmissions.nil? or @likedsubmissions.find_by(:submission_id =>submission.id).nil?) %>
+                                <% if Submission.find(submission.submission_id).user_id != session[:user_id] and (@submissions.nil? or @submissions.find_by(:submission_id =>submission.submission_id).nil?) %>
                                     <td valign="top" class="votelinks"><center>
                                         <% if User.find_by(id: session[:user_id]).nil? %>
                                         <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
                                         <% else %>
-                                        <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.id), method: :put, class: "votearrow"  %>
+                                        <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.submission_id), method: :put, class: "votearrow"  %>
                                         <% end %>
                                     </center></td>
                                 <% else %>
@@ -75,53 +77,49 @@
                                         <div class="votearrow" title="upvote"></div>
                                     </center></td>
                                 <% end%>
-
                                 <td class="title">
-                                    <% if submission.url!=""%>
-                                        <a href= <%= submission.url %> class="titlelink"><%= submission.title%></a>
+                                    <% if Submission.find(submission.submission_id).url!=""%>
+                                        <a href= <%= submission.url %> class="titlelink"><%= Submission.find(submission.submission_id).title%></a>
                                         <span class="sitebit comhead"> 
-                                        (<a href=<% submission.url %>>
-                                            <span class="sitestr"><%= URI.parse(submission.url).host %></span>
+                                        (<a href=<% Submission.find(submission.submission_id).url %>>
+                                            <span class="sitestr"><%= URI.parse(Submission.find(submission.submission_id).url).host %></span>
                                         </a>)
                                         </span>
                                     <% else %>
-                                        <a href= <%= submission_path(submission.id) %> class="titlelink"><%= submission.title%></a>
+                                        <a href= <%= submission_path(submission.submission_id) %> class="titlelink"><%= Submission.find(submission.submission_id).title%></a>
                                     <% end %>
-                                        
                                 </td>
                             </tr>
+                            
                             <tr>
                                 <td colspan="2"></td>
                                 <td class="subtext">
-                                    <span class="score"><%= submission.votes%> votes</span> 
-                                    by <a href=<%=user_path(submission.user)%> class="hnuser"><%= submission.user.name%></a> 
+                                    <span class="score"><%= Submission.find(submission.submission_id).votes%> votes</span> 
+                                    by <a href=<%=user_path(Submission.find(submission.submission_id).user)%> class="hnuser"><%= Submission.find(submission.submission_id).user.name%></a> 
                                     <span class="age">
-                                        <a href= <%= submission_path(submission.id) %>><%=time_ago_in_words(submission.created_at)%> ago</a>
+                                        <a href= <%= submission_path(submission.submission_id) %>><%=time_ago_in_words(Submission.find(submission.submission_id).created_at)%> ago</a>
                                     </span> 
                                     <span id=""></span> 
-                                    <% if submission.user_id != session[:user_id] and !@likedsubmissions.nil? and !@likedsubmissions.find_by(:submission_id =>submission.id).nil? %>
-                                       | <%= link_to 'unvote', unvote_submission_path(submission.id), method: :put%>
-                                    <% end %>
-                                    | <a href="">hide</a> 
-                                    | <a href=<%=submission_path(submission.id)%>> <% size = Comment.all.where(:postid => submission.id).length %> 
+                                    
+                                   
+                                    | <a href=<%=submission_path(submission.submission_id)%>> <% size = Comment.all.where(:postid => submission.submission_id).length %> 
                                     <% if size == 0 %> discuss
                                     <% elsif size < 2 %> <%= size%> comment
                                     <% else %> <%= size%> comments
                                     <%end%>
-                                    </a>            
+                                    </a>              
                                 </td>
                             </tr>
                             <tr class="spacer" style="height:5px"></tr>
+                            <%index = index+1%>
                             <!-- Fi esquelet ítem (exemple) -->
                             <%end%>
-    
+
                             <!-- Botó de More -->
                             <tr class="morespace" style="height:10px"></tr>
                             <tr>
                                 <td colspan="2"></td>
-                                <td class='title'>
-                                    <a href='news?p=2' class='morelink' rel='next'>More</a>
-                                </td>
+                            
                             </tr>
 
                         </table>

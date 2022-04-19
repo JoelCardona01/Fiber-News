@@ -1,16 +1,23 @@
 class SubmissionsController < ApplicationController
-  before_action :set_submission, only: [:show, :edit, :update, :destroy, :vote]
+  before_action :set_submission, only: [:show, :edit, :update, :destroy, :vote, :unvote]
 
   # GET /submissions
   # GET /submissions.json
   def index
     @submissions = Submission.all.order(votes: :desc)
+    if !session[:user_id].nil?
+      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    end
   end
 
   # GET /submissions/1
   # GET /submissions/1.json
   def show
     @comments= Comment.all.where(:postid => params[:id]).order(:parentid)
+    if !session[:user_id].nil?
+      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+      @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
+    end
   end
 
   
@@ -22,12 +29,15 @@ class SubmissionsController < ApplicationController
   #GET /submissions/user/:id
   def submFromUser
     @submissions = Submission.all.where(:user_id => params[:user_id])
+    if !session[:user_id].nil?
+      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    end
     render "index"
   end
   
-  def userUpvoted
-    @submissions = Submission.all #CANVIAR
-    render "index"
+  def userUpvotes
+    @submissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    render :upvotes
   end
 
   # GET /submissions/1/edit
@@ -36,11 +46,17 @@ class SubmissionsController < ApplicationController
   
   def newest
         @submissions = Submission.all.order(created_at: :desc)
+        if !session[:user_id].nil?
+          @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+        end
 
   end
 
   def ask
       @submissions = Submission.all.where(:url=>"").order(votes: :desc)
+      if !session[:user_id].nil?
+        @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+      end
   end
   # POST /submissions
   # POST /submissions.json
@@ -115,9 +131,21 @@ class SubmissionsController < ApplicationController
   
   def vote
     @submission.votes = @submission.votes+1
-    @submission.save
+    if @submission.save
+      @likedsubmission = Likedsubmission.new(:submission_id => @submission.id, :user_id => session[:user_id])
+      @likedsubmission.save
+    end
     redirect_to request.referrer
 
+  end
+  
+  def unvote
+    @submission.votes = @submission.votes - 1
+    if @submission.save
+      @likedsubmission = Likedsubmission.find_by(:submission_id => @submission.id, :user_id => session[:user_id])
+      @likedsubmission.destroy
+    end
+    redirect_to request.referrer
   end
   
   def comment

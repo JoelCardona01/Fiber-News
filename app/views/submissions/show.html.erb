@@ -28,6 +28,7 @@
              <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
              <%else%>
              <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+             (<%= User.find_by(id: session[:user_id]).karma %>)
              <%= link_to ' | Logout' , '/sessions/logout' %>
              <%end%>
             </span>
@@ -44,10 +45,19 @@
       <td>
         <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
           <tr class='athing'>
-            <td valign="top" class="votelinks"><center>
-              <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(@submission.id), method: :put, class: "votearrow"  %>
-            </center></td>
-        
+            <% if @submission.user_id != session[:user_id] and (@likedsubmissions.nil? or @likedsubmissions.find_by(:submission_id =>@submission.id).nil?) %>
+              <td valign="top" class="votelinks"><center>
+                <% if User.find_by(id: session[:user_id]).nil? %>
+                  <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
+                <% else %>
+                  <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(@submission.id), method: :put, class: "votearrow"  %>
+                <% end %>
+              </center></td>
+            <% else %>
+              <td valign="top" class="votelinks"><center>
+                <div class="votearrow" title="upvote"></div>
+              </center></td>
+            <% end%>
             <td class="title">
               <% if @submission.url!=""%>
                 <td>
@@ -73,6 +83,9 @@
                   <a href= <%= submission_path(@submission.id) %>><%=time_ago_in_words(@submission.created_at)%> ago</a>
                 </span> 
                 <span id=""></span> 
+                <% if @submission.user_id != session[:user_id] and !@likedsubmissions.nil? and !@likedsubmissions.find_by(:submission_id =>@submission.id).nil? %>
+                  | <%= link_to 'unvote', unvote_submission_path(@submission.id), method: :put%>
+                <% end %>
                 | <a href="">hide</a> 
                 | <a href=<%=submission_path(@submission.id)%>> <% size = Comment.all.where(:postid => @submission.id).length %> 
                     <% if size == 0 %> discuss
@@ -150,14 +163,33 @@
                 <tbody>
                   <tr>
                     <td class="ind"><img src="s.gif" height="1" width="<%=40*nivellComment[i]%>"></td>
-                    <td valign="top" class="votelinks"><center>
-                      <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comments[i].id), method: :put, class: "votearrow"  %>
-                    </center></td>
+                    <% if @comments[i].user_id != session[:user_id] and (@likedcomments.nil? or @likedcomments.find_by(:comment_id =>@comments[i].id).nil?) %>
+                      <td valign="top" class="votelinks"><center>
+                        <% if User.find_by(id: session[:user_id]).nil? %>
+                          <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
+                        <% else %>
+                          <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comments[i].id), method: :put, class: "votearrow"  %>
+                        <% end %>
+                      </center></td>
+                    <% else %>
+                      <td valign="top" class="votelinks"><center>
+                        <div class="votearrow" title="upvote"></div>
+                      </center></td>
+                    <% end%>
                     <td class="default">
                       <div style="margin-top:2px; margin-bottom:-10px;">
                         <span class="comhead">
                           <a href=<%=user_path(@comments[i].user)%> class="hnuser"> <%= @comments[i].user.name%> </a>
-                          <span class="age"><a href="/comments/<%=@comments[i].id%>/tree"> <%=time_ago_in_words(@comments[i].created_at)%> ago</a></span> 
+                          <span class="age"><a href="/comments/<%=@comments[i].id%>/tree"> <%=time_ago_in_words(@comments[i].created_at)%> ago</a></span>
+                          <% if @comments[i].user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comments[i].id).nil? %>
+                            | <%= link_to 'unvote', unvote_comment_path(@comments[i].id), method: :put%>
+                          <% end %>
+                          <% if @comments[i].user_id == session[:user_id] then %>   
+                            <a href=<%=edit_comment_path(@comments[i])%>>| edit</a>
+                            <% if Comment.find_by(:parentid => @comments[i].id).nil?%>
+                              |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete %>
+                            <%end%>
+                          <%end%>
                           <div class="comment">
                             <span class="commtext c00"> <%=@comments[i].text%></span>
                           </div>

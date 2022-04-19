@@ -35,6 +35,7 @@
                                         <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
                                         <%else%>
                                         <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        (<%= User.find_by(id: session[:user_id]).karma %>)
                                         <%= link_to ' | Logout' , '/sessions/logout' %>
                                         <%end%>
                                    </span>
@@ -64,11 +65,19 @@
                                     <span class="rank"><%=index+1%>. </span>
                                 </td>
 
-                                <td valign="top" class="votelinks"><center>
-
-                                   <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.id), method: :put, class: "votearrow"  %>
-
-                                </center></td>
+                                <% if submission.user_id != session[:user_id] and (@likedsubmissions.nil? or @likedsubmissions.find_by(:submission_id =>submission.id).nil?) %>
+                                    <td valign="top" class="votelinks"><center>
+                                        <% if User.find_by(id: session[:user_id]).nil? %>
+                                        <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
+                                        <% else %>
+                                        <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.id), method: :put, class: "votearrow"  %>
+                                        <% end %>
+                                    </center></td>
+                                <% else %>
+                                    <td valign="top" class="votelinks"><center>
+                                        <div class="votearrow" title="upvote"></div>
+                                    </center></td>
+                                <% end%>
 
                                 <td class="title">
                                         <a href= <%= submission_path(submission.id) %> class="titlelink"><%= submission.title%></a>
@@ -84,8 +93,16 @@
                                         <a href= <%= submission_path(submission.id) %>><%=time_ago_in_words(submission.created_at)%> ago</a>
                                     </span> 
                                     <span id=""></span> 
+                                     <% if submission.user_id != session[:user_id] and !@likedsubmissions.nil? and !@likedsubmissions.find_by(:submission_id =>submission.id).nil? %>
+                                       | <%= link_to 'unvote', unvote_submission_path(submission.id), method: :put%>
+                                    <% end %>
                                     | <a href="">hide</a> 
-                                    | <a href=""> x comments</a>              
+                                    | <a href=<%=submission_path(submission.id)%>> <% size = Comment.all.where(:postid => submission.id).length %> 
+                                    <% if size == 0 %> discuss
+                                    <% elsif size < 2 %> <%= size%> comment
+                                    <% else %> <%= size%> comments
+                                    <%end%>
+                                    </a>            
                                 </td>
                             </tr>
                             <tr class="spacer" style="height:5px"></tr>
