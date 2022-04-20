@@ -16,7 +16,6 @@
 https://tree.taiga.io/project/simonhelmutholiva-fiber-news/timeline
 
 ## Heroku
-
-https://sheltered-coast-57153.herokuapp.com/
+https://whispering-plains-92135.herokuapp.com
 
 
