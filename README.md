@@ -16,6 +16,6 @@
 https://tree.taiga.io/project/simonhelmutholiva-fiber-news/timeline
 
 ## Heroku
-https://fast-scrubland-49489.herokuapp.com/
+https://whispering-plains-92135.herokuapp.com/
 
 
