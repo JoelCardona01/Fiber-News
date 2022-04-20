@@ -33,11 +33,13 @@ group :production do
   gem 'pg', '1.2.3'
 end
 
+
 #Google authentication
 gem 'omniauth'
 gem 'dotenv-rails'
 gem 'omniauth-google-oauth2'
 gem "omniauth-rails_csrf_protection"
+
 
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

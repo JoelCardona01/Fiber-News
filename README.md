@@ -16,4 +16,7 @@
 https://tree.taiga.io/project/simonhelmutholiva-fiber-news/timeline
 
 ## Heroku
-https://quiet-savannah-70886.herokuapp.com/
+
+https://sheltered-coast-57153.herokuapp.com/
+
+
