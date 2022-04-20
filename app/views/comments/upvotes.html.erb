@@ -61,19 +61,11 @@
                     <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
                       
                       <% @comments.each_with_index do |comments, index| %>
-                        <% if Comment.find(comments.comment_id).user_id != session[:user_id] and (@comments.nil? or @comments.find_by(:comment_id =>comments.comment_id).nil?) %>
-                          <td valign="top" class="votelinks"><center>
-                            <% if User.find_by(id: session[:user_id]).nil? %>
-                              <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %>
-                            <% else %>
-                              <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(comments.comment_id), method: :put  %>
-                            <% end %>
-                          </center></td>
-                        <% else %>
-                          <td ><center>
-                            <div ></div>
-                          </center></td>
-                        <% end%>
+                      
+                        <td ><center>
+                          <div style="width:10px"></div>
+                        </center></td>
+                        
 
                         <td class="default">
                           <div style="margin-top:2px; margin-bottom:-10px;">
@@ -108,12 +100,6 @@
                         <%index = index+1%>
                       <%end%>
 
-                      <!-- Botó de More -->
-                      <tr class="morespace" style="height:10px"></tr>
-                      <tr>
-                        <td colspan="2"></td>
-                       
-                      </tr>
                     </table>
                   </td>
                 </tr>

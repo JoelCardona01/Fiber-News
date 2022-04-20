@@ -28,7 +28,7 @@ class SubmissionsController < ApplicationController
   
   #GET /submissions/user/:id
   def submFromUser
-    @submissions = Submission.all.where(:user_id => params[:user_id])
+    @submissions = Submission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
     end
@@ -37,7 +37,7 @@ class SubmissionsController < ApplicationController
   
   def submFromUrl
     params.permit!
-    @submissions = Submission.all.where("url like ?", "%#{params[:url].to_s}%")
+    @submissions = Submission.all.where("url like ?", "%#{params[:url].to_s}%").order(created_at: :desc)
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
     end
@@ -45,7 +45,7 @@ class SubmissionsController < ApplicationController
   end
   
   def userUpvotes
-    @submissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    @submissions = Likedsubmission.all.where(:user_id => session[:user_id]).order(created_at: :desc)
     render :upvotes
   end
 

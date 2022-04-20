@@ -64,19 +64,10 @@
                                 <td align="right" valign="top" class="title">
                                     <span class="rank"><%=index+1%>. </span>
                                 </td>
-                                <% if Submission.find(submission.submission_id).user_id != session[:user_id] and (@submissions.nil? or @submissions.find_by(:submission_id =>submission.submission_id).nil?) %>
-                                    <td valign="top" class="votelinks"><center>
-                                        <% if User.find_by(id: session[:user_id]).nil? %>
-                                        <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
-                                        <% else %>
-                                        <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.submission_id), method: :put  %>
-                                        <% end %>
-                                    </center></td>
-                                <% else %>
-                                    <td><center>
-                                        <div></div>
-                                    </center></td>
-                                <% end%>
+                                <td><center>
+                                    <div style="width:10px"></div>
+                                </center></td>
+                                
                                 <td class="title">
                                     <% if Submission.find(submission.submission_id).url!=""%>
                                         <a href= <%=  Submission.find(submission.submission_id).url%> class="titlelink"><%= Submission.find(submission.submission_id).title%></a>
@@ -114,13 +105,7 @@
                             <!-- Fi esquelet ítem (exemple) -->
                             <%end%>
 
-                            <!-- Botó de More -->
-                            <tr class="morespace" style="height:10px"></tr>
-                            <tr>
-                                <td colspan="2"></td>
-                            
-                            </tr>
-
+                         
                         </table>
                     </td>
                 </tr>
