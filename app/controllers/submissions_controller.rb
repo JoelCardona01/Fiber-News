@@ -35,6 +35,15 @@ class SubmissionsController < ApplicationController
     render "index"
   end
   
+  def submFromUrl
+    params.permit!
+    @submissions = Submission.all.where("url like ?", "%#{params[:url].to_s}%")
+    if !session[:user_id].nil?
+      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    end
+    render "index"
+  end
+  
   def userUpvotes
     @submissions = Likedsubmission.all.where(:user_id => session[:user_id])
     render :upvotes
