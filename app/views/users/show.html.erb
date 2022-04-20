@@ -1,0 +1,103 @@
+<% if not User.find_by(id: session[:user_id]).nil? and session[:user_id] == @user.id then%>
+<%=controller.redirect_to edit_user_path(@user)%>
+<%end%>
+
+
+<body><center>
+  <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+
+    <!-- Fila menu -->
+    <tr>
+      <td bgcolor="#ff6600">
+                                      <!-- Taula amb 3 files: una pel menu
+                                    una que conté una taula generada dinàmicament on surten els ítems
+                                    una amb els links del final de la pàgina
+                                    
+            -->
+            
+
+                <!-- Fila menu -->
+                <tr>
+                    <td bgcolor="#ff6600">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                            <tr>
+                                <td style="width:18px;padding-right:4px">
+                                    <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+                                </td>
+
+                                <td style="line-height:12pt; height:10px;">
+                                   <span class="pagetop">
+                                       <b class="hnname">
+                                              <a href=<%=submissions_path%>> Fiber News</a>
+                                       </b>
+                                          <a href=<%=newest_submissions_path%>> new</a>
+                                        | <a href=<%=ask_submissions_path%>>ask</a> 
+                                        <% if User.find_by(id: session[:user_id]).nil? %>
+                                            | <%= link_to 'submit', '/auth/google_oauth2', method: :post,:data => {:confirm => 'Do you want to login?'} %>
+                                        <% else %>
+                                            | <%= link_to "threads", comm_user_path(session[:user_id])%>
+                                            | <%= link_to 'submit', new_submission_path %>
+                                        <% end %>
+
+                                   </span>
+                                </td>
+
+                                <td style="text-align:right;padding-right:4px;">
+                                   <span class="pagetop">
+                                       <!-- <a href="login?goto=news">login</a> -->
+                                       <% if User.find_by(id: session[:user_id]).nil? then%>
+                                       <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+                                       <%else%>
+                                       <%= link_to User.find_by(id: session[:user_id]).name , edit_user_path(User.find_by(id: session[:user_id])) %>
+                                       (<%= User.find_by(id: session[:user_id]).karma %>)
+                                       <%= link_to ' | Logout' , '/sessions/logout' %>
+                                       <%end%>
+                                   </span>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+         </td>
+    </tr>
+
+
+
+
+
+    <tr>
+        <td>
+            <table border="0">
+                <tr class='athing'>
+                    <td valign="top">user:</td>
+                    <td><a href=<%=user_path(@user)%> class="hnuser"><%= @user.name %></a></td>
+                </tr>
+                <tr>
+                    <td valign="top">created:</td>
+                    <td><!--<a href="">--><%=time_ago_in_words(@user.created_at) %></a></td>
+                </tr>
+                <tr>
+                    <td valign="top">karma:</td>
+                    <td>
+                        <%= @user.karma %> </td>
+                </tr>
+                <tr>
+                    <td valign="top">about:</td>
+                    <td style="overflow:hidden;">
+                        <%= @user.about %> </td>
+                </tr>
+            </table>
+            <br>
+        </td>
+    </tr>
+
+    <tr>
+    <td><u><%= link_to "submissions", subm_user_path(@user)%></u></td>
+    </tr>
+    <tr>
+    <td><u><%= link_to "comments", comm_user_path(@user)%></u></td>
+    </tr>
+
+</table>
+     </center></body>

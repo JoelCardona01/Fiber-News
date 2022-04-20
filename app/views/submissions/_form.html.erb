@@ -1,27 +1,81 @@
-<%= form_with(model: submission) do |form| %>
-  <% if submission.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(submission.errors.count, "error") %> prohibited this submission from being saved:</h2>
 
-      <ul>
-        <% submission.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+         <!-- form -->
+          <tr>
+            <td>
+              <%= form_with(model: submission) do |form| %>
+                <% if submission.errors.any? %>
+                  <div id="error_explanation">
+                    <h2><%= pluralize(submission.errors.count, "error") %> prohibited this submission from being saved:</h2>
+                    <ul>
+                      <% submission.errors.each do |error| %>
+                        <li><%= error.full_message %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+                <% end %>
+                      
+                      
+                <% if !alert.nil? %>
+		              <div >
+                    <p style="color:grey" id="alert"><%= alert %></p>
+                  </div>
+                 <%end%>    
+                      
+                <table border="0"><tbody>
+              
+                  <tr>
+                    <tr style="height:10px">  </tr>
+                      <tr>
+                         <td><%= form.label "title" %> </td>
+                         <td><%= form.text_field :title, size: 40 %></td>
+                      </tr>
+                      <tr>
+                        <% if submission.id.nil? %>     <!-- Si estem editant un comentari que te url o estem creant un de nou, mostrem per editar la url -->
+                          <td><%= form.label "url" %> </td>
+                          <td><%= form.text_field :url, size: 40%></td> 
+                        <% elsif (submission.title != "" and submission.url !="")%>
+                          <td> <%= form.label "url" %> </td> <td><%=submission.url%></td>
+                        <%else%>
+                          <td><%= form.label "url" %></td>
+                        <%end%>
+                        <tr style="height:5px">  </tr>
+                      </tr>
 
-  <div class="field">
-    <%= form.label :url %>
-    <%= form.text_field :url %>
-  </div>
+                      <% if submission.id.nil? or (submission.title!="" and submission.url=="") %>    <!-- Si estem editant un comentari que te text o estem creant un de nou, mostrem per editar el text-->
+                        <tr>     
+                          <td></td>
+                            <td> <b>or</b></td> 
+                        </tr>
+                        <tr>   
+                          <td><%= form.label "text" %> </td>
+                          <td><%= form.text_area :text, size: "39x3" %> </td>
+                        </tr>
+                      <%end%>
+                      
+                      <%= form.hidden_field :user_id, value: session[:user_id] %>
+                      <tr style="height:5px">  </tr>
+                      <tr>
+                        <td></td>
+                        <td>
+                          <% if submission.id.nil?%>
+                            <%= form.submit "Submit"%>
+                          <%else%>
+                            <%= form.submit "Update"%>
+                          <%end%>
+                        </td>
+                       </tr>
+                  </tr>
+                </tbody></table>
+                <tr>
+                  <tr style="height:20px"></tr>   
+                  <% if submission.id.nil?%>
+                    <td>
+                      <label>Leave url blank to submit a question for discussion. If there is no url, the text (if any) will appear at the top of the thread. </label>
+                    </td>
+                  <%end%>
+                </tr>
+              <% end %>
+            </td>
+          </tr>
+                
 
-  <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>

@@ -1,0 +1,2 @@
+class Likedcomments < ApplicationRecord
+end

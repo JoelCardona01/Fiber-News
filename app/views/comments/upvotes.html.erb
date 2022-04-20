@@ -1,0 +1,126 @@
+    <body><center>
+                            <!-- Taula amb 3 files: una pel menu
+                                    una que conté una taula generada dinàmicament on surten els ítems
+                                    una amb els links del final de la pàgina
+                                    
+            -->
+            
+            <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+                <!-- Fila menu -->
+                <tr>
+                    <td bgcolor="#ff6600">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                            <tr>
+                                <td style="width:18px;padding-right:4px">
+                                    <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+                                </td>
+
+                                <td style="line-height:12pt; height:10px;">
+                                   <span class="pagetop">
+                                       <b class="hnname">
+                                              <a href=<%=submissions_path%>> Fiber News</a>
+                                       </b>
+                                          <a href=<%=newest_submissions_path%>> new</a>
+                                        | <a href=<%=ask_submissions_path%>>ask</a> 
+                                       |
+                                      <% if User.find_by(id: session[:user_id]).nil? %>
+                                      <%= link_to 'submit', '/auth/google_oauth2', method: :post,:data => {:confirm => 'Do you want to login?'} %>
+                                      <% else %>
+                                      <%= link_to 'submit', new_submission_path %>
+                                      <% end %>
+
+                                   </span>
+                                </td>
+
+                                <td style="text-align:right;padding-right:4px;">
+                                   <span class="pagetop">
+                                       <!-- <a href="login?goto=news">login</a> -->
+                                       <% if User.find_by(id: session[:user_id]).nil? then%>
+                                       <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+                                       <%else%>
+                                       <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                                       (<%= User.find_by(id: session[:user_id]).karma %>)
+                                       <%= link_to ' | Logout' , '/sessions/logout' %>
+                                       <%end%>
+                                   </span>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+
+                <!-- Padding -->
+                <tr id="pagespace" title="" style="height:10px"></tr>
+                <tr><%=flash[:alert]%></tr>
+
+                <!-- Fila amb la llista d'ítems -->
+                <tr>
+                  <td>
+                    <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
+                      
+                      <% @comments.each_with_index do |comments, index| %>
+                      
+                        <td ><center>
+                          <div style="width:10px"></div>
+                        </center></td>
+                        
+
+                        <td class="default">
+                          <div style="margin-top:2px; margin-bottom:-10px;">
+                            <span class="comhead">
+                              <a href=<%=user_path(Comment.find(comments.comment_id).user)%> class="hnuser"> <%= Comment.find(comments.comment_id).user.name%> </a>
+                              <span class="age">
+                                <a href="/comments/<%=comments.comment_id%>/tree"><%=time_ago_in_words(Comment.find(comments.comment_id).created_at)%> ago</a>
+                              </span>
+                    
+                              <span class="navs">
+                                |
+                                <a href="">parent</a>
+                                |
+                                <a href="" rel="nofollow">context</a>
+                              </span>
+                              <span class="onstory">
+                                | on: 
+                                <%= link_to Submission.find(Comment.find(comments.comment_id).postid).title, submission_path(Submission.find(Comment.find(comments.comment_id).postid).id), method: :get%>
+                              </span>
+                            </span>
+                          </div>
+                          <br>
+                          <div class="comment">
+                            <span class="commtext c00">
+                              <%=Comment.find(comments.comment_id).text%>
+                              <div class="reply"></div>
+                            </span>
+                          </div>
+                        </td>
+                        
+                        <tr class="spacer" style="height:5px"></tr>
+                        <%index = index+1%>
+                      <%end%>
+
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <img src="s.gif" height="10" width="0">
+                    <table width="100%" cellspacing="0" cellpadding="1">
+                      <tr><td bgcolor="#ff6600"></td></tr>
+                    </table>
+                    <br>
+                        <center><a href="https://www.fib.upc.edu/en/studies/bachelors-degrees/bachelor-degree-informatics-engineering/curriculum/syllabus/ASW">Projecte ASW - FIB</a></center>
+                        <br>
+                        <center>
+                            <span class="yclinks">
+                            <a href="mailto:simon.helmuth.oliva@estudiantat.upc.edu?cc=joel.cardona@estudiantat.upc.edu;marina.alapont@estudiantat.upc.edu;daniel.pulido.galvez@estudiantat.upc.edu&subject=Contact%20from%20FiberNews">
+                                | Contact with the developers |
+                            </a>
+                            </span>
+                        </center>
+                  </td>
+                </tr>
+            </table>
+  
+    </center></body>

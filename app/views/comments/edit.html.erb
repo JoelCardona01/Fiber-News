@@ -1,0 +1,104 @@
+<% if User.find_by(id: session[:user_id]).nil? or session[:user_id] != @comment.user_id then%>
+<%=controller.redirect_to edit_user_path(@user)%>
+<%end%>
+<body>
+    <center>
+        <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+            <!-- Fila menu -->           
+           <tr>
+                <td bgcolor="#ff6600">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+                        <tr>
+                            <td style="width:18px;padding-right:4px">
+                                <%= image_tag("LogoFiberNews.png", width: '18px' , height: '18px' , :style=> "border:1px
+                                    solid
+                                    white") %>
+                            </td>
+
+                            <td style="line-height:12pt; height:10px;">
+                                <span class="pagetop">
+                                    <b class="hnname">
+                                        <a href=<%=submissions_path%>> Fiber News</a>
+                                    </b>
+                                    <a href=<%=newest_submissions_path%>> new</a>
+                                    | <a href=<%=ask_submissions_path%>>ask</a>
+                                    <% if User.find_by(id: session[:user_id]).nil? %>
+                                        | <%= link_to 'submit', '/auth/google_oauth2', method: :post,:data => {:confirm => 'Do you want to login?'} %>
+                                    <% else %>
+                                        | <%= link_to "threads", comm_user_path(session[:user_id])%>
+                                        | <%= link_to 'submit', new_submission_path %>
+                                    <% end %>
+                                </span>
+                            </td>
+
+                            <td style="text-align:right;padding-right:4px;">
+                                <span class="pagetop">
+                                    <!-- <a href="login?goto=news">login</a> -->
+                                    <% if User.find_by(id: session[:user_id]).nil? then%>
+                                        <%= link_to "Log In with Google" , '/auth/google_oauth2' , method: :post %>
+                                    <%else%>
+                                        <%= link_to User.find_by(id: session[:user_id]).name,edit_user_path(User.find_by(id: session[:user_id])) %>
+                                        (<%= User.find_by(id: session[:user_id]).karma %>)
+                                        <%= link_to ' | Logout' , '/sessions/logout' %>
+                                    <%end%>
+                                </span>
+                            </td>
+
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table border="0" cellpadding="0" cellspacing="0" class="itemlist">
+                        <tr class="athing comtr">
+                            <td>
+                                <table border="0">
+                                    <tr>
+                                        <td class="default">
+                                            <div style="margin-top:2px; margin-bottom:-10px;"><span class="comhead">
+                                                <span class="score" id=comment>
+                                                    <%=@comment.likes%> points
+                                                </span> by 
+                                                <a href="<%=edit_user_path(@comment.user)%>" class="hnuser">
+                                                    <font color="#3c963c">
+                                                        <%= @comment.user.name%>
+                                                    </font>
+                                                </a> 
+                                                <span class="age"><a href=<%=comment_path(@comment.id) %>>
+                                                    <%=time_ago_in_words(@comment.created_at)%> ago
+                                                </a></span>
+                                                <span class="navs"> | 
+                                                    <a
+                                                        href=<%=comment_path(@comment.parentid)%>>parent</a> | 
+                                                        <a href="/submissions/<%=@comment.postid%>" >context</a>
+                                                </span>
+                                                <% if @comment.user_id == session[:user_id] then %>   
+                                                    <a href=<%=edit_comment_path(@comment)%>>| edit</a> | 
+                                                    <%= link_to "delete", comment_path(@comment.id), method: :delete, :data => {:confirm => 'Are you sure?'} %>
+                                                <%end%>
+                                                <span class="onstory"> | on: 
+                                                    <a href="/submissions/<%=@comment.postid%>">Ask FN: <%=truncate(Submission.find_by(id:@comment.postid).title)%>
+                                                    </a>
+                                                </span> 
+                                            </span></div>
+                                            <br>
+                                            <div class="comment">
+                                                <span class="commtext c00">
+                                                    <%=@comment.text%>
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td><%= render 'form', comment: @comment %></td>
+            </tr>
+        </table>
+    </center>
+</body>
