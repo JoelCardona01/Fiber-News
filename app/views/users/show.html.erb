@@ -32,8 +32,12 @@
                                        </b>
                                           <a href=<%=newest_submissions_path%>> new</a>
                                         | <a href=<%=ask_submissions_path%>>ask</a> 
-                                        |  <%= link_to 'submit', new_submission_path %>
-
+                                        <% if User.find_by(id: session[:user_id]).nil? %>
+                                            | <%= link_to 'submit', '/auth/google_oauth2', method: :post,:data => {:confirm => 'Do you want to login?'} %>
+                                        <% else %>
+                                            | <%= link_to "threads", comm_user_path(session[:user_id])%>
+                                            | <%= link_to 'submit', new_submission_path %>
+                                        <% end %>
 
                                    </span>
                                 </td>
