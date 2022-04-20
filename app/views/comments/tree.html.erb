@@ -51,12 +51,12 @@
                   <% if User.find_by(id: session[:user_id]).nil? %>
                     <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %>
                   <% else %>
-                    <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comment.id), method: :put, class: "votearrow"  %>
+                    <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comment.id), method: :put %>
                   <% end %>
                   </center></td>
                 <% else %>
-                  <td valign="top" class="votelinks"><center>
-                  <div class="votearrow" title="upvote"></div>
+                  <td ><center>
+                  <div ></div>
                   </center></td>
                 <% end%>
           
@@ -165,12 +165,12 @@
                         <% if User.find_by(id: session[:user_id]).nil? %>
                           <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
                         <% else %>
-                          <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comments[i].id), method: :put, class: "votearrow"  %>
+                          <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comments[i].id), method: :put  %>
                         <% end %>
                       </center></td>
                     <% else %>
-                      <td valign="top" class="votelinks"><center>
-                        <div class="votearrow" title="upvote"></div>
+                      <td ><center>
+                        <div></div>
                       </center></td>
                     <% end%>
 
