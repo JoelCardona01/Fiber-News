@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   resources :likedcomments
   resources :likedsubmissions
+  resources :likedcomments
+  resources :likedsubmissions
     get '/submissions/newest', to: 'submissions#newest', as: 'newest_submissions'
     get '/submissions/ask', to: 'submissions#ask', as: 'ask_submissions'
     post '/submissions/comment', to: 'submissions#comment', as: 'submissions_comment'
@@ -12,7 +14,6 @@ Rails.application.routes.draw do
     get '/comments/user/:user_id', to: 'comments#commFromUser', as: 'comm_user'
     get '/submissions/upvoted/:user_id', to: 'submissions#userUpvotes', as: 'user_submissions_upvotes'
     get '/comments/upvoted/:user_id', to: 'comments#userUpvotes', as: 'user_comments_upvotes'
-    get '/submissions/url/*url', to: 'submissions#submFromUrl', as: 'subm_host'
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'
 
@@ -24,13 +25,12 @@ Rails.application.routes.draw do
   resources :submissions do
       put 'vote', on: :member
       put 'unvote', on: :member
+      put 'unvote', on: :member
   end
+
 
   resources :users
   root 'submissions#index'
   
-  # Routes for Google authentication
-    get "auth/:provider/callback", to: "sessions#googleAuth"
-    get "auth/failure", to: redirect("/")
 end
 
