@@ -23,9 +23,12 @@
                                        </b>
                                           <a href=<%=newest_submissions_path%>> new</a>
                                         | <a href=<%=ask_submissions_path%>>ask</a> 
-                                        |  <%= link_to 'submit', new_submission_path %>
-
-
+                                        |
+                                        <% if User.find_by(id: session[:user_id]).nil? %>
+                                        <%= link_to 'submit', '/auth/google_oauth2', method: :post,:data => {:confirm => 'Do you want to login?'} %>
+                                        <% else %>
+                                        <%= link_to 'submit', new_submission_path %>
+                                        <% end %>
                                    </span>
                                 </td>
 
@@ -67,7 +70,7 @@
                                 <% if submission.user_id != session[:user_id] and (@likedsubmissions.nil? or @likedsubmissions.find_by(:submission_id =>submission.id).nil?) %>
                                     <td valign="top" class="votelinks"><center>
                                         <% if User.find_by(id: session[:user_id]).nil? %>
-                                        <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
+                                        <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %>
                                         <% else %>
                                         <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(submission.id), method: :put, class: "votearrow"  %>
                                         <% end %>
