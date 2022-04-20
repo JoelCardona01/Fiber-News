@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     get '/comments/user/:user_id', to: 'comments#commFromUser', as: 'comm_user'
     get '/submissions/upvoted/:user_id', to: 'submissions#userUpvotes', as: 'user_submissions_upvotes'
     get '/comments/upvoted/:user_id', to: 'comments#userUpvotes', as: 'user_comments_upvotes'
+    get '/submissions/url/*url', to: 'submissions#submFromUrl', as: 'subm_host'
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'
 
