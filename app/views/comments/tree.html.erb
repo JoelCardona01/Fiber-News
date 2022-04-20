@@ -1,0 +1,228 @@
+<body><center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+
+ <!-- Fila menu -->
+  <tr> 
+    <td bgcolor="#ff6600">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+        <tr>
+          <td style="width:18px;padding-right:4px">
+            <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+          </td>
+
+          <td style="line-height:12pt; height:10px;">
+            <span class="pagetop">
+              <b class="hnname">
+                <a href=<%=submissions_path%>> Fiber News </a>
+              </b>
+              
+              <a href=<%=newest_submissions_path%>> new</a>
+              | <a href=<%=ask_submissions_path%>>ask</a> 
+              |
+              <% if User.find_by(id: session[:user_id]).nil? %>
+              <%= link_to 'submit', '/auth/google_oauth2', method: :post,:data => {:confirm => 'Do you want to login?'} %>
+              <% else %>
+              <%= link_to 'submit', new_submission_path %>
+              <% end %>
+            </span>
+          </td>
+                                
+          <td style="text-align:right;padding-right:4px;">
+            <span class="pagetop">
+             <!-- <a href="login?goto=news">login</a> -->
+             <% if User.find_by(id: session[:user_id]).nil? then%>
+             <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+             <%else%>
+             <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+             <%= link_to ' | Logout' , '/sessions/logout' %>
+             <%end%>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+
+  <p id="notice"><%= notice %></p>
+  <tr>
+    <tr style = "height:10px"></tr>
+      <td>
+        <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
+          <tbody>
+            <tr class='athing'>
+              <td class="ind"></td>
+                <% if @comment.user_id != session[:user_id] and (@likedcomments.nil? or @likedcomments.find_by(:comment_id =>@comment.id).nil?) %>
+                  <td valign="top" class="votelinks"><center>
+                  <% if User.find_by(id: session[:user_id]).nil? %>
+                    <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %>
+                  <% else %>
+                    <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comment.id), method: :put %>
+                  <% end %>
+                  </center></td>
+                <% else %>
+                  <td ><center>
+                  <div ></div>
+                  </center></td>
+                <% end%>
+          
+              <td class="default">
+                <div style="margin-top:2px; margin-bottom:-10px;">
+                  <span class="comhead">
+                    <a href=<%=user_path(@comment.user)%> class="hnuser"> <%= @comment.user.name%> </a>
+                          <span class="age"><a href="/comments/tree/<%=@comment.id%>"> <%=time_ago_in_words(@comment.created_at)%> ago</a></span> 
+                    <% if @comment.user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comment.id).nil? %>
+                      | <%= link_to 'unvote', unvote_comment_path(@comment.id), method: :put%>
+                    <% end %>
+                    <% if not @submission.nil? %>
+                    <span class="navs">
+                      <% if not Comment.find_by(id: @comment.parentid).nil? then%>
+                      | <a href=<%=comments_tree_path(@comment.parentid)%>>parent</a>
+                      <%end%>
+                      <% if not Submission.find_by(id: @comment.postid).nil? %>
+                      | <a href="/submissions/<%=@comment.postid%>" >context</a>
+                      <%end%>
+                    </span>
+                    <%end%>
+                        <% if @comment.user_id == session[:user_id] then %>
+                        <% if not @submission.nil? %>
+                          <a href=<%=edit_comment_path(@comment)%>>| edit</a>  
+                        <%end%>
+                          <% if Comment.find_by(:parentid => @comment.id).nil?%>
+                          |  <%= link_to "delete", comment_path(@comment.id), method: :delete, :data => {:confirm => 'Are you sure?'} %>
+                          <%end%>
+                        <%end%>
+                    <% if not @submission.nil? %>
+                    <span class="onstory">
+                      | on: 
+                      <%= link_to @submission.title, submission_path(@comment.postid), method: :get%>
+                    </span>
+                    <%end%>
+                  </span>
+                </div>
+                <br>
+                <div class="comment">
+                  <span class="commtext c00">
+                    <%=@comment.text%>
+                    <div class="reply"></div>
+                  </span>
+                </div>
+              </td>
+            </tr>
+            
+            <tr style ="height:10px" ></tr>
+            <% if not @submission.nil? %>
+              <tr>
+                <td colspan="2"></td>
+                  <td>
+                    <form method="post" action="comment">
+                      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                      <input type="hidden" name="comment[postid]" value="<%= @submission.id%>">
+                      <input type="hidden" name="comment[user_id]" value="<%= session[:user_id]%>">
+                      <input type="hidden" name="comment[parentid]" value="<%= @comment.id %>" >
+                      <input type="hidden" name="comment[likes]" value="1">
+                      <textarea name="comment[text]" rows="6" cols="60"></textarea>
+                      <br><br>
+                      <% if User.find_by(id: session[:user_id]).nil? %>
+                      <button> <%= link_to "reply", '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %> </button>
+                      <%else%>
+                      <input type="submit" value="reply">
+                      <%end%>
+                    </form>
+                  </td>
+              </tr>
+              <% end %>
+            </tbody>
+        </table>
+        <table>
+          <%
+
+            #Representam l'arbre de comentaris com un array, i cream un altre array per saber el nivell de cada comentari (inicialment tots els comentaris tenen nivell 0)
+            @comments = @comments.to_a
+            nivellComment = Array.new(@comments.size, 0)
+            
+            #Per a tot comentari, si te pare...
+            for i in 0..@comments.length-1
+              if @comments[i].parentid != @comment.id
+              
+                #...cercam la posicio del comentari pare
+                p = 0
+                while @comments[p].id != @comments[i].parentid and p < @comments.length do
+                  p += 1
+                end
+                #Quan sortim del bucle, "p" sera la posicio del pare
+                
+                if(@comments[p].id==@comments[i].parentid) 
+                  #Movem el comentari de la posicio "i", a la posicio seguent a la del seu pare i actualitzam el seu nivell (un mes que el seu pare)
+                  @comments.insert(p+1, @comments.delete_at(i))
+                  nivellComment.insert(p+1, nivellComment.delete_at(i))
+                  nivellComment[p+1] = nivellComment[p]+1
+                  i -= 1
+                end
+                
+              end
+            end
+          %>
+          
+          
+          <% for i in 0..@comments.length-1%>
+          <tr class="athing comtr" id= <%=@comments[i].id%> >
+            <td>
+              <table border="0">
+                <tbody>
+                  <tr>
+                    <td class="ind"><img src="s.gif" height="1" width="<%=40*nivellComment[i]%>"></td>
+                    <% if @comments[i].user_id != session[:user_id] and (@likedcomments.nil? or @likedcomments.find_by(:comment_id =>@comments[i].id).nil?) %>
+                      <td valign="top" class="votelinks"><center>
+                        <% if User.find_by(id: session[:user_id]).nil? %>
+                          <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post %>
+                        <% else %>
+                          <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comments[i].id), method: :put  %>
+                        <% end %>
+                      </center></td>
+                    <% else %>
+                      <td ><center>
+                        <div></div>
+                      </center></td>
+                    <% end%>
+
+                    <td class="default">
+                      <div style="margin-top:2px; margin-bottom:-10px;">
+                        <span class="comhead">
+                          <a href=<%=user_path(@comments[i].user)%> class="hnuser"> <%= @comments[i].user.name%> </a>
+                          <span class="age"><a href="/comments/<%=@comments[i].id%>/tree"> <%=time_ago_in_words(@comments[i].created_at)%> ago</a></span> 
+                          <% if @comments[i].user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comments[i].id).nil? %>
+                            | <%= link_to 'unvote', unvote_comment_path(@comments[i].id), method: :put%>
+                          <% end %>
+                              <% if @comments[i].user_id == session[:user_id] then %>   
+                                <a href=<%=edit_comment_path(@comments[i])%>>| edit</a>
+                                <% if Comment.find_by(:parentid => @comments[i].id).nil?%>
+                                  |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete, :data => {:confirm => 'Are you sure?'} %>
+                                <%end%>    
+                              <%end%>
+                          <div class="comment">
+                            <span class="commtext c00"> <%=@comments[i].text%></span>
+                          </div>
+                          <div class="reply">     
+                            <p><font size="1">
+                              <u><%=link_to "reply", comment_path(@comments[i].id), method: :get%></u>
+                            </font></p>
+                            <tr style="height:7px" ></tr>
+                          </div>
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <% end %>
+          
+          
+        </table>
+      </td>
+  </tr>
+</table>
+</center></body>
+

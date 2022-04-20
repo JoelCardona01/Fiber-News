@@ -1,98 +1,230 @@
- <body><center>
- <table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+<body><center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
 
-                <!-- Fila menu -->
-                <tr>
-                    <td bgcolor="#ff6600">
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
-                            <tr>
-                                <td style="width:18px;padding-right:4px">
-                                    <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
-                                </td>
-
-                                <td style="line-height:12pt; height:10px;">
-                                   <span class="pagetop">
-                                       <b class="hnname">
-                                              <a href=<%=submissions_path%>> Fiber News</a>
-                                       </b>
-
-                                          <a href=<%=newest_submissions_path%>> new</a>
-                                        | <a href="front">past</a> 
-                                        | <a href="newcomments">comments</a> 
-                                        | <a href=<%=ask_submissions_path%>>ask</a> 
-                                        | <a href="jobs">jobs</a> 
-                                        |  <%= link_to 'submit', new_submission_path %>
-
-
-                                   </span>
-                                </td>
-                                
-                                <td style="text-align:right;padding-right:4px;">
-                                   <span class="pagetop">
-                                       <a href="login?goto=news">login</a>
-                                   </span>
-                                </td>
-
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-
-
-<p id="notice"><%= notice %></p>
- <tr>
-    <tr style = "height:10px"></tr>
-    <td>
-      <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
-           <tr class='athing'>
-            <td valign="top" class="votelinks"><center>
-              <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(@submission.id), method: :put, class: "votearrow"  %>
-
-             </center></td>
-        
-           <td class="title">
-            <% if @submission.url!=""%>
-            <td>
-              <a href= <%= @submission.url %> class="titlelink"><%= @submission.title%></a>
-              <span class="sitebit comhead"> 
-                (<a href=<% @submission.url %>>
-                <span class="sitestr"><%= URI.parse(@submission.url).host %></span>
-                </a>)
-              </span>
-              </td>
-            <% else %>
-               <td class= "title" ><%= @submission.title%> </td>
-             <% end %>
+ <!-- Fila menu -->
+  <tr>
+    <td bgcolor="#ff6600">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+        <tr>
+          <td style="width:18px;padding-right:4px">
+            <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
           </td>
+
+          <td style="line-height:12pt; height:10px;">
+            <span class="pagetop">
+              <b class="hnname">
+                <a href=<%=submissions_path%>> Fiber News</a>
+              </b>
+
+              <a href=<%=newest_submissions_path%>> new</a>
+              | <a href=<%=ask_submissions_path%>>ask</a> 
+              |
+              <% if User.find_by(id: session[:user_id]).nil? %>
+              <%= link_to 'submit', '/auth/google_oauth2', method: :post,:data => {:confirm => 'Do you want to login?'} %>
+              <% else %>
+              <%= link_to 'submit', new_submission_path %>
+              <% end %>
+            </span>
+          </td>
+                                
+          <td style="text-align:right;padding-right:4px;">
+            <span class="pagetop">
+             <% if User.find_by(id: session[:user_id]).nil? then%>
+             <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+             <%else%>
+             <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+             (<%= User.find_by(id: session[:user_id]).karma %>)
+             <%= link_to ' | Logout' , '/sessions/logout' %>
+             <%end%>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+
+  <p id="notice"><%= notice %></p>
+  <tr>
+    <tr style = "height:10px"></tr>
+      <td>
+        <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
+          <tr class='athing'>
+            <% if @submission.user_id != session[:user_id] and (@likedsubmissions.nil? or @likedsubmissions.find_by(:submission_id =>@submission.id).nil?) %>
+              <td valign="top" class="votelinks"><center>
+                <% if User.find_by(id: session[:user_id]).nil? %>
+                  <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %>
+                <% else %>
+                  <%= link_to image_tag("grayarrow.gif", border:0), vote_submission_path(@submission.id), method: :put  %>
+                <% end %>
+              </center></td>
+            <% else %>
+              <td ><center>
+                <div></div>
+              </center></td>
+            <% end%>
+            <td class="title">
+              <% if @submission.url!=""%>
+                <td>
+                  <a href= <%= @submission.url %> class="titlelink"><%= @submission.title%></a>
+                  <span class="sitebit comhead"> 
+                    (<a href=<% @submission.url %>>
+                      <span class="sitestr"><%= URI.parse(@submission.url).host %></span>
+                    </a>)
+                  </span>
+                </td>
+              <% else %>
+               <td class= "title" ><%= @submission.title%> </td>
+              <% end %>
+            </td>
           </tr>
         
           <tr>
             <td colspan="2"></td>
               <td class="subtext">
                 <span class="score"><%= @submission.votes%> votes</span> 
-                by <a href="" class="hnuser">SoyHardcoded</a> 
+                by <a href=<%=user_path(@submission.user)%> class="hnuser"><%= @submission.user.name%></a> 
                 <span class="age">
-                  <a href=""><%=time_ago_in_words(@submission.created_at)%> ago</a>
+                  <a href= <%= submission_path(@submission.id) %>><%=time_ago_in_words(@submission.created_at)%> ago</a>
                 </span> 
-              <span id=""></span> 
-              | <a href="">hide</a> 
-              | <a href=""> x comments</a>              
+                <span id=""></span> 
+                <% if @submission.user_id != session[:user_id] and !@likedsubmissions.nil? and !@likedsubmissions.find_by(:submission_id =>@submission.id).nil? %>
+                  | <%= link_to 'unvote', unvote_submission_path(@submission.id), method: :put%>
+                <% end %>
+                <% if @submission.user_id == session[:user_id] %>
+                  | <a href="<%=edit_submission_path(@submission)%>">edit</a> 
+                  | <%= link_to "delete", submission_path(@submission), method: :delete, :data => {:confirm => 'Are you sure?'} %> 
+                <%end%>
+                | <a href=<%=submission_path(@submission.id)%>> <% size = Comment.all.where(:postid => @submission.id).length %> 
+                    <% if size == 0 %> discuss
+                    <% elsif size < 2 %> <%= size%> comment
+                    <% else %> <%= size%> comments
+                    <%end%>
+                  </a>             
+              </td>
+          </tr>
+        
+          <tr style = "height:10px"></tr>
+        
+          <tr>
+            <td>
+            <td>
+              <td class="text"> 
+              <%= @submission.text %> </td>
+            </td>
             </td>
           </tr>
         
-        <tr style = "height:10px"></tr>
-        
-       <tr>
-         <td>
-          <td>
-              <td class="text"> 
-              <%= @submission.text %> </td>
-          </td>
-          </td>
-        </tr>
-        
-      </table>
-    </td>
+          <tr style ="height:10px" ></tr>
+            <tr>
+              <td colspan="2"></td>
+                <td>
+                  <form method="post" action="comment">
+                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                    <input type="hidden" name="comment[postid]" value="<%= @submission.id%>">
+                    <input type="hidden" name="comment[user_id]" value="<%= session[:user_id]%>">
+                    <input type="hidden" name="comment[parentid]" value="0">
+                    <input type="hidden" name="comment[likes]" value="1">
+                    <textarea name="comment[text]" rows="6" cols="60"></textarea>
+                    <br><br>
+                    <% if User.find_by(id: session[:user_id]).nil? %>
+                    <button> <%= link_to "add comment", '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %> </button>
+                    <%else%>
+                    <input type="submit" value="add comment">
+                    <%end%>
+                  </form>
+                </td>
+            </tr>
+        </table>
+
+        <table>
+          
+          <%
+            #Representam l'arbre de comentaris com un array, i cream un altre array per saber el nivell de cada comentari (inicialment tots els comentaris tenen nivell 0)
+            @comments = @comments.to_a
+            nivellComment = Array.new(@comments.size, 0)
+            
+            #Per a tot comentari, si te pare...
+            for i in 0..@comments.length-1
+              if @comments[i].parentid != 0
+                
+                #...cercam la posicio del comentari pare
+                p = 0
+                while @comments[p].id != @comments[i].parentid and p < @comments.length do
+                  p += 1
+                end
+                #Quan sortim del bucle, "p" sera la posicio del pare
+                
+                if(@comments[p].id==@comments[i].parentid) 
+                  #Movem el comentari de la posicio "i", a la posicio seguent a la del seu pare i actualitzam el seu nivell (un mes que el seu pare)
+                  @comments.insert(p+1, @comments.delete_at(i))
+                  nivellComment.insert(p+1, nivellComment.delete_at(i))
+                  nivellComment[p+1] = nivellComment[p]+1
+                  i -= 1
+                end
+                
+              end
+            end
+          %>
+          
+          
+          <% for i in 0..@comments.length-1%>
+          <tr class="athing comtr" id= <%=@comments[i].id%> >
+            <td>
+              <table border="0">
+                <tbody>
+                  <tr>
+                    <td class="ind"><img src="s.gif" height="1" width="<%=40*nivellComment[i]%>"></td>
+                    <% if @comments[i].user_id != session[:user_id] and (@likedcomments.nil? or @likedcomments.find_by(:comment_id =>@comments[i].id).nil?) %>
+                      <td valign="top" class="votelinks"><center>
+                        <% if User.find_by(id: session[:user_id]).nil? %>
+                          <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %>
+                        <% else %>
+                          <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comments[i].id), method: :put %>
+                        <% end %>
+                      </center></td>
+                    <% else %>
+                      <td ><center>
+                        <div ></div>
+                      </center></td>
+                    <% end%>
+                    <td class="default">
+                      <div style="margin-top:2px; margin-bottom:-10px;">
+                        <span class="comhead">
+                          <a href=<%=user_path(@comments[i].user)%> class="hnuser"> <%= @comments[i].user.name%> </a>
+                          <span class="age"><a href="/comments/tree/<%=@comments[i].id%>"> <%=time_ago_in_words(@comments[i].created_at)%> ago</a></span>
+                          <% if @comments[i].user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comments[i].id).nil? %>
+                            | <%= link_to 'unvote', unvote_comment_path(@comments[i].id), method: :put%>
+                          <% end %>
+                          <% if @comments[i].user_id == session[:user_id] then %>   
+                            <a href=<%=edit_comment_path(@comments[i])%>>| edit</a>
+                            <% if Comment.find_by(:parentid => @comments[i].id).nil?%>
+                              |  <%= link_to "delete", comment_path(@comments[i].id), method: :delete, :data => {:confirm => 'Are you sure?'} %>
+                            <%end%>
+                          <%end%>
+                          <div class="comment">
+                            <span class="commtext c00"> <%=@comments[i].text%></span>
+                          </div>
+                          <div class="reply">     
+                            <p><font size="1">
+                              <u><%=link_to "reply", comment_path(@comments[i].id), method: :get%></u>
+                            </font></p>
+                            <tr style="height:7px" ></tr>
+                          </div>
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <% end %>
+          
+          
+        </table>
+      </td>
   </tr>
-    </center></body>
+</table>
+</center></body>
 

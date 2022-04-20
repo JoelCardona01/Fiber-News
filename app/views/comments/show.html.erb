@@ -1,0 +1,130 @@
+<body><center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+
+ <!-- Fila menu -->
+  <tr>
+    <td bgcolor="#ff6600">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+        <tr>
+          <td style="width:18px;padding-right:4px">
+            <%= image_tag("LogoFiberNews.png", width: '18px', height: '18px', :style => "border:1px solid white") %>
+          </td>
+
+          <td style="line-height:12pt; height:10px;">
+            <span class="pagetop">
+              <b class="hnname">
+                 Add Comment
+              </b>
+              <td style="text-align:right;padding-right:4px;">
+                <span class="pagetop">
+                   <!-- <a href="login?goto=news">login</a> -->
+                   <% if User.find_by(id: session[:user_id]).nil? then%>
+                   <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+                   <%else%>
+                   <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                   <%= link_to ' | Logout' , '/sessions/logout' %>
+                   <%end%>
+                </span>
+              </td>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+
+  <p id="notice"><%= notice %></p>
+  <tr>
+    <tr style = "height:10px"></tr>
+      <td>
+        <table border="0" cellpadding="0" cellspacing="0" class="fatitem">
+          <tbody>
+            <tr class='athing'>
+              <td class="ind"></td>
+                <% if @comment.user_id != session[:user_id] and (@likedcomments.nil? or @likedcomments.find_by(:comment_id =>@comment.id).nil?) %>
+                  <td valign="top" class="votelinks"><center>
+                  <% if User.find_by(id: session[:user_id]).nil? %>
+                    <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %>
+                  <% else %>
+                    <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comment.id), method: :put  %>
+                  <% end %>
+                  </center></td>
+                <% else %>
+                  <td><center>
+                  <div ></div>
+                  </center></td>
+                <% end%>
+          
+              <td class="default">
+                <div style="margin-top:2px; <marg></marg>in-bottom:-10px;">
+                  <span class="comhead">
+                    <a href=<%=user_path(@comment.user)%> class="hnuser"> <%= @comment.user.name%> </a>
+                    <span class="age">
+                      <a href="/comments/tree/<%=@comment.id%>"><%=time_ago_in_words(@comment.created_at)%> ago</a>
+                    </span>
+                    <% if @comment.user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comment.id).nil? %>
+                      | <%= link_to 'unvote', unvote_comment_path(@comment.id), method: :put%>
+                    <% end %>
+                    <span class="navs">
+                      <% if not Comment.find_by(id: @comment.parentid).nil? then%>
+                      | <a href=<%=comments_tree_path(@comment.parentid)%>>parent</a>
+                      <%end%>
+                      <% if not Submission.find_by(id: @comment.postid).nil? %>
+                      | <a href="/submissions/<%=@comment.postid%>" >context</a>
+                      <%end%>
+                    </span>
+                        <% if @comment.user_id == session[:user_id] then %>   
+                          <a href=<%=edit_comment_path(@comment)%>>| edit</a>  
+                          <% if Comment.find_by(:parentid => @comment.id).nil?%>
+                           | <%= link_to "delete", comment_path(@comment.id), method: :delete, :data => {:confirm => 'Are you sure?'} %>
+                          <%end%>
+                        <%end%>
+                    <% if not @submission.nil? %>
+                    <span class="onstory">
+                      | on: 
+                      <%= link_to @submission.title, submission_path(@submission.id), method: :get%>
+                    </span>
+                    <% end %>
+                  </span>
+                </div>
+                <br>
+                <div class="comment">
+                  <span class="commtext c00">
+                    <%=@comment.text%>
+                    <div class="reply"></div>
+                  </span>
+                </div>
+              </td>
+            </tr>
+            <% if not @submission.nil? %>
+            <tr style ="height:10px" ></tr>
+              <tr>
+                <td colspan="2"></td>
+                  <td>
+                    <form method="post" action="comment">
+                      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                      <input type="hidden" name="comment[postid]" value="<%= @submission.id%>">
+                      <input type="hidden" name="comment[parentid]" value="<%= @comment.id %>" >
+                      <input type="hidden" name="comment[user_id]" value="<%= session[:user_id]%>">
+                      <input type="hidden" name="comment[likes]" value="1">
+                      <textarea name="comment[text]" rows="6" cols="60"></textarea>
+                      <br><br>
+                      <% if User.find_by(id: session[:user_id]).nil? %>
+                      <button> <%= link_to "reply", '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %> </button>
+                      <%else%>
+                      <input type="submit" value="reply">
+                      <%end%>
+                    </form>
+                  </td>
+              </tr>
+              <%else%>
+              <tr><td><br></td></tr>
+              <%end%>
+            </tbody>
+        </table>
+      </td>
+  </tr>
+</table>
+</center></body>
+
