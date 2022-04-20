@@ -22,12 +22,14 @@ class CommentsController < ApplicationController
   end
   
   def commFromUser
-    @comments = Comment.all.where(:user_id => params[:user_id])
+    @comments = Comment.all.where(:user_id => params[:user_id]).order(created_at: :desc)
+    @user = User.find_by(:id => params[:user_id])
+    @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
     render "index"
   end
   
   def userUpvotes
-      @comments = Likedcomments.all.where(:user_id => session[:user_id])
+      @comments = Likedcomments.all.where(:user_id => session[:user_id]).order(created_at: :desc)
       render :upvotes
     
   end
@@ -71,7 +73,7 @@ class CommentsController < ApplicationController
   def update
     respond_to do |format|
       if @comment.update(comment_params)
-        format.html { redirect_to request.referrer }
+        format.html { redirect_to comment_path(@comment.id)}
         format.json { render :show, status: :ok, location: @comment }
       else
         format.html { render :edit }

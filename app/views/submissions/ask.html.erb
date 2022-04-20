@@ -80,7 +80,7 @@
                                     </center></td>
                                 <% else %>
                                     <td><center>
-                                        <div ></div>
+                                        <div style="width:10px"></div>
                                     </center></td>
                                 <% end%>
 
@@ -101,7 +101,6 @@
                                      <% if submission.user_id != session[:user_id] and !@likedsubmissions.nil? and !@likedsubmissions.find_by(:submission_id =>submission.id).nil? %>
                                        | <%= link_to 'unvote', unvote_submission_path(submission.id), method: :put%>
                                     <% end %>
-                                    | <a href="">hide</a> 
                                     <% if  submission.user_id == session[:user_id] %>
                                         | <a href="<%=edit_submission_path(submission)%>">edit</a>  
                                         | <%= link_to "delete", submission_path(submission), method: :delete, :data => {:confirm => 'Are you sure?'} %> 
@@ -119,14 +118,6 @@
                             <!-- Fi esquelet ítem (exemple) -->
                             <%end%>
     
-                            <!-- Botó de More -->
-                            <tr class="morespace" style="height:10px"></tr>
-                            <tr>
-                                <td colspan="2"></td>
-                                <td class='title'>
-                                    <a href='news?p=2' class='morelink' rel='next'>More</a>
-                                </td>
-                            </tr>
 
                         </table>
                     </td>

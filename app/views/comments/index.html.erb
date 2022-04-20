@@ -22,7 +22,11 @@
                                     <% if User.find_by(id: session[:user_id]).nil? %>
                                         | <%= link_to 'submit', '/auth/google_oauth2', method: :post,:data => {:confirm => 'Do you want to login?'} %>
                                     <% else %>
-                                        | <%= link_to "threads", comm_user_path(session[:user_id]), style: "color:white"%>
+                                        <% if @user.id == session[:user_id] %>
+                                            | <%= link_to "threads", comm_user_path(session[:user_id]),  style: "color:white" %>
+                                        <%else%>
+                                            | <%= link_to "threads", comm_user_path(session[:user_id]) %>
+                                        <%end%>
                                         | <%= link_to 'submit', new_submission_path %>
                                     <% end %>
                                 </span>
@@ -81,6 +85,19 @@
                             <table border="0">
                                 <tr>
                                     <td class="ind"><img src="s.gif" height="1" width="<%=40*nivellComment[i]%>"></td>
+                                        <% if @comments[i].user_id != session[:user_id] and (@likedcomments.nil? or @likedcomments.find_by(:comment_id =>@comments[i].id).nil?) %>
+                                            <td valign="top" class="votelinks"><center>
+                                            <% if User.find_by(id: session[:user_id]).nil? %>
+                                                <%= link_to image_tag("grayarrow.gif", border:0), '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %>
+                                               <% else %>
+                                                <%= link_to image_tag("grayarrow.gif", border:0), like_comment_path(@comments[i].id), method: :put %>
+                                            <% end %>
+                                        </center></td>
+                                    <% else %>
+                                        <td><center>
+                                            <div style="width:10px"></div>
+                                        </center></td>
+                                    <% end%>
                                     <td class="default">
                                         <div style="margin-top:2px; margin-bottom:-10px;"><span class="comhead">
                                             <span class="score" id=comment>
@@ -94,6 +111,9 @@
                                             <span class="age"><a href=<%=comments_tree_path(@comments[i].id) %>>
                                                 <%=time_ago_in_words(@comments[i].created_at)%> ago
                                             </a></span>
+                                            <% if @comments[i].user_id != session[:user_id] and !@likedcomments.nil? and !@likedcomments.find_by(:comment_id =>@comments[i].id).nil? %>
+                                               | <%= link_to 'unvote', unvote_comment_path(@comments[i]), method: :put%>
+                                            <% end %>
                                             <% if Submission.find_by(id:@comments[i].postid).nil? %>
                                             [flagged]
                                             <%end%>
