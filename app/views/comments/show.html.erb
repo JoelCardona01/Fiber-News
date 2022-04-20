@@ -15,17 +15,17 @@
               <b class="hnname">
                  Add Comment
               </b>
-             <td style="text-align:right;padding-right:4px;">
-                                   <span class="pagetop">
-                                       <!-- <a href="login?goto=news">login</a> -->
-                                       <% if User.find_by(id: session[:user_id]).nil? then%>
-                                       <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
-                                       <%else%>
-                                       <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
-                                       <%= link_to ' | Logout' , '/sessions/logout' %>
-                                       <%end%>
-                                   </span>
-                                </td>
+              <td style="text-align:right;padding-right:4px;">
+                <span class="pagetop">
+                   <!-- <a href="login?goto=news">login</a> -->
+                   <% if User.find_by(id: session[:user_id]).nil? then%>
+                   <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+                   <%else%>
+                   <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+                   <%= link_to ' | Logout' , '/sessions/logout' %>
+                   <%end%>
+                </span>
+              </td>
             </span>
           </td>
         </tr>
@@ -67,10 +67,12 @@
                       | <%= link_to 'unvote', unvote_comment_path(@comment.id), method: :put%>
                     <% end %>
                     <span class="navs">
-                      |
-                      <a href="">parent</a>
-                      |
-                      <a href="" rel="nofollow">context</a>
+                      <% if not Comment.find_by(id: @comment.parentid).nil? then%>
+                      | <a href=<%=comments_tree_path(@comment.parentid)%>>parent</a>
+                      <%end%>
+                      <% if not Submission.find_by(id: @comment.postid).nil? %>
+                      | <a href="/submissions/<%=@comment.postid%>" >context</a>
+                      <%end%>
                     </span>
                         <% if @comment.user_id == session[:user_id] then %>   
                           <a href=<%=edit_comment_path(@comment)%>>| edit</a>  

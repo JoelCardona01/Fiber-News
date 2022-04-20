@@ -29,7 +29,13 @@
                                 
           <td style="text-align:right;padding-right:4px;">
             <span class="pagetop">
-              <a href="login?goto=news">login</a>
+             <!-- <a href="login?goto=news">login</a> -->
+             <% if User.find_by(id: session[:user_id]).nil? then%>
+             <%= link_to "Log In with Google", '/auth/google_oauth2', method: :post %>
+             <%else%>
+             <%= link_to User.find_by(id: session[:user_id]).name, edit_user_path(User.find_by(id: session[:user_id])) %>
+             <%= link_to ' | Logout' , '/sessions/logout' %>
+             <%end%>
             </span>
           </td>
         </tr>
@@ -70,10 +76,12 @@
                     <% end %>
                     <% if not @submission.nil? %>
                     <span class="navs">
-                      |
-                      <a href="">parent</a>
-                      |
-                      <a href="" rel="nofollow">context</a>
+                      <% if not Comment.find_by(id: @comment.parentid).nil? then%>
+                      | <a href=<%=comments_tree_path(@comment.parentid)%>>parent</a>
+                      <%end%>
+                      <% if not Submission.find_by(id: @comment.postid).nil? %>
+                      | <a href="/submissions/<%=@comment.postid%>" >context</a>
+                      <%end%>
                     </span>
                     <%end%>
                         <% if @comment.user_id == session[:user_id] then %>
@@ -115,7 +123,11 @@
                       <input type="hidden" name="comment[likes]" value="1">
                       <textarea name="comment[text]" rows="6" cols="60"></textarea>
                       <br><br>
+                      <% if User.find_by(id: session[:user_id]).nil? %>
+                      <button> <%= link_to "reply", '/auth/google_oauth2', method: :post, :data => {:confirm => 'Do you want to login?'} %> </button>
+                      <%else%>
                       <input type="submit" value="reply">
+                      <%end%>
                     </form>
                   </td>
               </tr>
