@@ -63,7 +63,7 @@
                             
                             #...cercam la posicio del comentari pare
                             p = 0
-                            while p < @comments.size and @comments[p].id != @comments[i].parentid do
+                            while p < @comments.length and @comments[p].id != @comments[i].parentid do
                               p += 1
                             end
                             #Quan sortim del bucle, "p" sera la posicio del pare
