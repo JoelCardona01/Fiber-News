@@ -59,7 +59,7 @@
                         
                         #Per a tot comentari, si te pare...
                         for i in 0..@comments.length-1
-                          if @comments[i].parentid != 0
+                          if not @comments[i].nil? and @comments[i].parentid != 0
                             
                             #...cercam la posicio del comentari pare
                             p = 0
@@ -72,7 +72,9 @@
                               #Movem el comentari de la posicio "i", a la posicio seguent a la del seu pare i actualitzam el seu nivell (un mes que el seu pare)
                               @comments.insert(p+1, @comments.delete_at(i))
                               nivellComment.insert(p+1, nivellComment.delete_at(i))
-                              nivellComment[p+1] = nivellComment[p] +1
+                              if not nivellComment[p].nil? then
+                                  nivellComment[p+1] = nivellComment[p] +1
+                              end
                               i -= 1
                             end
                             
@@ -80,6 +82,7 @@
                         end
                         %>
                         <% for i in 0..@comments.length-1%>
+                        <% if not @comments[i].nil?%> 
                         <tr class="athing comtr" id= <%=@comments[i].id%> >
                           <td>
                             <table border="0">
@@ -160,6 +163,7 @@
                             </table>
                         </td>
                     </tr>
+                    <%end%>
                 <%end%>
                 </table>
             </td>
