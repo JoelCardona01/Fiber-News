@@ -132,11 +132,9 @@ GEM
     omniauth-oauth2 (1.7.2)
       oauth2 (~> 1.4)
       omniauth (>= 1.9, < 3)
-
     omniauth-rails_csrf_protection (1.0.1)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
-
     pg (1.2.3)
     public_suffix (4.0.6)
     puma (5.3.1)
@@ -245,11 +243,9 @@ DEPENDENCIES
   dotenv-rails
   jbuilder (= 2.10.0)
   listen (= 3.4.1)
-
   omniauth
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
-
   pg (= 1.2.3)
   puma (= 5.3.1)
   rack-mini-profiler (= 2.3.1)
