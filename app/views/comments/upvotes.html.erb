@@ -72,7 +72,7 @@
                             <span class="comhead">
                               <a href=<%=user_path(Comment.find(comments.comment_id).user)%> class="hnuser"> <%= Comment.find(comments.comment_id).user.name%> </a>
                               <span class="age">
-                                <a href="/comments/<%=comments.comment_id%>/tree"><%=time_ago_in_words(Comment.find(comments.comment_id).created_at)%> ago</a>
+                                <a href="/comments/tree/<%=comments.comment_id%>"><%=time_ago_in_words(Comment.find(comments.comment_id).created_at)%> ago</a>
                               </span>
                     
                               <span class="navs">
