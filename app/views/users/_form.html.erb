@@ -42,6 +42,11 @@
           <td valign="top">email:</td>
           <td><%= @user.email %></td>
         </tr>
+        
+        <tr>
+          <td valign="top">API-KEY:</td>
+          <td><%=@user.APIKey%></td>
+        </tr>
 
    </table>
   <br><%= form.submit "Update"%>
