@@ -9,8 +9,8 @@ class SubmissionsController < ApplicationController
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
     end
      respond_to do |format|
-            format.html { redirect_to submissions_path }
-            format.json { render :index }
+            format.html {  }
+            format.json { render json: @submissions }
     end
   end
 
