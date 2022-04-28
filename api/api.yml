@@ -187,7 +187,6 @@ components:
           example: "Soy un texto de ejemplo, aqui va el cuerpo del tweet si es de tipo ask"
 
           
-          
     Tweet:
       type: object
       properties:
@@ -262,3 +261,4 @@ components:
       type: apiKey
       name: X-API-KEY #Custom headers in rails apps must have the X- prefix
       in: header
+
