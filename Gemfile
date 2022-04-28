@@ -40,7 +40,8 @@ gem 'dotenv-rails'
 gem 'omniauth-google-oauth2'
 gem "omniauth-rails_csrf_protection"
 
-
+#API
+gem 'rack-cors'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 # Uncomment the following line if you're running Rails
