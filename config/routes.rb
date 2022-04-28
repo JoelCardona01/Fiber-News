@@ -15,6 +15,10 @@ Rails.application.routes.draw do
     get '/submissions/upvoted/:user_id', to: 'submissions#userUpvotes', as: 'user_submissions_upvotes'
     get '/comments/upvoted/:user_id', to: 'comments#userUpvotes', as: 'user_comments_upvotes'
     get '/submissions/url/*url', to: 'submissions#submFromUrl', as: 'subm_host'
+    
+    #Rutas de la api
+    get '/api/submissions', to: 'submissions#index', as: 'index'
+    
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'
 

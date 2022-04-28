@@ -8,6 +8,10 @@ class SubmissionsController < ApplicationController
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
     end
+     respond_to do |format|
+            format.html { redirect_to submissions_path }
+            format.json { render :index }
+    end
   end
 
   # GET /submissions/1
