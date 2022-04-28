@@ -8,7 +8,7 @@ class SubmissionsController < ApplicationController
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
     end
-     respond_to do |format|
+    respond_to do |format|
             format.html {  }
             format.json { render json: @submissions }
     end
@@ -17,6 +17,16 @@ class SubmissionsController < ApplicationController
   # GET /submissions/1
   # GET /submissions/1.json
   def show
+    @comments= Comment.all.where(:postid => params[:id]).order(:parentid)
+    if !session[:user_id].nil?
+      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+      @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
+    end
+  end
+  
+  # GET /submissions/1
+  # GET /submissions/1.json
+  def showapi
     @comments= Comment.all.where(:postid => params[:id]).order(:parentid)
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
