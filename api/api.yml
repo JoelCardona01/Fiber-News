@@ -4,8 +4,24 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://44.202.100.211:8080'
+  - url: 'http://18.208.186.50:8080'
 paths:
+  /api/submissions:
+    get:
+      tags:
+      - submissions
+      summary: Retrieves all the submissions posted on the app
+      description: Returns a set of submissions
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+                
   /submissions/{postid}/api:
     get:
       tags:
@@ -140,6 +156,37 @@ paths:
                   $ref: '#/components/examples/error404'
 components:
   schemas:
+    Submission:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 22
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        url:
+          type: string
+          example: "https://atenea.upc.edu/mod/page/view.php?id=3328883"
+        title:
+          type: string
+          example : "soy un post"
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        votes:
+          type: integer
+          example: 32
+        text:
+          type: string
+          example: "Soy un texto de ejemplo, aqui va el cuerpo del tweet si es de tipo ask"
+
+          
     Tweet:
       type: object
       properties:
@@ -214,3 +261,4 @@ components:
       type: apiKey
       name: X-API-KEY #Custom headers in rails apps must have the X- prefix
       in: header
+
