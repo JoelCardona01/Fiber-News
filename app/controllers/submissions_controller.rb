@@ -36,13 +36,18 @@ class SubmissionsController < ApplicationController
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
     end
-    respond_to do |format|
-            format.html {  }
-            format.json { render json: @submissions }
-    end
     render "index"
   end
   
+  def submFromUrlJSON
+     @submissions = Submission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
+    if !session[:user_id].nil?
+      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+    end
+    respond_to do |format|
+        format.json { render json: @submissions }
+    end
+  end
   def submFromUrl
     params.permit!
     @submissions = Submission.all.where("url like ?", "%#{params[:url].to_s}%").order(created_at: :desc)
