@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   version: 1.0.0
   title: Fiber News
-  description: "This is the Open API documentation for the REST API of our beloved application **Wall of Tweets** deployed at <https://asw-api-demo.herokuapp.com/>. <br>All operations are executable. Only one operation requires authentication: `deleteTweet`. In this case, you must **Authorize** your request by providing the api_key vaule you got when you created the tweet."
+  description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
   - url: 'http://44.202.100.211:8080'
 paths:
