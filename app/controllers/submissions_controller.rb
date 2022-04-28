@@ -36,6 +36,10 @@ class SubmissionsController < ApplicationController
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
     end
+    respond_to do |format|
+            format.html {  }
+            format.json { render json: @submissions }
+    end
     render "index"
   end
   
