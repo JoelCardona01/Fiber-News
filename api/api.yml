@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://18.208.186.50:8080'
+  - url: 'http://54.152.123.23:8080'
 paths:
   /api/submissions:
     get:
@@ -22,6 +22,40 @@ paths:
                 items:
                   $ref: '#/components/schemas/Submission'
                 
+                
+  /api/submissions/user/{user_id}:
+    get:
+      tags:
+      - submissions
+      summary: Retrieves all the submissions posted from the user with id user_id
+      description: Returns a set of submissions
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+                  
   /submissions/{postid}/api:
     get:
       tags:
@@ -255,7 +289,7 @@ components:
       value:
         status: 404
         error: "Not Found"
-        message: "No Tweet with that ID"
+        message: "No user with that id"
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
