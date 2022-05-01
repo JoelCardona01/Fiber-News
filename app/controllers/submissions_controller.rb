@@ -39,15 +39,21 @@ class SubmissionsController < ApplicationController
     render "index"
   end
   
-  def submFromUrlJSON
-     @submissions = Submission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
-    if !session[:user_id].nil?
-      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
-    end
+  def submFromUserJSON
     respond_to do |format|
+      if User.find_by(:id => params[:user_id]).nil?
+        format.json { render json: {"status": 404, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 404
+          return } 
+      else 
+        @submissions = Submission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
+        if !session[:user_id].nil?
+          @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
+        end
         format.json { render json: @submissions }
+      end
     end
   end
+  
   def submFromUrl
     params.permit!
     @submissions = Submission.all.where("url like ?", "%#{params[:url].to_s}%").order(created_at: :desc)
