@@ -39,6 +39,7 @@ class SubmissionsController < ApplicationController
     render "index"
   end
   
+  #GET /api/submissions/user/:user_id
   def submFromUserJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
@@ -200,6 +201,41 @@ class SubmissionsController < ApplicationController
         else
           format.html { render :new }
           format.json { render json: @comment.errors, status: :unprocessable_entity }
+        end
+      end
+    end
+  end
+  
+  def commentAPI
+    respond_to do |format|
+      elsif User.find_by(APIKey => request.header["X-API-Key"]).nil?
+        render json: {
+          "status":403,
+          "error": "Forbidden",
+          "message": "Your api key (X-API-KEY Header) is not valid"
+        }
+        status: 403
+        return
+      elsif request.header["X-API_KEY"].nil?
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        }
+        status: 403
+        return
+      else
+        params.permit!
+        if !params[:comment][:text].blank? ##Si el text no es buit, aleshores creem el comentari.
+          @comment = Comment.new(params[:comment])
+            if @comment.save
+              format.html { redirect_to "/submissions/"+@comment.postid.to_s }
+              format.json { render :show, status: :created, location: @comment }
+            else
+              format.html { render :new }
+              format.json { render json: @comment.errors, status: :unprocessable_entity }
+            end
+          end
         end
       end
     end
