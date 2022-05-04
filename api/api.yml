@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://54.152.123.23:8080'
+  - url: 'http://54.226.124.0:8080'
 paths:
   /api/submissions:
     get:
@@ -21,7 +21,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Submission'
-                
                 
   /api/submissions/user/{user_id}:
     get:
@@ -47,7 +46,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Submission'
         404:
-          description: User not found
+          description: 'Error: Not Found'
           content:
             application/json:
               schema:
@@ -55,6 +54,15 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
+        410:
+          description: User does not exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error410'
                   
   /submissions/{postid}/api:
     get:
@@ -263,10 +271,10 @@ components:
       properties:
         status:
           type: integer
-          enum: [400, 401, 403, 404, 409]
+          enum: [400, 401, 403, 404, 409, 410]
         error: 
           type: string
-          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict"]
+          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists"]
         message: 
           type: string
   examples:
@@ -289,7 +297,17 @@ components:
       value:
         status: 404
         error: "Not Found"
-        message: "No user with that id"
+        message: "Bad request"
+    error409:
+      value:
+        status: 409
+        error: "Conflict"
+        message: "There was a conflict"
+    error410:
+      value:
+        status: 410
+        error: "The user does not exists"
+    
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

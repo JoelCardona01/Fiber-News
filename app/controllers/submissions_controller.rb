@@ -42,7 +42,7 @@ class SubmissionsController < ApplicationController
   def submFromUserJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
-        format.json { render json: {"status": 404, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 404
+        format.json { render json: {"status": 410, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 410
           return } 
       else 
         @submissions = Submission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
