@@ -34,6 +34,50 @@ class CommentsController < ApplicationController
     
   end
   
+  #POST /api/submissions/:submission_id/comment
+  def commentAPI
+    respond_to do |format|
+      if User.find_by(APIKey => request.header["X-API-Key"]).nil?
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 403
+        }
+      elsif request.header["X-API_KEY"].nil?
+        format.json{
+           render json: {
+            "status":401,
+            "error": "Unauthorized",
+            "message": "You provided no api key (X-API-KEY Header)"
+          },
+          status: 401
+        }
+      else
+        @user = User.find_by(APIKey => request.header["X-API-Key"])
+        params.permit!
+        if !params[:comment][:text].blank? ##Si el text no es buit, aleshores creem el comentari.
+            @comment = Comment.new(params[:comment])
+            if @comment.save
+              format.json { 
+                render json: {
+                  "status":201,
+                  "comment":@comment,
+                  "message": "Comment posted",
+                },
+                status: :ok
+              }
+              
+            else
+              format.json { render json: @comment.errors, status: :unprocessable_entity }
+            end
+        end
+      end
+    end
+  end
+  
   # GET /comments/1/edit
   def edit
   end
