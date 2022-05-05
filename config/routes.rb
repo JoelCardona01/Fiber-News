@@ -17,11 +17,19 @@ Rails.application.routes.draw do
     get '/submissions/url/*url', to: 'submissions#submFromUrl', as: 'subm_host'
     
     #Rutas de la api
+<<<<<<< HEAD
     get '/api/submissions', to: 'submissions#index', as: 'index'
     get '/api/submissions/user/:user_id', to: 'submissions#submFromUrl', as: 'subm_user'
     get '/api/submissions/:postid', to: 'submissions#showapi', as: 'subm'
     
     
+=======
+    get '/api/submissions', to: 'submissions#indexAPI', as: 'indexAPI'
+    post '/api/submissions', to: 'submissions#new', as: 'createAPI'
+    get '/api/submissions/user/:user_id', to: 'submissions#submFromUserJSON', as: 'subm_user_JSON'    
+    get '/api/users/:user_id', to: 'users#userJSON', as: 'user_JSON'
+
+>>>>>>> develop2
     
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'

@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://18.208.186.50:8080'
+  - url: 'http://54.226.124.0:8080'
 paths:
   /api/submissions:
     get:
@@ -22,6 +22,48 @@ paths:
                 items:
                   $ref: '#/components/schemas/Submission'
                 
+  /api/submissions/user/{user_id}:
+    get:
+      tags:
+      - submissions
+      summary: Retrieves all the submissions posted from the user with id user_id
+      description: Returns a set of submissions
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        410:
+          description: User does not exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error410'
+                  
   /submissions/{postid}/api:
     get:
       tags:
@@ -46,6 +88,48 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Tweet'
+                  
+  /api/users/{userId}:
+    get:
+      tags:
+      - user
+      summary: Retives the information about the user identified with userId. 
+      description: Returns the information stored about the user.
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose information to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        410:
+          description: User does not exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error410'
   /tweets/{tweetId}:
     get:
       tags:
@@ -184,8 +268,113 @@ components:
           example: 32
         text:
           type: string
-          example: "Soy un texto de ejemplo, aqui va el cuerpo del tweet si es de tipo ask"
-
+          example: "Soy un texto de ejemplo, aqui va el cuerpo de la submission si es de tipo ask"
+    Likedsubmission:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        submission_id:
+          type: integer
+          format: int64
+          example: 1
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        post_id:
+          type: integer
+          format: int64
+          example: 1
+        parentid:
+          type: integer
+          format: int64
+          example: 2
+        likes:
+          type: integer
+          format: int64
+          example: 10
+        text:
+          type: string
+          example: "Soy un texto de ejemplo, aqui va el cuerpo del comment."
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+    Likedcomment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        comment_id:
+          type: integer
+          format: int64
+          example: 4
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+    User:
+      type: object
+      properties:
+        id: 
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          format: string
+          example: "Quim Motger"
+        email:
+          type: string
+          format: string
+          example: "quim.motger@estudiantat.upc.edu"
+        karma:
+          type: integer
+          format: int64
+          example: 1
+        about:
+          type: string
+          format: string
+          example: "Soc un estudiant de la FIB"
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+    
+      
+        
           
     Tweet:
       type: object
@@ -229,10 +418,10 @@ components:
       properties:
         status:
           type: integer
-          enum: [400, 401, 403, 404, 409]
+          enum: [400, 401, 403, 404, 409, 410]
         error: 
           type: string
-          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict"]
+          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists"]
         message: 
           type: string
   examples:
@@ -255,7 +444,17 @@ components:
       value:
         status: 404
         error: "Not Found"
-        message: "No Tweet with that ID"
+        message: "Bad request"
+    error409:
+      value:
+        status: 409
+        error: "Conflict"
+        message: "There was a conflict"
+    error410:
+      value:
+        status: 410
+        error: "The user does not exists"
+    
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

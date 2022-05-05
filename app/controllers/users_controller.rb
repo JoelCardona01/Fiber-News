@@ -36,6 +36,31 @@ class UsersController < ApplicationController
       end
     end
   end
+  
+  #GET /api/users/:user_id
+  def userJSON
+    respond_to do |format|
+      @user = User.find_by(:id => params[:user_id])
+      if @user.nil? 
+        format.json { render json: {"status": 410, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 410
+          return } 
+      else
+        format.json { 
+          userJson = {
+            "id": @user.id,
+            "name": @user.name,
+            "email": @user.email,
+            "karma": @user.karma,
+            "about": @user.about,
+            "created_at": @user.created_at,
+            "updated_at": @user.updated_at,
+            
+          }
+          render json: userJson
+        }
+      end
+    end
+  end
 
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
