@@ -19,6 +19,9 @@ Rails.application.routes.draw do
     #Rutas de la api
     get '/api/submissions', to: 'submissions#indexAPI', as: 'indexAPI'
     post '/api/submissions', to: 'submissions#new', as: 'createAPI'
+    get '/api/submissions/user/:user_id', to: 'submissions#submFromUserJSON', as: 'subm_user_JSON'    
+    get '/api/users/:user_id', to: 'users#userJSON', as: 'user_JSON'
+
     
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'
