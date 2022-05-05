@@ -1,6 +1,6 @@
 class SubmissionsController < ApplicationController
   before_action :set_submission, only: [:show, :edit, :update, :destroy, :vote, :unvote]
-
+  skip_before_action :verify_authenticity_token
   # GET /submissions
   # GET /submissions.json
   def index
@@ -56,6 +56,7 @@ class SubmissionsController < ApplicationController
     render "index"
   end
   
+  #GET /api/submissions/user/:user_id
   def submFromUserJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
@@ -249,6 +250,68 @@ class SubmissionsController < ApplicationController
       @likedsubmission.destroy
     end
     redirect_to request.referrer
+  end
+  
+  #POST /api/submissions/:submission_id/comment
+  def commentAPI
+    logger.debug request.headers["X-API-Key"]
+    logger.debug 
+    respond_to do |format|
+      @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+      logger.debug "\n\n"
+      logger.debug @user.APIKey  
+      if @user.nil?
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 403
+        }
+      elsif request.headers["X-API-KEY"].blank? then
+        format.json{
+           render json: {
+            "status":401,
+            "error": "Unauthorized",
+            "message": "You provided no api key (X-API-KEY Header)"
+          },
+          status: 401
+        }
+      else
+        params.permit!
+        if !params[:text].blank? ##Si el text no es buit, aleshores creem el comentari.
+            @comment = Comment.new
+            @comment.user_id = @user.id
+            @comment.text = params[:text]
+            @comment.postid = params[:submission_id]
+            @comment.parentid = 0
+            if Submission.find_by(:id => params[:submission_id]).nil? then
+              format.json{
+                 render json: {
+                  "status":432,
+                  "error": "Submission not found",
+                  "message": "It does not exists any submission with the same id as you provided in the query parameters"
+                },
+                status: 432
+              }
+            else
+              if @comment.save
+                format.json { 
+                  render json: {
+                    "status":201,
+                    "comment":@comment,
+                    "message": "Comment posted",
+                  },
+                  status: :ok
+                }
+              else
+              format.json { render json: @comment.errors, status: :unprocessable_entity }
+              end
+            end
+        end
+      end
+    end
   end
   
   def comment

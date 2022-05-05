@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: [:show, :edit, :update, :destroy, :like, :unvote]
-
+  before_action :set_comment, only: [:show, :edit, :update, :destroy, :like, :unvote, :commentAPI]
+  skip_before_action :verify_authenticity_token
   # GET /comments
   # GET /comments.json
   def index
@@ -33,6 +33,7 @@ class CommentsController < ApplicationController
       render :upvotes
     
   end
+  
   
   # GET /comments/1/edit
   def edit
