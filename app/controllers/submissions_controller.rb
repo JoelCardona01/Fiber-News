@@ -1,6 +1,6 @@
 class SubmissionsController < ApplicationController
   before_action :set_submission, only: [:show, :edit, :update, :destroy, :vote, :unvote]
-
+  skip_before_action :verify_authenticity_token
   # GET /submissions
   # GET /submissions.json
   def index
@@ -188,6 +188,57 @@ class SubmissionsController < ApplicationController
       @likedsubmission.destroy
     end
     redirect_to request.referrer
+  end
+  
+  #POST /api/submissions/:submission_id/comment
+  def commentAPI
+    logger.debug request.headers["X-API-Key"]
+    
+    respond_to do |format|
+      if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 403
+        }
+      elsif request.headers["X-API_KEY"].nil?
+        format.json{
+           render json: {
+            "status":401,
+            "error": "Unauthorized",
+            "message": "You provided no api key (X-API-KEY Header)"
+          },
+          status: 401
+        }
+      else
+        @user = User.find_by(:APIKey => request.headers["X-API-Key"])
+        params.permit!
+        if !params[:comment][:text].blank? ##Si el text no es buit, aleshores creem el comentari.
+            puts request.headers["X-API-Key"]
+            @comment = Comment.new
+            @comment.user_id = @user.id
+            @comment.text = params[:comment][:text]
+            @comment.postid = params[:submission_id]
+            @comment.parent_id = 0
+            if @comment.save
+              format.json { 
+                render json: {
+                  "status":201,
+                  "comment":@comment,
+                  "message": "Comment posted",
+                },
+                status: :ok
+              }
+              
+            else
+              format.json { render json: @comment.errors, status: :unprocessable_entity }
+            end
+        end
+      end
+    end
   end
   
   def comment

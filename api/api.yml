@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://54.226.124.0:8080'
+  - url: 'http://54.197.158.237:8080'
 paths:
   /api/submissions:
     get:
@@ -137,6 +137,8 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error410'
+      security:
+      - ApiKeyAuth: []
                 
                   
   /api/users/{userId}:
