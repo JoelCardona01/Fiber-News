@@ -8,32 +8,15 @@ class SubmissionsController < ApplicationController
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
     end
-  end
-  
-  # GET /api/submissions
-    def indexAPI
-    @submissions = Submission.all.order(votes: :desc)
-    if !session[:user_id].nil?
-      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
-    end
      respond_to do |format|
-        format.json { render json: @submissions }
+            format.html {  }
+            format.json { render json: @submissions }
     end
   end
 
   # GET /submissions/1
   # GET /submissions/1.json
   def show
-    @comments= Comment.all.where(:postid => params[:id]).order(:parentid)
-    if !session[:user_id].nil?
-      @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
-      @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
-    end
-  end
-  
-  # GET /submissions/1
-  # GET /submissions/1.json
-  def showapi
     @comments= Comment.all.where(:postid => params[:id]).order(:parentid)
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
@@ -115,7 +98,7 @@ class SubmissionsController < ApplicationController
       elsif (@submission.url=="") 
         if @submission.save
             format.html { redirect_to submissions_path }
-            format.json { render @submission, status: :created, location: @submission }
+            format.json { render :show, status: :created, location: @submission }
           else
             format.html { render :new }
             format.json { render json: @submission.errors, status: :unprocessable_entity }
@@ -151,51 +134,6 @@ class SubmissionsController < ApplicationController
     end 
   end
 
-  # POST /api/submissions
-  # POST /api/submissions.json
-  def createAPI
-    @submission = Submission.new(submission_params)
-    
-    respond_to do |format|
-      if @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } ##Comprovem que el titol no es buit
-      elsif (@submission.url=="") 
-        if @submission.save
-            format.html { redirect_to submissions_path }
-            format.json { render @submission, status: :created, location: @submission }
-          else
-            format.html { render :new }
-            format.json { render json: @submission.errors, status: :unprocessable_entity }
-          end
-      elsif ((@submission.url!="" && Submission.find_by(url: @submission.url).nil?))##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
-        if @submission.text!=""
-          text = @submission.text
-          @submission.text=""
-          if @submission.save
-            @comment= Comment.new(:text => text, :user_id =>@submission.user_id, :postid => @submission.id, :parentid => "0", :likes => 0)
-            @comment.save
-            format.html { redirect_to submissions_path }
-            format.json { render :show, status: :created, location: @submission }
-          else
-            format.html { render :new }
-            format.json { render json: @submission.errors, status: :unprocessable_entity }
-          end
-        else
-          if @submission.save
-            format.html { redirect_to submissions_path }
-            format.json { render :show, status: :created, location: @submission }
-          else
-            format.html { render :new }
-            format.json { render json: @submission.errors, status: :unprocessable_entity }
-          end
-        end
-       
-      else ##Ja existia una submission amb el mateix url de manera que redirigim a la submission amb el mateix url.
-        @submission2 = Submission.find_by(url: @submission.url)
-        format.html {redirect_to @submission2 }
-      end
-       
-    end 
-  end
   # PATCH/PUT /submissions/1
   # PATCH/PUT /submissions/1.json
   def update
