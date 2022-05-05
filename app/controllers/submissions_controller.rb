@@ -193,9 +193,12 @@ class SubmissionsController < ApplicationController
   #POST /api/submissions/:submission_id/comment
   def commentAPI
     logger.debug request.headers["X-API-Key"]
-    
+    logger.debug 
     respond_to do |format|
-      if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+      logger.debug "\n\n"
+      logger.debug @user.APIKey  
+      if @user.nil?
         format.json{
           render json: {
             "status":403,
@@ -204,7 +207,7 @@ class SubmissionsController < ApplicationController
           },
           status: 403
         }
-      elsif request.headers["X-API_KEY"].nil?
+      elsif request.headers["X-API-KEY"].blank? then
         format.json{
            render json: {
             "status":401,
@@ -214,27 +217,35 @@ class SubmissionsController < ApplicationController
           status: 401
         }
       else
-        @user = User.find_by(:APIKey => request.headers["X-API-Key"])
         params.permit!
-        if !params[:comment][:text].blank? ##Si el text no es buit, aleshores creem el comentari.
-            puts request.headers["X-API-Key"]
+        if !params[:text].blank? ##Si el text no es buit, aleshores creem el comentari.
             @comment = Comment.new
             @comment.user_id = @user.id
-            @comment.text = params[:comment][:text]
+            @comment.text = params[:text]
             @comment.postid = params[:submission_id]
-            @comment.parent_id = 0
-            if @comment.save
-              format.json { 
-                render json: {
-                  "status":201,
-                  "comment":@comment,
-                  "message": "Comment posted",
+            @comment.parentid = 0
+            if Submission.find_by(:id => params[:submission_id]).nil? then
+              format.json{
+                 render json: {
+                  "status":432,
+                  "error": "Submission not found",
+                  "message": "It does not exists any submission with the same id as you provided in the query parameters"
                 },
-                status: :ok
+                status: 432
               }
-              
             else
+              if @comment.save
+                format.json { 
+                  render json: {
+                    "status":201,
+                    "comment":@comment,
+                    "message": "Comment posted",
+                  },
+                  status: :ok
+                }
+              else
               format.json { render json: @comment.errors, status: :unprocessable_entity }
+              end
             end
         end
       end

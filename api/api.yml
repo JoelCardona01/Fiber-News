@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://54.197.158.237:8080'
+  - url: 'http://34.229.213.245:8080'
 paths:
   /api/submissions:
     get:
@@ -54,7 +54,7 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
-        410:
+        433:
           description: User does not exists
           content:
             application/json:
@@ -119,6 +119,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Submission'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+                
+        403:
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
         404:
           description: 'Error: Not Found'
           content:
@@ -128,15 +147,15 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
-        410:
-          description: User does not exists
+        432:
+          description: 'Error: Submission does not exists'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-                  $ref: '#/components/examples/error410'
+                  $ref: '#/components/examples/error411'
       security:
       - ApiKeyAuth: []
                 
@@ -173,7 +192,7 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
-        410:
+        433:
           description: User does not exists
           content:
             application/json:
@@ -470,10 +489,10 @@ components:
       properties:
         status:
           type: integer
-          enum: [400, 401, 403, 404, 409, 410]
+          enum: [400, 401, 403, 404, 409, 433, 432]
         error: 
           type: string
-          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists"]
+          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists", "Submission does not exists"]
         message: 
           type: string
   examples:
@@ -502,10 +521,14 @@ components:
         status: 409
         error: "Conflict"
         message: "There was a conflict"
-    error410:
+    error433:
       value:
-        status: 410
+        status: 433
         error: "The user does not exists"
+    error432:
+      value:
+        status: 432
+        error: "It does not exists any submissions with the same id as provided"
     
   securitySchemes:
     ApiKeyAuth:
