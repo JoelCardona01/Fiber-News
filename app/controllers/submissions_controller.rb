@@ -8,11 +8,6 @@ class SubmissionsController < ApplicationController
     if !session[:user_id].nil?
       @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id])
     end
-<<<<<<< HEAD
-    respond_to do |format|
-            format.html {  }
-            format.json { render json: @submissions }
-=======
   end
   
   # GET /api/submissions
@@ -23,7 +18,6 @@ class SubmissionsController < ApplicationController
     end
      respond_to do |format|
         format.json { render json: @submissions }
->>>>>>> develop2
     end
   end
 
