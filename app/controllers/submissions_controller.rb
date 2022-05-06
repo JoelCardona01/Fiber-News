@@ -84,11 +84,11 @@ class SubmissionsController < ApplicationController
         format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
           return } 
       else 
-        @likedsubmissions = Likedsubmission.all.where(:user_id => session[:user_id]).order(created_at: :desc)
+        @likedsubmissions = Likedsubmission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
         format.json { 
           submissions = []
           @likedsubmissions.each do |ls|
-            submissions.put(Submission.find_by(:id => ls.submission_id))
+            submissions.push(Submission.find_by(:id => ls.submission_id))
           end
           render json: submissions.to_json, status: :ok
         }
