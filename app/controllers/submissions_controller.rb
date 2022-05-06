@@ -13,6 +13,15 @@ class SubmissionsController < ApplicationController
             format.json { render json: @submissions }
     end
   end
+  
+   # GET /api/submissions
+  def indexAPI
+    @submissions = Submission.all.order(votes: :desc)
+  
+     respond_to do |format|
+        format.json { render json: @submissions }
+    end
+  end
 
   # GET /submissions/1
   # GET /submissions/1.json
@@ -43,7 +52,7 @@ class SubmissionsController < ApplicationController
   def submFromUserJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
-        format.json { render json: {"status": 410, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 410
+        format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
           return } 
       else 
         @submissions = Submission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
@@ -68,6 +77,25 @@ class SubmissionsController < ApplicationController
     @submissions = Likedsubmission.all.where(:user_id => session[:user_id]).order(created_at: :desc)
     render :upvotes
   end
+  
+  def userUpvotesJSON
+    respond_to do |format|
+      if User.find_by(:id => params[:user_id]).nil?
+        format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
+          return } 
+      else 
+        @likedsubmissions = Likedsubmission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
+        format.json { 
+          submissions = []
+          @likedsubmissions.each do |ls|
+            submissions.push(Submission.find_by(:id => ls.submission_id))
+          end
+          render json: submissions.to_json, status: :ok
+        }
+      end
+    end
+  end
+  
 
   # GET /submissions/1/edit
   def edit
@@ -267,6 +295,7 @@ class SubmissionsController < ApplicationController
       end
     end
   end
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.
