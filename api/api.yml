@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://34.229.213.245:8080'
+  - url: 'http://52.87.201.131:8080'
 paths:
   /api/submissions:
     get:
@@ -62,8 +62,50 @@ paths:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-                  $ref: '#/components/examples/error410'
+                  $ref: '#/components/examples/error433'
                   
+  /api/submissions/upvoted/user/{user_id}:
+    get:
+        tags:
+        - submissions
+        summary: Retrieves all the upvoted submissions from the user with id user_id
+        description: Returns a set of submissions
+        parameters:
+        - name: user_id
+          in: path
+          description: ID of the user
+          required: true
+          schema:
+            type: integer
+            format: int64
+        responses:
+          200:
+            description: successful operation
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Submission'
+          404:
+            description: 'Error: Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResult'
+                examples:
+                  errorExample:
+                    $ref: '#/components/examples/error404'
+          433:
+            description: User does not exists
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResult'
+                examples:
+                  errorExample:
+                    $ref: '#/components/examples/error433'
+                    
   /submissions/{postid}/api:
     get:
       tags:
@@ -155,7 +197,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-                  $ref: '#/components/examples/error411'
+                  $ref: '#/components/examples/error432'
       security:
       - ApiKeyAuth: []
                 
@@ -200,7 +242,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-                  $ref: '#/components/examples/error410'
+                  $ref: '#/components/examples/error433'
   /tweets/{tweetId}:
     get:
       tags:
