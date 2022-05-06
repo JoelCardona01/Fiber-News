@@ -34,6 +34,25 @@ class CommentsController < ApplicationController
     
   end
   
+  #GET /api/comments/liked/user/:user_id
+  def userlikedJSON
+    respond_to do |format|
+      if User.find_by(:id => params[:user_id]).nil?
+        format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
+          return } 
+      else 
+        @likedcomments = Likedcomment.all.where(:user_id => params[:user_id]).order(created_at: :desc)
+        format.json { 
+          comments = []
+          @likedcomments.each do |cs|
+            comments.push(Comment.find_by(:id => cs.comment_id))
+          end
+          render json: comments.to_json, status: :ok
+        }
+      end
+    end
+  end
+  
   
   # GET /comments/1/edit
   def edit

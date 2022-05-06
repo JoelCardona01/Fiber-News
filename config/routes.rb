@@ -24,6 +24,9 @@ Rails.application.routes.draw do
     
     get '/api/users/:user_id', to: 'users#userJSON', as: 'user_JSON'
 
+    get '/api/comments/liked/user/:user_id', to: 'comments#userlikedJSON', as: 'user_comments_liked_json'
+
+
     post '/api/submissions/:submission_id/comment', to: 'submissions#commentAPI', as: 'commentAPI'
     
     #Google login

@@ -200,6 +200,48 @@ paths:
                   $ref: '#/components/examples/error432'
       security:
       - ApiKeyAuth: []
+      
+  /api/comments/liked/user/{user_id}:
+    get:
+      tags:
+      - comments
+      summary: Retrieves all the liked comments from the user with id user_id
+      description: Returns a set of comments
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        433:
+          description: User does not exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error433'
                 
                   
   /api/users/{userId}:
