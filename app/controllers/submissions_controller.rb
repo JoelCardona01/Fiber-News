@@ -78,6 +78,7 @@ class SubmissionsController < ApplicationController
     render :upvotes
   end
   
+  #GET /api/submissions/upvoted/user/:user_id
   def userUpvotesJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
