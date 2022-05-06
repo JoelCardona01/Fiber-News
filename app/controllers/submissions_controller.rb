@@ -221,22 +221,8 @@ class SubmissionsController < ApplicationController
   
   #POST /api/submissions/:submission_id/comment
   def commentAPI
-    logger.debug request.headers["X-API-Key"]
-    logger.debug 
     respond_to do |format|
-      @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
-      logger.debug "\n\n"
-      logger.debug @user.APIKey  
-      if @user.nil?
-        format.json{
-          render json: {
-            "status":403,
-            "error": "Forbidden",
-            "message": "Your api key (X-API-KEY Header) is not valid"
-          },
-          status: 403
-        }
-      elsif request.headers["X-API-KEY"].blank? then
+      if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
         format.json{
            render json: {
             "status":401,
@@ -244,8 +230,19 @@ class SubmissionsController < ApplicationController
             "message": "You provided no api key (X-API-KEY Header)"
           },
           status: 401
-        }
+          return
+      }
+      elsif User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+          format.json{
+            render json: {
+              "status":403,
+              "error": "Forbidden",
+              "message": "Your api key (X-API-KEY Header) is not valid"
+            },
+            status: 403
+          }
       else
+        @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
         params.permit!
         if !params[:text].blank? ##Si el text no es buit, aleshores creem el comentari.
             @comment = Comment.new
