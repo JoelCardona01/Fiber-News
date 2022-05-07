@@ -163,6 +163,10 @@ class CommentsController < ApplicationController
       end
     end
   end 
+  
+  def commentJSON 
+    
+  end
 
 def treecomment
      params.permit!
