@@ -145,7 +145,11 @@ class CommentsController < ApplicationController
   end 
   
   def commentJSON 
-    
+    @comment = Comment.new(comment_params)
+    if (@comment.text == "") 
+          format.json { render json: {"status": 400, "error": "Bad Request", "message": "Comment not found or too short"}, status: 400
+          return } 
+    end
   end
 
 def treecomment

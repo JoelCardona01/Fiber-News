@@ -21,7 +21,7 @@ Rails.application.routes.draw do
     post '/api/submissions', to: 'submissions#new', as: 'createAPI'
     get '/api/submissions/user/:user_id', to: 'submissions#submFromUserJSON', as: 'subm_user_JSON'    
     get '/api/users/:user_id', to: 'users#userJSON', as: 'user_JSON'
-    post '/api/comments/comment/:submission_id', to: 'comments#commentJSON'
+    post '/api/comments/:comment_id', to: 'comments#commentJSON'
     
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'

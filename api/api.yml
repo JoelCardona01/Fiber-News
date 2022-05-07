@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://54.226.124.0:8080'
+  - url: 'http://3.83.227.28:8080'
 paths:
   /api/submissions:
     get:
@@ -130,6 +130,67 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error410'
+                  
+  /api/comments/{commentId}:
+    post:
+      tags: 
+      - comment
+      summary: Reply the comment identified by commentId
+      description: Returns the comment created
+
+      parameters: 
+      - name: commentId
+        in: path
+        description: ID of the comment that will be replied
+        required: true
+        schema:
+          type: integer
+          format: int64
+          
+      requestBody:
+        description: Provide the content of the comment
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - text
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: 'This is an example comment'
+      
+        
+      responses:
+        200:
+          description: succesful operation
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+      security:
+      - ApiKeyAuth: []
+    
+  
   /tweets/{tweetId}:
     get:
       tags:
