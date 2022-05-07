@@ -165,12 +165,84 @@ class CommentsController < ApplicationController
   end 
   
   def commentJSON 
-    @comment = Comment.new(comment_params)
-    if (@comment.text == "") 
-          format.json { render json: {"status": 400, "error": "Bad Request", "message": "Comment not found or too short"}, status: 400
-          return } 
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+      respond_to do |format|
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      end
+      return
     end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+      if (Comment.find_by(id: params[:comment_id]).nil?)
+          respond_to do |format|
+            format.json{
+            render json: {
+              "status":400,
+              "error": "Not Found",
+              "message": "Comment not found"
+            },
+            status: 400
+            }
+        end
+        return
+      end
+    if (params[:text].blank?) 
+      respond_to do |format|  
+        format.json{
+           render json: {
+            "status":404,
+            "error": "Not Found",
+            "message": "Text of the comment not found or too short"
+          },
+          status: 400
+        }
+      end
+      return
+    end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+    @commentP = Comment.find(params[:comment_id])
+    @comment = Comment.new
+    @comment.user_id = @user.id
+    @comment.text = params[:text]
+    @comment.postid = @commentP.postid
+    @comment.parentid = params[:comment_id]
+    if @comment.save
+      respond_to do |format|
+        format.json { 
+          render json: {
+            "status":201,
+            "comment":@comment,
+            "message": "Comment posted",
+          },
+          status: 201
+        }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
+    end
+
   end
+
 
 def treecomment
      params.permit!
@@ -196,6 +268,6 @@ end
 
     # Only allow a list of trusted parameters through.
     def comment_params
-      params.require(:comment).permit(:text, :postid, :parentid, :likes, :user_id)
+      params.require(:comment).permit(:text, :postid, :parentid, :likes, :user_id, :comment_id)
     end
 end
