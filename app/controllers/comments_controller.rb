@@ -195,11 +195,11 @@ class CommentsController < ApplicationController
           respond_to do |format|
             format.json{
             render json: {
-              "status":400,
+              "status":404,
               "error": "Not Found",
               "message": "Comment not found"
             },
-            status: 400
+            status: 404
             }
         end
         return
@@ -208,7 +208,7 @@ class CommentsController < ApplicationController
       respond_to do |format|  
         format.json{
            render json: {
-            "status":404,
+            "status":400,
             "error": "Not Found",
             "message": "Text of the comment not found or too short"
           },
