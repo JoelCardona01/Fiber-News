@@ -307,7 +307,92 @@ class SubmissionsController < ApplicationController
   
   #DELETE /api/submissions/:submission_id/vote
   def APIUnvote
-    
+        if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+      respond_to do |format|
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      end
+      return
+    end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+    if (Submission.find_by(id: params[:submission_id]).nil?)
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "Submission not found"
+        },
+        status: 404
+        }
+        end
+    return
+    end
+    if request.headers["X-API-Key"] == Submission.find_by(id: params[:submission_id]).user.APIKey
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "You cannot unvote your own submission and will never be ablo to because you can't vote your own submission"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+    if Likedsubmission.all.find_by(user_id: @user.id, submission_id: params[:submission_id]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "You cannot unvote a submission that you haven't voted"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+    @submission = Submission.find_by(id: params[:submission_id])
+    @submission.votes = @submission.votes-1
+    if @submission.save
+      @likedsubmission = Likedsubmission.find_by(:submission_id => @submission.id, :user_id => @user.id)
+      @likedsubmission.destroy
+      respond_to do |format|
+        format.json { 
+          render json: {
+            "status":200,
+            "comment":@submission,
+            "message": "Submission unvoted",
+          },
+          status: 200
+        }
+      end
+    else
+      respond_to do |format|
+      format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
+    end
   end
   
   
@@ -400,7 +485,7 @@ class SubmissionsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-     def set_submission
+    def set_submission
       @submission = Submission.find(params[:id])
     end
 
