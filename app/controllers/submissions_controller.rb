@@ -210,6 +210,17 @@ class SubmissionsController < ApplicationController
 
   end
   
+  #POST /api/submissions/:submission_id/vote
+  def APIVote
+    
+  end
+  
+  #DELETE /api/submissions/:submission_id/vote
+  def APIUnvote
+    
+  end
+  
+  
   def unvote
     @submission.votes = @submission.votes - 1
     if @submission.save
@@ -218,6 +229,8 @@ class SubmissionsController < ApplicationController
     end
     redirect_to request.referrer
   end
+  
+  def 
   
   #POST /api/submissions/:submission_id/comment
   def commentAPI

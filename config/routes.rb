@@ -33,6 +33,8 @@ Rails.application.routes.draw do
 
 
     post '/api/comments/:comment_id', to: 'comments#commentJSON'
+    post '/api/submissions/:submission_id/vote', to: "submissions#APIVote"
+    delete '/api/submissions/:submission_id/vote', to: "submissions#APIUnvote"
 
     
     #Google login
