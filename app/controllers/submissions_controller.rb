@@ -209,7 +209,9 @@ class SubmissionsController < ApplicationController
       }
     return
     end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
     @submission = Submission.new(submission_params)
+    @submission.user_id = @user.id
     if @submission.title=="" 
       format.json{
         render json: {
@@ -219,8 +221,18 @@ class SubmissionsController < ApplicationController
         },
         status: 400
       }
-      return
-    elsif (@submission.url=="") 
+      
+    elsif (!@submission.url.nil? and  @submission.url != "" and  !(@submission.url=~ /\A#{URI::regexp(['http', 'https'])}\z/)) 
+       format.json{
+        render json: {
+          "status":400,
+          "error": "Bad request",
+          "message": "The url provided is not in a valid format."
+        },
+        status: 400
+      }
+       
+    elsif (@submission.url.nil? or @submission.url=="") 
       if @submission.save
          format.json { 
             render json: {
@@ -230,12 +242,12 @@ class SubmissionsController < ApplicationController
             },
             status: :ok
           }
-          return
+          
       else
         format.json { render json: @submission.errors, status: :unprocessable_entity }
       end
-    elsif ((@submission.url!="" && Submission.find_by(url: @submission.url).nil?))##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
-      if @submission.text!=""
+    elsif ((@submission.url!="" or !@submission.url.nil? and Submission.find_by(url: @submission.url).nil?))##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
+      if @submission.text!="" or !@submission.text.nil?
         text = @submission.text
         @submission.text=""
         if @submission.save
@@ -249,7 +261,7 @@ class SubmissionsController < ApplicationController
             },
             status: :ok
          }
-         return
+         
         else
           format.json { render json: @submission.errors, status: :unprocessable_entity }
         end
@@ -263,7 +275,7 @@ class SubmissionsController < ApplicationController
             },
             status: :ok
          }
-         return
+         
         else
           format.json { render json: @submission.errors, status: :unprocessable_entity }
         end
@@ -277,7 +289,7 @@ class SubmissionsController < ApplicationController
         },
         status: 400
       }
-      return
+      
     end
   end 
 end
