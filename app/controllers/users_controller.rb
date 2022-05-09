@@ -42,7 +42,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       @user = User.find_by(:id => params[:user_id])
       if @user.nil? 
-        format.json { render json: {"status": 410, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 410
+        format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
           return } 
       else
         format.json { 
