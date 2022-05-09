@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://52.87.17.250:8080'
+  - url: 'http://3.239.54.2:8080'
 paths:
   /api/submissions:
     get:
@@ -21,7 +21,60 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Submission'
-                
+                  
+    post:
+      tags:
+      - submissions
+      summary: Posts a submission with title, url or text values passed by parameter.
+      description: Post an url or ask submissions depending on the parameters received
+      parameters:
+        - in: header
+          name: "authenticity_token"
+          schema:
+            type: string
+          required: true
+      
+      requestBody:
+        description: "TO DO"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              items: 
+                $ref: '#/components/schemas/PostSubmission'
+              example:
+                tilte: "New Submission"
+           
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        400:
+          description: 'Error: Bad Request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+
   /api/submissions/user/{user_id}:
     get:
       tags:
@@ -596,6 +649,22 @@ components:
         text:
           type: string
           example: "Soy un texto de ejemplo, aqui va el cuerpo de la submission si es de tipo ask"
+    
+    PostSubmission:
+      type: object
+      required: ["title"]
+      properties:
+        url:
+          type: string
+          example: "https://atenea.upc.edu/mod/page/view.php?id=3328883"
+        title:
+          type: string
+          example : "soy un post"
+        text:
+          type: string
+          example: "Soy un texto de ejemplo, aqui va el cuerpo de la submission si es de tipo ask"
+          
+    
     Likedsubmission:
       type: object
       properties:
@@ -740,6 +809,7 @@ components:
         api_key:
           type: string
           example: "MjAyMC0wNC0xOCAxMjoyODo0MSBVVEM=\n"
+          
     ErrorResult:
       type: object
       properties:
@@ -751,12 +821,13 @@ components:
           enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists", "Submission does not exists"]
         message: 
           type: string
+          
   examples:
     error400:
       value:
         status: 400
         error: "Bad Request"
-        message: "Content is too long (maximum is 280 characters)"
+        message: "The provieded parameters are incorrect or not the ones expected"
     error401:
       value:
         status: 401
@@ -791,4 +862,4 @@ components:
       type: apiKey
       name: X-API-KEY #Custom headers in rails apps must have the X- prefix
       in: header
-      
+
