@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://3.239.54.2:8080'
+  - url: 'http://54.211.193.221:8080'
 paths:
   /api/submissions:
     get:
@@ -22,6 +22,20 @@ paths:
                 items:
                   $ref: '#/components/schemas/Submission'
                   
+  /api/submissions/{post_id}:
+    get:
+      tags:
+      - submissions
+      summary: Retrieves the submission identified by post_id
+      description: Returns a single submission
+      parameters:
+      - name: post_id
+        in: path
+        description: ID of the submission to return
+        required: true
+        schema:
+          type: integer
+          format: int64
     post:
       tags:
       - submissions
@@ -55,6 +69,31 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Submission'
+                  
+  /api/submissions/{post_id}/comments:
+    get:
+      tags:
+      - comments
+      summary: Retrieves the comment tree of the submission identified by post_id
+      description: Returns a set of comments. If some comment is a reply to another, parentid is different to 0 and corresponds to the ID of the comment which is being replied.
+      parameters:
+      - name: post_id
+        in: path
+        description: ID of the submission whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+                
         400:
           description: 'Error: Bad Request.'
           content:
@@ -108,7 +147,7 @@ paths:
                 errorExample:
                   $ref: '#/components/examples/error404'
         433:
-          description: User does not exists
+          description: User does not exist
           content:
             application/json:
               schema:
@@ -150,7 +189,7 @@ paths:
                   errorExample:
                     $ref: '#/components/examples/error404'
           433:
-            description: User does not exists
+            description: User does not exist
             content:
               application/json:
                 schema:
@@ -158,101 +197,6 @@ paths:
                 examples:
                   errorExample:
                     $ref: '#/components/examples/error433'
-                    
-  /submissions/{postid}/api:
-    get:
-      tags:
-      - submissions
-      summary: Retrieves all the comments of a submission by its postid
-      description: Returns a set of comments
-      operationId: XDXDXDXD
-      parameters:
-      - name: postid
-        in: path
-        description: ID of the submission whose comments to return
-        required: true
-        schema:
-          type: integer
-          format: int64
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Tweet'
-  
-  /api/submissions/{submission_id}/comment:
-    post:
-      tags:
-      - comments
-      summary: Comments the submission identified with submission_id
-      parameters:
-      - name: submission_id
-        in: path
-        description: ID of the submission whose comments to return
-        required: true
-        schema:
-          type: integer
-          format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                text: 
-                  type: string
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Submission'
-        401:
-          description: 'Error: Unauthorized'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error401'
-                
-        403:
-          description: 'Error: Forbidden'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error403'
-        404:
-          description: 'Error: Not Found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error404'
-        432:
-          description: 'Error: Submission does not exists'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error432'
-      security:
-      - ApiKeyAuth: []
   
   /api/submissions/{submission_id}/vote:
     post:
@@ -358,11 +302,44 @@ paths:
       security:
       - ApiKeyAuth: []
       
+  /api/comments/user/{user_id}:
+    get:
+      tags:
+      - comments
+      summary: Retrieves all the comments from the user with id user_id
+      description: Returns a set of comments
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        433:
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error433'  
+  
   /api/comments/liked/user/{user_id}:
     get:
       tags:
       - comments
-      summary: Retrieves all the liked comments from the user with id user_id
+      summary: Retrieves the liked comments from the user with id user_id
       description: Returns a set of comments
       parameters:
       - name: user_id
@@ -391,7 +368,7 @@ paths:
                 errorExample:
                   $ref: '#/components/examples/error404'
         433:
-          description: User does not exists
+          description: User does not exist
           content:
             application/json:
               schema:
@@ -399,6 +376,76 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error433'
+                  
+  /api/submissions/{submission_id}/comment:
+    post:
+      tags:
+      - comments
+      summary: Comments the submission identified with submission_id
+      parameters:
+      - name: submission_id
+        in: path
+        description: ID of the submission whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text: 
+                  type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+                
+        403:
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        432:
+          description: 'Error: Submission does not exist'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error432'
+      security:
+      - ApiKeyAuth: []
                   
   /api/comments/{commentId}:
     post:
@@ -502,7 +549,7 @@ paths:
                 errorExample:
                   $ref: '#/components/examples/error404'
         433:
-          description: User does not exists
+          description: User does not exist
           content:
             application/json:
               schema:
@@ -818,7 +865,7 @@ components:
           enum: [400, 401, 403, 404, 409, 433, 432]
         error: 
           type: string
-          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists", "Submission does not exists"]
+          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists", "Submission does not exist"]
         message: 
           type: string
           
@@ -851,11 +898,11 @@ components:
     error433:
       value:
         status: 433
-        error: "The user does not exists"
+        error: "The user does not exist"
     error432:
       value:
         status: 432
-        error: "It does not exists any submissions with the same id as provided"
+        error: "It does not exist any submissions with the same id as provided"
     
   securitySchemes:
     ApiKeyAuth:
