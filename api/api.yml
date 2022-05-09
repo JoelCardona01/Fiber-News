@@ -107,7 +107,7 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
-        410:
+        433:
           description: User does not exists
           content:
             application/json:
@@ -115,8 +115,50 @@ paths:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-                  $ref: '#/components/examples/error410'
+                  $ref: '#/components/examples/error433'
                   
+  /api/submissions/upvoted/user/{user_id}:
+    get:
+        tags:
+        - submissions
+        summary: Retrieves all the upvoted submissions from the user with id user_id
+        description: Returns a set of submissions
+        parameters:
+        - name: user_id
+          in: path
+          description: ID of the user
+          required: true
+          schema:
+            type: integer
+            format: int64
+        responses:
+          200:
+            description: successful operation
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Submission'
+          404:
+            description: 'Error: Not Found'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResult'
+                examples:
+                  errorExample:
+                    $ref: '#/components/examples/error404'
+          433:
+            description: User does not exists
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResult'
+                examples:
+                  errorExample:
+                    $ref: '#/components/examples/error433'
+                    
   /submissions/{postid}/api:
     get:
       tags:
@@ -141,6 +183,291 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Tweet'
+  
+  /api/submissions/{submission_id}/comment:
+    post:
+      tags:
+      - comments
+      summary: Comments the submission identified with submission_id
+      parameters:
+      - name: submission_id
+        in: path
+        description: ID of the submission whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text: 
+                  type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+                
+        403:
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        432:
+          description: 'Error: Submission does not exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error432'
+      security:
+      - ApiKeyAuth: []
+  
+  /api/submissions/{submission_id}/vote:
+    post:
+      tags:
+      - submissions
+      summary: Votes a submission
+      description: Returns the submission voted with the updated votes
+      parameters:
+      - name: submission_id
+        in: path
+        description: ID of the submission
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        403:
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - ApiKeyAuth: []
+    delete:
+      tags:
+      - submissions
+      summary: Unvotes a submission
+      description: Returns the submission unvoted with the updated votes
+      parameters:
+      - name: submission_id
+        in: path
+        description: ID of the submission
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        403:
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      security:
+      - ApiKeyAuth: []
+      
+  /api/comments/liked/user/{user_id}:
+    get:
+      tags:
+      - comments
+      summary: Retrieves all the liked comments from the user with id user_id
+      description: Returns a set of comments
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        433:
+          description: User does not exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error433'
+                  
+  /api/comments/{commentId}:
+    post:
+      tags: 
+      - comments
+      summary: Reply the comment identified by commentId
+      description: Returns the comment created
+
+      parameters: 
+      - name: commentId
+        in: path
+        description: ID of the comment that will be replied
+        required: true
+        schema:
+          type: integer
+          format: int64
+          
+      requestBody:
+        description: Provide the content of the comment
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - text
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: 'This is an example comment'
+      
+        
+      responses:
+        201:
+          description: object created
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+      security:
+      - ApiKeyAuth: []
+                
                   
   /api/users/{userId}:
     get:
@@ -174,7 +501,7 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
-        410:
+        433:
           description: User does not exists
           content:
             application/json:
@@ -182,7 +509,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-                  $ref: '#/components/examples/error410'
+                  $ref: '#/components/examples/error433'
   /tweets/{tweetId}:
     get:
       tags:
@@ -488,10 +815,10 @@ components:
       properties:
         status:
           type: integer
-          enum: [400, 401, 403, 404, 409, 410]
+          enum: [400, 401, 403, 404, 409, 433, 432]
         error: 
           type: string
-          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists"]
+          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists", "Submission does not exists"]
         message: 
           type: string
           
@@ -521,13 +848,18 @@ components:
         status: 409
         error: "Conflict"
         message: "There was a conflict"
-    error410:
+    error433:
       value:
-        status: 410
+        status: 433
         error: "The user does not exists"
+    error432:
+      value:
+        status: 432
+        error: "It does not exists any submissions with the same id as provided"
     
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
       name: X-API-KEY #Custom headers in rails apps must have the X- prefix
       in: header
+
