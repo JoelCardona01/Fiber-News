@@ -319,7 +319,7 @@ class CommentsController < ApplicationController
           render json: {
             "status":403,
             "error": "Forbidden",
-            "message": "You cannot unvote a comment that you haven't voted first"
+            "message": "You cannot unvote a comment that you haven't voted before"
           },
           status: 403
         }
