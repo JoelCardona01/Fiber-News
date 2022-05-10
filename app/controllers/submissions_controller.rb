@@ -186,8 +186,8 @@ class SubmissionsController < ApplicationController
   
   # POST /api/submissions
   def createAPI
-   respond_to do |format|
-    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? 
+     respond_to do |format|
         format.json{
          render json: {
           "status":401,
@@ -196,9 +196,11 @@ class SubmissionsController < ApplicationController
         },
         status: 401
         }
+      end
       return
     end
     if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+     respond_to do |format|
       format.json{
         render json: {
           "status":403,
@@ -207,8 +209,11 @@ class SubmissionsController < ApplicationController
          },
         status: 403
       }
+     end 
     return
     end
+    respond_to do |format|
+
     @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
     @submission = Submission.new(submission_params)
     @submission.user_id = @user.id
