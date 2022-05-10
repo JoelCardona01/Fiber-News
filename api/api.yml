@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://3.236.51.229:8080'
+  - url: 'http://54.221.120.214:8080'
 paths:
   /api/submissions:
     get:
@@ -89,6 +89,54 @@ paths:
       security:
       - ApiKeyAuth: []
 
+  /api/submissions/{post_id}:
+    get:
+      tags:
+      - submissions
+      summary: Retrieves the submission identified by post_id
+      description: Returns a single submission
+      parameters:
+      - name: post_id
+        in: path
+        description: ID of the submission to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+
+  /api/submissions/{post_id}/comments:
+    get:
+      tags:
+      - comments
+      summary: Retrieves the comment tree of the submission identified by post_id
+      description: Returns a set of comments. If some comment is a reply to another, parentid is different to 0 and corresponds to the ID of the comment which is being replied.
+      parameters:
+      - name: post_id
+        in: path
+        description: ID of the submission whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+          
   /api/submissions/user/{user_id}:
     get:
       tags:
@@ -113,7 +161,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Submission'
         404:
-          description: 'Error: Not Found'
+          description: User does not exist
           content:
             application/json:
               schema:
@@ -121,15 +169,6 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
-        433:
-          description: User does not exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error433'
                   
   /api/submissions/upvoted/user/{user_id}:
     get:
@@ -155,7 +194,7 @@ paths:
                   items:
                     $ref: '#/components/schemas/Submission'
           404:
-            description: 'Error: Not Found'
+            description: User does not exist
             content:
               application/json:
                 schema:
@@ -163,40 +202,6 @@ paths:
                 examples:
                   errorExample:
                     $ref: '#/components/examples/error404'
-          433:
-            description: User does not exists
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ErrorResult'
-                examples:
-                  errorExample:
-                    $ref: '#/components/examples/error433'
-                    
-  /submissions/{postid}/api:
-    get:
-      tags:
-      - submissions
-      summary: Retrieves all the comments of a submission by its postid
-      description: Returns a set of comments
-      operationId: XDXDXDXD
-      parameters:
-      - name: postid
-        in: path
-        description: ID of the submission whose comments to return
-        required: true
-        schema:
-          type: integer
-          format: int64
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Tweet'
   
   /api/submissions/{submission_id}/comment:
     post:
@@ -228,6 +233,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Submission'
+        400:
+          description: 'Error: Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
         401:
           description: 'Error: Unauthorized'
           content:
@@ -248,7 +262,7 @@ paths:
                 errorExample:
                   $ref: '#/components/examples/error403'
         404:
-          description: 'Error: Not Found'
+          description: Submission does not exist
           content:
             application/json:
               schema:
@@ -256,15 +270,6 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
-        432:
-          description: 'Error: Submission does not exists'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error432'
       security:
       - ApiKeyAuth: []
   
@@ -372,6 +377,39 @@ paths:
       security:
       - ApiKeyAuth: []
       
+  /api/comments/user/{user_id}:
+    get:
+      tags:
+      - comments
+      summary: Retrieves all the comments from the user with id user_id
+      description: Returns a set of comments
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+      
   /api/comments/liked/user/{user_id}:
     get:
       tags:
@@ -396,7 +434,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Comment'
         404:
-          description: 'Error: Not Found'
+          description: User does not exist
           content:
             application/json:
               schema:
@@ -404,15 +442,6 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
-        433:
-          description: User does not exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error433'
                   
   /api/comments/{commentId}:
     post:
@@ -482,6 +511,56 @@ paths:
       security:
       - ApiKeyAuth: []
                 
+  /api/comments/{commentId}/vote:
+    post:
+      tags:
+      - comments
+      summary: Votes a comment
+      description: Returns the comment identified by commentId, with the updated likes
+      parameters:
+      - name: commentId
+        in: path
+        description: ID of comment to vote
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+      security:
+      - ApiKeyAuth: []
+      
+    delete:
+      tags:
+      - comments
+      summary: Unvotes a comment
+      description: Returns the comment identified by commentId, with the updated likes
+      parameters:
+      - name: commentId
+        in: path
+        description: ID of comment to unvote
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+      security:
+      - ApiKeyAuth: []
                   
   /api/users/{userId}:
     get:
@@ -507,7 +586,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
         404:
-          description: 'Error: Not Found'
+          description: 'User does not exist'
           content:
             application/json:
               schema:
@@ -515,73 +594,52 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
-        433:
-          description: User does not exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error433'
-  /tweets/{tweetId}:
-    get:
+    put:
       tags:
-      - tweets
-      summary: Finds a Tweet by its ID
-      description: Returns a single Tweet
-      operationId: getTweetById
+      - user
+      summary: Allows the user to update his About description
+      description: "TODO"
       parameters:
-      - name: tweetId
+      - name: userId
         in: path
-        description: ID of Tweet to return
+        description: ID of the user whose information to return
         required: true
         schema:
           type: integer
           format: int64
+      requestBody:
+        description: "TO DO"
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - about
+              type: object
+              properties:
+                about:
+                  type: string
+                  example: 'I am not a morning person'
+      
       responses:
-        200:
+        201:
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tweet'
-        404:
-          description: 'Error: Not Found'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request.'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-                  $ref: '#/components/examples/error404'
-    delete:
-      tags:
-      - tweets
-      summary: Deletes a Tweet
-      operationId: deleteTweet
-      parameters:
-      - name: tweetId
-        in: path
-        description: Tweet id to delete
-        required: true
-        schema:
-          type: integer
-          format: int64
-      responses:
-        204:
-          description: Tweet deleted
-          content:
-            application/json: {}
-        404:
-          description: 'Error: Not Found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error404'
+                  $ref: '#/components/examples/error400'
+
         401:
           description: 'Error: Unauthorized'
           content:
@@ -600,31 +658,8 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error403'
-      security:
-      - ApiKeyAuth: []
-  /tweets/{tweetId}/likes:
-    post:
-      tags:
-      - tweets
-      summary: Likes a Tweet
-      operationId: likeTweet
-      parameters:
-      - name: tweetId
-        in: path
-        description: Tweet id to like
-        required: true
-        schema:
-          type: integer
-          format: int64
-      responses:
-        200:
-          description: Liked Tweet
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Tweet'
         404:
-          description: 'Error: Not Found'
+          description: 'User does not exist'
           content:
             application/json:
               schema:
@@ -632,6 +667,10 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
+        
+        
+      security:
+      - ApiKeyAuth: []
 components:
   schemas:
     Submission:
@@ -782,57 +821,16 @@ components:
         updated_at:
           type: string
           example: "2022/06/23 13:00:000 UTC"
-    
-      
-        
-          
-    Tweet:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 2
-        author:
-          type: string
-          minLength: 4
-          example: 'My name'
-        content:
-          type: string
-          minLength: 4
-          maxLength: 280
-          example: 'My content'
-        likes:
-          type: integer
-          format: int32
-        created_at:
-          type: string
-          format: date-time
-        _links:
-          type: object
-          properties:
-            self:
-              type: string
-              format: url
-              example: 'https://asw-api-demo.herokuapp.com/tweets/2'
-    AddTweetResult:
-      type: object
-      properties:
-        new_tweet:
-          $ref: '#/components/schemas/Tweet'
-        api_key:
-          type: string
-          example: "MjAyMC0wNC0xOCAxMjoyODo0MSBVVEM=\n"
           
     ErrorResult:
       type: object
       properties:
         status:
           type: integer
-          enum: [400, 401, 403, 404, 409, 433, 432]
+          enum: [400, 401, 403, 404, 409]
         error: 
           type: string
-          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "User not exists", "Submission does not exists"]
+          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict"]
         message: 
           type: string
           
@@ -862,14 +860,6 @@ components:
         status: 409
         error: "Conflict"
         message: "There was a conflict"
-    error433:
-      value:
-        status: 433
-        error: "The user does not exists"
-    error432:
-      value:
-        status: 432
-        error: "It does not exists any submissions with the same id as provided"
     
   securitySchemes:
     ApiKeyAuth:
