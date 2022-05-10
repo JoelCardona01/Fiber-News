@@ -225,10 +225,17 @@ class CommentsController < ApplicationController
     @comment = Comment.find_by(id: params[:commentId])
     @comment.likes = @comment.likes+1
     if @comment.save
-      @likedcomment = Likedcomment.new(:comment_id => @comment.id, :user_id => @user.id)
+      @likedcomment = Likedcomments.new(:comment_id => @comment.id, :user_id => @user.id)
       if @likedcomment.save
         respond_to do |format|
-        format.json { @comment }
+        format.json { 
+          render json: {
+          "status":200,
+          "comment":@comment,
+          "message": "Comment voted"
+          },
+          status: 200
+        }
         end
       else 
         respond_to do |format|
@@ -242,7 +249,6 @@ class CommentsController < ApplicationController
     end
   end
   
-  
   def unvote
     @comment.likes = @comment.likes - 1
     if @comment.save
@@ -251,6 +257,98 @@ class CommentsController < ApplicationController
     end
     redirect_to request.referrer
   end
+  
+  #DELETE /api/comments/:commentId/vote
+  def APIunvote_comment
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+      respond_to do |format|
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      end
+      return
+    end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+    if (Comment.find_by(id: params[:commentId]).nil?)
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "Comment not found"
+        },
+        status: 404
+        }
+        end
+    return
+    end
+    if request.headers["X-API-Key"] == Comment.find_by(id: params[:commentId]).user.APIKey
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "You cannot unvote your own comment"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+    if Likedcomment.all.find_by(user_id: @user.id, comment_id: params[:commentId]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "You cannot unvote a comment that you haven't voted first"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+    @comment = Comment.find_by(id: params[:commentId])
+    @comment.likes = @comment.likes-1
+    if @comment.save
+      @likedcomment = Likedcomment.find_by(:comment_id => @comment.id, :user_id => @user.id)
+      @likedcomment.destroy
+      respond_to do |format|
+        format.json { 
+          render json: {
+          "status":200,
+          "comment":@comment,
+          "message": "Comment unvoted"
+          },
+          status: 200
+        }
+      end
+    else
+      respond_to do |format|
+      format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  
   
   def comment
     params.permit!
