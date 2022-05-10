@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://54.166.247.177:8080'
+  - url: 'http://3.80.189.203:8080'
 paths:
   /api/submissions:
     get:
@@ -478,6 +478,56 @@ paths:
       security:
       - ApiKeyAuth: []
                 
+  /api/comments/{commentId}/vote:
+    post:
+      tags:
+      - comments
+      summary: Votes a comment
+      description: Returns the comment identified by commentId, with the updated likes
+      parameters:
+      - name: commentId
+        in: path
+        description: ID of comment to vote
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+      security:
+      - ApiKeyAuth: []
+      
+    delete:
+      tags:
+      - comments
+      summary: Unvotes a comment
+      description: Returns the comment identified by commentId, with the updated likes
+      parameters:
+      - name: commentId
+        in: path
+        description: ID of comment to unvote
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+      security:
+      - ApiKeyAuth: []
                   
   /api/users/{userId}:
     get:
