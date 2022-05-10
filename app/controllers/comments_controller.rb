@@ -62,10 +62,7 @@ class CommentsController < ApplicationController
           return } 
       else 
         @comments = Comment.all.where(:user_id => params[:user_id]).order(created_at: :desc)
-  
-        respond_to do |format|
-          format.json { render json: @comments }
-        end
+        format.json { render json: @comments }
       end
     end
   end
