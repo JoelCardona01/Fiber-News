@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
+  skip_before_action :verify_authenticity_token
 
   # GET /users
   # GET /users.json
@@ -77,12 +78,84 @@ class UsersController < ApplicationController
   end
   
   # PATCH/PUT /api/users/1.json
-  def update
+  def updateAPI
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? 
+     respond_to do |format|
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      end
+      return
+    end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+     respond_to do |format|
+      format.json{
+        render json: {
+          "status":403,
+          "error": "Forbidden",
+          "message": "Your api key (X-API-KEY Header) is not valid"
+         },
+        status: 403
+      }
+     end 
+    return
+    end
+     if User.find_by(:id => params[:user_id]).nil?
+       respond_to do |format|
+        format.json{
+         render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "There is not an existing user with the id provided"
+        },
+        status: 404
+        }
+      end
+      return
+    end
+    if User.find_by(:id => params[:user_id]).APIKey !=  request.headers["X-API-KEY"]
+       respond_to do |format|
+        format.json{
+         render json: {
+          "status":403,
+          "error": "Forbidden",
+          "message": "You are not allowed to edit someone else profile. The api key provided does not belong to the user with id provided"
+        },
+        status: 403
+        }
+      end
+      return
+    end
     respond_to do |format|
-      if @user.update(user_params)
-        format.json { render :show, status: :ok, location: @user }
-      else
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+      if params[:about]=="" or params[:about].nil?
+        format.json{
+        render json: {
+          "status":400,
+          "error": "Bad request",
+          "message": "The about field must contain at least 1 character"
+        },
+        status: 400
+      }
+      else 
+        @user = User.find_by(:id => params[:user_id])
+        @user.about = params[:about]
+        if @user.save
+           format.json { 
+            render json: {
+            "status":200,
+            "user":@user,
+            "message": "User updated",
+            },
+            status: :ok
+          }
+        else
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
