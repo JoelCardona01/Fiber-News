@@ -75,6 +75,17 @@ class UsersController < ApplicationController
       end
     end
   end
+  
+  # PATCH/PUT /api/users/1.json
+  def update
+    respond_to do |format|
+      if @user.update(user_params)
+        format.json { render :show, status: :ok, location: @user }
+      else
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
+    end
+  end
 
   # DELETE /users/1
   # DELETE /users/1.json
