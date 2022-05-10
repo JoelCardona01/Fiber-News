@@ -154,7 +154,7 @@ class CommentsController < ApplicationController
     redirect_to request.referrer
   end
   
-  
+  #POST /api/comments/:commentId/vote
   def APIvote_comment
     if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
       respond_to do |format|
@@ -209,33 +209,26 @@ class CommentsController < ApplicationController
       return
     end
     @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
-    if not Likedcomment.all.find_by(user_id: @user.id, comment_id: ///////////////////////////////////////ACÁ////////////params[:submission_id]).nil?
+    if not Likedcomment.all.find_by(user_id: @user.id, comment_id: params[:commentId]).nil?
       respond_to do |format|
         format.json{
           render json: {
             "status":403,
             "error": "Forbidden",
-            "message": "You cannot vote twice a comment"
+            "message": "You cannot vote a comment twice"
           },
           status: 403
         }
       end
       return
     end
-    @submission = Submission.find_by(id: params[:submission_id])
-    @submission.votes = @submission.votes+1
-    if @submission.save
-      @likedsubmission = Likedsubmission.new(:submission_id => @submission.id, :user_id => @user.id)
-      if @likedsubmission.save
+    @comment = Comment.find_by(id: params[:commentId])
+    @comment.likes = @comment.likes+1
+    if @comment.save
+      @likedcomment = Likedcomment.new(:comment_id => @comment.id, :user_id => @user.id)
+      if @likedcomment.save
         respond_to do |format|
-        format.json { 
-          render json: {
-            "status":200,
-            "comment":@submission,
-            "message": "Submission voted",
-          },
-          status: 200
-        }
+        format.json { @comment }
         end
       else 
         respond_to do |format|
