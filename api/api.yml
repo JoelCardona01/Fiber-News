@@ -89,6 +89,54 @@ paths:
       security:
       - ApiKeyAuth: []
 
+  /api/submissions/{post_id}:
+    get:
+      tags:
+      - submissions
+      summary: Retrieves the submission identified by post_id
+      description: Returns a single submission
+      parameters:
+      - name: post_id
+        in: path
+        description: ID of the submission to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+
+  /api/submissions/{post_id}/comments:
+    get:
+      tags:
+      - comments
+      summary: Retrieves the comment tree of the submission identified by post_id
+      description: Returns a set of comments. If some comment is a reply to another, parentid is different to 0 and corresponds to the ID of the comment which is being replied.
+      parameters:
+      - name: post_id
+        in: path
+        description: ID of the submission whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+          
   /api/submissions/user/{user_id}:
     get:
       tags:
@@ -113,7 +161,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Submission'
         404:
-          description: User does not exists
+          description: User does not exist
           content:
             application/json:
               schema:
@@ -146,7 +194,7 @@ paths:
                   items:
                     $ref: '#/components/schemas/Submission'
           404:
-            description: User does not exists
+            description: User does not exist
             content:
               application/json:
                 schema:
@@ -214,7 +262,7 @@ paths:
                 errorExample:
                   $ref: '#/components/examples/error403'
         404:
-          description: Submission does not exists
+          description: Submission does not exist
           content:
             application/json:
               schema:
@@ -353,7 +401,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Comment'
         404:
-          description: User does not exists
+          description: User does not exist
           content:
             application/json:
               schema:
@@ -455,7 +503,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
         404:
-          description: 'User doesn not exists'
+          description: 'User does not exist'
           content:
             application/json:
               schema:
