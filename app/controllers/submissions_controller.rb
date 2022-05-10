@@ -434,19 +434,19 @@ end
         end
       else 
         respond_to do |format|
-        format.json { render json: @comment.errors, status: :unprocessable_entity }
+        format.json { render json: @submission.errors, status: :unprocessable_entity }
         end
       end
     else
       respond_to do |format|
-      format.json { render json: @comment.errors, status: :unprocessable_entity }
+      format.json { render json: @submission.errors, status: :unprocessable_entity }
       end
     end
   end
   
   #DELETE /api/submissions/:submission_id/vote
   def APIUnvote
-        if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
       respond_to do |format|
         format.json{
          render json: {
@@ -529,7 +529,7 @@ end
       end
     else
       respond_to do |format|
-      format.json { render json: @comment.errors, status: :unprocessable_entity }
+      format.json { render json: @submission.errors, status: :unprocessable_entity }
       end
     end
   end
