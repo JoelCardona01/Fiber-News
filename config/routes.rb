@@ -27,8 +27,9 @@ Rails.application.routes.draw do
     
     get '/api/submissions/:post_id', to: 'submissions#submission_JSON', as: 'submission_JSON'
     get '/api/submissions/:post_id/comments', to: 'submissions#sub_comments_JSON', as: 'sub_comments_JSON'
-    
     get '/api/comments/user/:user_id', to: 'comments#user_comments_JSON', as: 'user_comments_JSON'
+    
+    post 
     
     
     
