@@ -38,7 +38,7 @@ class CommentsController < ApplicationController
   def userlikedJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
-        format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
+        format.json { render json: {"status": 433, "error": "User does not exist", "message": "There is no user with same user_id as provided"}, status: 433
           return } 
       else 
         @likedcomments = Likedcomment.all.where(:user_id => params[:user_id]).order(created_at: :desc)
@@ -53,6 +53,21 @@ class CommentsController < ApplicationController
     end
   end
   
+  
+  #GET /api/comments/user/:user_id
+  def user_comments_JSON
+    respond_to do |format|
+      if User.find_by(:id => params[:user_id]).nil?
+        format.json { render json: {"status": 433, "error": "User does not exist", "message": "There is no user with same user_id as provided"}, status: 433
+          return } 
+      else 
+        @comments = Comment.all.where(:user_id => params[:user_id]).order(created_at: :desc)
+        format.json { render json: @comments }
+      end
+    end
+  end
+
+
   
   # GET /comments/1/edit
   def edit
