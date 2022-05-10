@@ -256,8 +256,9 @@ class SubmissionsController < ApplicationController
           format.json { 
             render json: {
               "status":201,
-              "submission":@submission,
-              "message": "Submission posted",
+              "submission": @submission,
+              "comment": @comment,
+              "message": "Submission posted"
             },
             status: :ok
          }
@@ -270,7 +271,7 @@ class SubmissionsController < ApplicationController
           format.json { 
             render json: {
               "status":201,
-              "submission":@submission,
+              "submission": @submission,
               "message": "Submission posted",
             },
             status: :ok
@@ -281,13 +282,15 @@ class SubmissionsController < ApplicationController
         end
       end
     else ##Ja existia una submission amb el mateix url de manera que redirigim a la submission amb el mateix url.
+    @submissionAux = Submission.find_by(:url => @submission.url )
       format.json{
         render json: {
-          "status":400,
-          "error": "Bad request",
-          "message": "There is already an existing submission with that url"
+          "status":409,
+          "error": "Conflict",
+          "message": "There is already an existing submission with that url",
+          "Already existing submission": @submissionAux
         },
-        status: 400
+        status: 409
       }
       
     end
