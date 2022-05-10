@@ -182,6 +182,120 @@ class SubmissionsController < ApplicationController
        
     end 
   end
+  
+  
+  # POST /api/submissions
+  def createAPI
+   respond_to do |format|
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      return
+    end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      format.json{
+        render json: {
+          "status":403,
+          "error": "Forbidden",
+          "message": "Your api key (X-API-KEY Header) is not valid"
+         },
+        status: 403
+      }
+    return
+    end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+    @submission = Submission.new(submission_params)
+    @submission.user_id = @user.id
+    if @submission.title=="" 
+      format.json{
+        render json: {
+          "status":400,
+          "error": "Bad request",
+          "message": "The title of the submission must contain at least 1 character"
+        },
+        status: 400
+      }
+      
+    elsif (!@submission.url.nil? and  @submission.url != "" and  !(@submission.url=~ /\A#{URI::regexp(['http', 'https'])}\z/)) 
+       format.json{
+        render json: {
+          "status":400,
+          "error": "Bad request",
+          "message": "The url provided is not in a valid format."
+        },
+        status: 400
+      }
+       
+    elsif (@submission.url.nil? or @submission.url=="") 
+      if @submission.save
+         format.json { 
+            render json: {
+            "status":201,
+            "submission":@submission,
+            "message": "Submission posted",
+            },
+            status: :ok
+          }
+          
+      else
+        format.json { render json: @submission.errors, status: :unprocessable_entity }
+      end
+    elsif ((@submission.url!="" or !@submission.url.nil? and Submission.find_by(url: @submission.url).nil?))##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
+      if @submission.text!="" or !@submission.text.nil?
+        text = @submission.text
+        @submission.text=""
+        if @submission.save
+          @comment= Comment.new(:text => text, :user_id =>@submission.user_id, :postid => @submission.id, :parentid => "0", :likes => 0)
+          @comment.save
+          format.json { 
+            render json: {
+              "status":201,
+              "submission": @submission,
+              "comment": @comment,
+              "message": "Submission posted"
+            },
+            status: :ok
+         }
+         
+        else
+          format.json { render json: @submission.errors, status: :unprocessable_entity }
+        end
+      else
+        if @submission.save
+          format.json { 
+            render json: {
+              "status":201,
+              "submission": @submission,
+              "message": "Submission posted",
+            },
+            status: :ok
+         }
+         
+        else
+          format.json { render json: @submission.errors, status: :unprocessable_entity }
+        end
+      end
+    else ##Ja existia una submission amb el mateix url de manera que redirigim a la submission amb el mateix url.
+    @submissionAux = Submission.find_by(:url => @submission.url )
+      format.json{
+        render json: {
+          "status":409,
+          "error": "Conflict",
+          "message": "There is already an existing submission with that url",
+          "Already existing submission": @submissionAux
+        },
+        status: 409
+      }
+      
+    end
+  end 
+end
 
   # PATCH/PUT /submissions/1
   # PATCH/PUT /submissions/1.json

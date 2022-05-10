@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://54.211.193.221:8080'
+
 paths:
   /api/submissions:
     get:
@@ -41,13 +41,6 @@ paths:
       - submissions
       summary: Posts a submission with title, url or text values passed by parameter.
       description: Post an url or ask submissions depending on the parameters received
-      parameters:
-        - in: header
-          name: "authenticity_token"
-          schema:
-            type: string
-          required: true
-      
       requestBody:
         description: "TO DO"
         required: true
@@ -58,10 +51,10 @@ paths:
               items: 
                 $ref: '#/components/schemas/PostSubmission'
               example:
-                tilte: "New Submission"
+                title: "New Submission"
            
       responses:
-        200:
+        201:
           description: successful operation
           content:
             application/json:
@@ -113,6 +106,27 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error401'
+        403:
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+        
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+      security:
+      - ApiKeyAuth: []
 
   /api/submissions/user/{user_id}:
     get:
@@ -909,4 +923,3 @@ components:
       type: apiKey
       name: X-API-KEY #Custom headers in rails apps must have the X- prefix
       in: header
-

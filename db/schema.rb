@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 2022_04_23_190608) do
 
   create_table "submissions", force: :cascade do |t|
     t.integer "user_id"
-    t.string "url"
+    t.string "url", default: ""
     t.string "title"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
