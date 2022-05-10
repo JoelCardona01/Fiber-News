@@ -482,12 +482,12 @@ paths:
     post:
       tags:
       - comments
-      summary: Retrieves all the comments from the user with id user_id
-      description: Returns a set of comments
+      summary: Votes a comment
+      description: Returns the comment identified by commentId, with the updated likes
       parameters:
-      - name: user_id
+      - name: commentId
         in: path
-        description: ID of the user whose comments to return
+        description: ID of comment to vote
         required: true
         schema:
           type: integer
@@ -501,6 +501,33 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
+      security:
+      - ApiKeyAuth: []
+      
+    delete:
+      tags:
+      - comments
+      summary: Unvotes a comment
+      description: Returns the comment identified by commentId, with the updated likes
+      parameters:
+      - name: commentId
+        in: path
+        description: ID of comment to unvote
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+      security:
+      - ApiKeyAuth: []
                   
   /api/users/{userId}:
     get:
