@@ -29,7 +29,8 @@ Rails.application.routes.draw do
     get '/api/submissions/:post_id/comments', to: 'submissions#sub_comments_JSON', as: 'sub_comments_JSON'
     get '/api/comments/user/:user_id', to: 'comments#user_comments_JSON', as: 'user_comments_JSON'
     
-    post 
+    post '/api/comments/:commentId/vote', to: "comments#APIvote_comment"
+    delete '/api/comments/:commentId/vote', to: "comments#APIunvote_comment"
     
     
     

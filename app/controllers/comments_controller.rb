@@ -154,6 +154,102 @@ class CommentsController < ApplicationController
     redirect_to request.referrer
   end
   
+  
+  def APIvote_comment
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+      respond_to do |format|
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      end
+      return
+    end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+    if (Comment.find_by(id: params[:commentId]).nil?)
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "Comment not found"
+        },
+        status: 404
+        }
+        end
+    return
+    end
+    if request.headers["X-API-Key"] == Comment.find_by(id: params[:commentId]).user.APIKey
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "You cannot vote your own comment"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+    if not Likedcomment.all.find_by(user_id: @user.id, comment_id: ///////////////////////////////////////ACÁ////////////params[:submission_id]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":403,
+            "error": "Forbidden",
+            "message": "You cannot vote twice a comment"
+          },
+          status: 403
+        }
+      end
+      return
+    end
+    @submission = Submission.find_by(id: params[:submission_id])
+    @submission.votes = @submission.votes+1
+    if @submission.save
+      @likedsubmission = Likedsubmission.new(:submission_id => @submission.id, :user_id => @user.id)
+      if @likedsubmission.save
+        respond_to do |format|
+        format.json { 
+          render json: {
+            "status":200,
+            "comment":@submission,
+            "message": "Submission voted",
+          },
+          status: 200
+        }
+        end
+      else 
+        respond_to do |format|
+        format.json { render json: @comment.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      respond_to do |format|
+      format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  
   def unvote
     @comment.likes = @comment.likes - 1
     if @comment.save
