@@ -18,7 +18,7 @@ Rails.application.routes.draw do
     
     #Rutas de la api
     get '/api/submissions', to: 'submissions#indexAPI', as: 'indexAPI'
-    post '/api/submissions', to: 'submissions#new', as: 'createAPI'
+    post '/api/submissions', to: 'submissions#createAPI', as: 'createAPI'
     get '/api/submissions/user/:user_id', to: 'submissions#submFromUserJSON', as: 'subm_user_JSON'    
     get '/api/submissions/upvoted/user/:user_id', to: 'submissions#userUpvotesJSON', as: 'user_submissions_upvotes_json'
     get '/api/users/:user_id', to: 'users#userJSON', as: 'user_JSON'

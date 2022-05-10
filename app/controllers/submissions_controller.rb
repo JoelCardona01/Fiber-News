@@ -71,7 +71,7 @@ class SubmissionsController < ApplicationController
   def submFromUserJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
-        format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
+        format.json { render json: {"status": 404, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 404
           return } 
       else 
         @submissions = Submission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
@@ -101,7 +101,7 @@ class SubmissionsController < ApplicationController
   def userUpvotesJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
-        format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
+        format.json { render json: {"status": 404, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 404
           return } 
       else 
         @likedsubmissions = Likedsubmission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
@@ -182,6 +182,120 @@ class SubmissionsController < ApplicationController
        
     end 
   end
+  
+  
+  # POST /api/submissions
+  def createAPI
+   respond_to do |format|
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      return
+    end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      format.json{
+        render json: {
+          "status":403,
+          "error": "Forbidden",
+          "message": "Your api key (X-API-KEY Header) is not valid"
+         },
+        status: 403
+      }
+    return
+    end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+    @submission = Submission.new(submission_params)
+    @submission.user_id = @user.id
+    if @submission.title=="" 
+      format.json{
+        render json: {
+          "status":400,
+          "error": "Bad request",
+          "message": "The title of the submission must contain at least 1 character"
+        },
+        status: 400
+      }
+      
+    elsif (!@submission.url.nil? and  @submission.url != "" and  !(@submission.url=~ /\A#{URI::regexp(['http', 'https'])}\z/)) 
+       format.json{
+        render json: {
+          "status":400,
+          "error": "Bad request",
+          "message": "The url provided is not in a valid format."
+        },
+        status: 400
+      }
+       
+    elsif (@submission.url.nil? or @submission.url=="") 
+      if @submission.save
+         format.json { 
+            render json: {
+            "status":201,
+            "submission":@submission,
+            "message": "Submission posted",
+            },
+            status: :ok
+          }
+          
+      else
+        format.json { render json: @submission.errors, status: :unprocessable_entity }
+      end
+    elsif ((@submission.url!="" or !@submission.url.nil? and Submission.find_by(url: @submission.url).nil?))##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
+      if @submission.text!="" or !@submission.text.nil?
+        text = @submission.text
+        @submission.text=""
+        if @submission.save
+          @comment= Comment.new(:text => text, :user_id =>@submission.user_id, :postid => @submission.id, :parentid => "0", :likes => 0)
+          @comment.save
+          format.json { 
+            render json: {
+              "status":201,
+              "submission": @submission,
+              "comment": @comment,
+              "message": "Submission posted"
+            },
+            status: :ok
+         }
+         
+        else
+          format.json { render json: @submission.errors, status: :unprocessable_entity }
+        end
+      else
+        if @submission.save
+          format.json { 
+            render json: {
+              "status":201,
+              "submission": @submission,
+              "message": "Submission posted",
+            },
+            status: :ok
+         }
+         
+        else
+          format.json { render json: @submission.errors, status: :unprocessable_entity }
+        end
+      end
+    else ##Ja existia una submission amb el mateix url de manera que redirigim a la submission amb el mateix url.
+    @submissionAux = Submission.find_by(:url => @submission.url )
+      format.json{
+        render json: {
+          "status":409,
+          "error": "Conflict",
+          "message": "There is already an existing submission with that url",
+          "Already existing submission": @submissionAux
+        },
+        status: 409
+      }
+      
+    end
+  end 
+end
 
   # PATCH/PUT /submissions/1
   # PATCH/PUT /submissions/1.json
@@ -425,8 +539,7 @@ class SubmissionsController < ApplicationController
     redirect_to request.referrer
   end
   
-  def 
-  
+
   #POST /api/submissions/:submission_id/comment
   def commentAPI
     respond_to do |format|
@@ -461,11 +574,11 @@ class SubmissionsController < ApplicationController
             if Submission.find_by(:id => params[:submission_id]).nil? then
               format.json{
                  render json: {
-                  "status":432,
+                  "status":404,
                   "error": "Submission not found",
                   "message": "It does not exists any submission with the same id as you provided in the query parameters"
                 },
-                status: 432
+                status: 404
               }
             else
               if @comment.save
@@ -481,6 +594,15 @@ class SubmissionsController < ApplicationController
               format.json { render json: @comment.errors, status: :unprocessable_entity }
               end
             end
+        else 
+          format.json{
+                 render json: {
+                  "status":400,
+                  "error": "Bad request",
+                  "message": "The text must contain atleast 1 character."
+                },
+                status: 400
+          }
         end
       end
     end
