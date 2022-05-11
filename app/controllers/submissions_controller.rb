@@ -335,7 +335,7 @@ class SubmissionsController < ApplicationController
             "submission":@submission,
             "message": "Submission posted",
             },
-            status: :201
+            status: 201
           }
           
       else
@@ -355,7 +355,7 @@ class SubmissionsController < ApplicationController
               "comment": @comment,
               "message": "Submission posted"
             },
-            status: :201
+            status: 201
          }
          
         else
@@ -369,7 +369,7 @@ class SubmissionsController < ApplicationController
               "submission": @submission,
               "message": "Submission posted",
             },
-            status: :201
+            status: 201
          }
          
         else
