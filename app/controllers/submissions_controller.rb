@@ -294,11 +294,11 @@ class SubmissionsController < ApplicationController
      respond_to do |format|
       format.json{
         render json: {
-          "status":403,
-          "error": "Forbidden",
+          "status":401,
+          "error": "Unauthorized",
           "message": "Your api key (X-API-KEY Header) is not valid"
          },
-        status: 403
+        status: 401
       }
      end 
     return
@@ -650,11 +650,11 @@ end
       elsif User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
           format.json{
             render json: {
-              "status":403,
-              "error": "Forbidden",
+              "status":401,
+              "error": "Unauthorized",
               "message": "Your api key (X-API-KEY Header) is not valid"
             },
-            status: 403
+            status: 401
           }
       else
         @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()

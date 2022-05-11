@@ -96,11 +96,11 @@ class UsersController < ApplicationController
      respond_to do |format|
       format.json{
         render json: {
-          "status":403,
-          "error": "Forbidden",
+          "status":401,
+          "error": "Unauthorized",
           "message": "Your api key (X-API-KEY Header) is not valid"
          },
-        status: 403
+        status: 401
       }
      end 
     return
