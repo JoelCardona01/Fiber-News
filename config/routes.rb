@@ -17,31 +17,29 @@ Rails.application.routes.draw do
     get '/submissions/url/*url', to: 'submissions#submFromUrl', as: 'subm_host'
     
     #Rutas de la api
+    #recurs submissions
     get '/api/submissions', to: 'submissions#indexAPI', as: 'indexAPI'
     post '/api/submissions', to: 'submissions#createAPI', as: 'createAPI'
-    get '/api/submissions/user/:user_id', to: 'submissions#submFromUserJSON', as: 'subm_user_JSON'    
-    get '/api/submissions/upvoted/user/:user_id', to: 'submissions#userUpvotesJSON', as: 'user_submissions_upvotes_json'
-    get '/api/users/:user_id', to: 'users#userJSON', as: 'user_JSON'
-    get '/api/comments/liked/user/:user_id', to: 'comments#userlikedJSON', as: 'user_comments_liked_json'
-    
-    
     get '/api/submissions/:post_id', to: 'submissions#submission_JSON', as: 'submission_JSON'
     get '/api/submissions/:post_id/comments', to: 'submissions#sub_comments_JSON', as: 'sub_comments_JSON'
-    get '/api/comments/user/:user_id', to: 'comments#user_comments_JSON', as: 'user_comments_JSON'
+    post '/api/submissions/:submission_id/comment', to: 'submissions#commentAPI', as: 'commentAPI'
+    post '/api/submissions/:submission_id/vote', to: "submissions#APIVote"
+    delete '/api/submissions/:submission_id/vote', to: "submissions#APIUnvote"
+    get '/api/submissions/user/:user_id', to: 'submissions#submFromUserJSON', as: 'subm_user_JSON'    
+    get '/api/submissions/upvoted/user/:user_id', to: 'submissions#userUpvotesJSON', as: 'user_submissions_upvotes_json'
     
+    #recurs comments
+    get '/api/comments/liked/user/:user_id', to: 'comments#userlikedJSON', as: 'user_comments_liked_json'
+    get '/api/comments/user/:user_id', to: 'comments#user_comments_JSON', as: 'user_comments_JSON'    
     post '/api/comments/:commentId/vote', to: "comments#APIvote_comment"
     delete '/api/comments/:commentId/vote', to: "comments#APIunvote_comment"
-    
-    
-    
-    post '/api/submissions/:submission_id/comment', to: 'submissions#commentAPI', as: 'commentAPI'
     post '/api/comments/comment/:comment_id', to: 'comments#commentJSON'
     post '/api/comments/:comment_id', to: 'comments#commentJSON'
-    post '/api/submissions/:submission_id/vote', to: "submissions#APIVote"
     
-    delete '/api/submissions/:submission_id/vote', to: "submissions#APIUnvote"
-
-    
+    #recurs user
+    get '/api/users/:user_id', to: 'users#userJSON', as: 'user_JSON'
+    put '/api/users/:user_id', to: 'users#updateAPI', as: 'updateAPI'
+     
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'
 

@@ -213,11 +213,10 @@ class SubmissionsController < ApplicationController
     return
     end
     respond_to do |format|
-
     @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
     @submission = Submission.new(submission_params)
     @submission.user_id = @user.id
-    if @submission.title=="" 
+    if @submission.title.nil? or @submission.title==""
       format.json{
         render json: {
           "status":400,
@@ -544,7 +543,6 @@ end
     redirect_to request.referrer
   end
   
-
   #POST /api/submissions/:submission_id/comment
   def commentAPI
     respond_to do |format|
