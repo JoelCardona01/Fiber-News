@@ -86,16 +86,6 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error401'
-        403:
-          description: 'Error: Forbidden'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error403'
-        
         409:
           description: 'Error: Conflict'
           content:
@@ -105,6 +95,15 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
       - ApiKeyAuth: []
 
@@ -289,15 +288,6 @@ paths:
                 errorExample:
                   $ref: '#/components/examples/error401'
                 
-        403:
-          description: 'Error: Forbidden'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error403'
         404:
           description: Submission does not exist
           content:
@@ -307,6 +297,15 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
       - ApiKeyAuth: []
   
@@ -776,6 +775,15 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
         
         
       security:
