@@ -564,13 +564,49 @@ paths:
           format: int64
       responses:
         200:
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        404:
+          description: 'Error: Comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_comment'
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
       - ApiKeyAuth: []
       
@@ -596,6 +632,42 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        404:
+          description: 'Error: Comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_comment'
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
       - ApiKeyAuth: []
                   
@@ -864,10 +936,10 @@ components:
       properties:
         status:
           type: integer
-          enum: [400, 401, 403, 404, 409]
+          enum: [400, 401, 403, 404, 409, 422]
         error: 
           type: string
-          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict"]
+          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "Unprocessable Entity"]
         message: 
           type: string
           
@@ -896,17 +968,27 @@ components:
       value:
         status: 404
         error: "Not Found"
-        message: "There is no submission with the provided post_id"
+        message: "There is no submission with the provided ID"
     error404_user:
       value:
         status: 404
         error: "Not Found"
-        message: "There is no user with the provided user_id"
+        message: "There is no user with the provided ID"
+    error404_comment:
+      value:
+        status: 404
+        error: "Not Found"
+        message: "There is no comment with the provided ID"
     error409:
       value:
         status: 409
         error: "Conflict"
         message: "There was a conflict"
+    error422:
+      value:
+        status: 422
+        error: "Unprocessable Entity"
+        message: "There was an error saving an entity"
     
   securitySchemes:
     ApiKeyAuth:

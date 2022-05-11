@@ -13,7 +13,7 @@ class CommentsController < ApplicationController
     @submission = Submission.find_by(id: @comment.postid)
      if !session[:user_id].nil?
       @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
-    end
+     end
   end
 
   # GET /comments/new
@@ -173,11 +173,11 @@ class CommentsController < ApplicationController
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":401,
+            "error": "Unauthorized",
             "message": "Your api key (X-API-KEY Header) is not valid"
           },
-          status: 403
+          status: 401
         }
       end
       return
@@ -199,11 +199,11 @@ class CommentsController < ApplicationController
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":409,
+            "error": "Conflict",
             "message": "You cannot vote your own comment"
           },
-          status: 403
+          status: 409
         }
       end
       return
@@ -213,11 +213,11 @@ class CommentsController < ApplicationController
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":409,
+            "error": "Conflict",
             "message": "You cannot vote a comment twice"
           },
-          status: 403
+          status: 409
         }
       end
       return
@@ -277,11 +277,11 @@ class CommentsController < ApplicationController
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":401,
+            "error": "Unauthorized",
             "message": "Your api key (X-API-KEY Header) is not valid"
           },
-          status: 403
+          status: 401
         }
       end
       return
@@ -303,11 +303,11 @@ class CommentsController < ApplicationController
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":409,
+            "error": "Conflict",
             "message": "You cannot unvote your own comment"
           },
-          status: 403
+          status: 409
         }
       end
       return
@@ -317,11 +317,11 @@ class CommentsController < ApplicationController
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":409,
+            "error": "Conflict",
             "message": "You cannot unvote a comment that you haven't voted before"
           },
-          status: 403
+          status: 409
         }
       end
       return
