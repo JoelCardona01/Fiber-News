@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   version: 1.0.0
   title: Fiber News
-  description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://fibernews.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
+  description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://fibernews.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions post, put i delete requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
   - url: 'https://fibernews.herokuapp.com/'
 paths:
@@ -47,7 +47,7 @@ paths:
       summary: Posts a submission with title, url or text values passed by parameter.
       description: Post an url or ask submissions depending on the parameters received
       requestBody:
-        description: "TO DO"
+        description: The title body parameter is required. If the url is not blank, the submission will be of url type and the text, if any, will be posted as a comment of the submission. If url is blank, the submission will be of type ask and the text will be the one passed on the request body or blank.
         required: true
         content:
           application/json:
@@ -765,7 +765,7 @@ paths:
       tags:
       - user
       summary: Allows the user to update his About description
-      description: "TODO"
+      description: It allows a user to modify its about description and change it by the one passed by the request body. This text must not be blank. You can only modify you own profile.
       parameters:
       - name: userId
         in: path
@@ -775,7 +775,7 @@ paths:
           type: integer
           format: int64
       requestBody:
-        description: "TO DO"
+        description: In the request body there must be a string that represents the new about information. It can't be blank.
         required: true
         content:
           application/json:
