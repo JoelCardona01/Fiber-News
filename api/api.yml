@@ -108,14 +108,14 @@ paths:
       security:
       - ApiKeyAuth: []
 
-  /api/submissions/{post_id}:
+  /api/submissions/{submission_id}:
     get:
       tags:
       - submissions
-      summary: Retrieves the submission identified by post_id
+      summary: Retrieves the submission identified by submission_id
       description: Returns a single submission
       parameters:
-      - name: post_id
+      - name: submission_id
         in: path
         description: ID of the submission to return
         required: true
@@ -141,14 +141,14 @@ paths:
                 errorExample:
                   $ref: '#/components/examples/error404_submission'
 
-  /api/submissions/{post_id}/comments:
+  /api/submissions/{submission_id}/comments:
     get:
       tags:
       - comments
-      summary: Retrieves the comment tree of the submission identified by post_id
+      summary: Retrieves all the comments of the submission identified by submission_id
       description: Returns a set of comments. If some comment is a reply to another, parentid is different to 0 and corresponds to the ID of the comment which is being replied.
       parameters:
-      - name: post_id
+      - name: submission_id
         in: path
         description: ID of the submission whose comments to return
         required: true
@@ -480,15 +480,47 @@ paths:
                 errorExample:
                   $ref: '#/components/examples/error404'
                   
-  /api/comments/{commentId}:
+  /api/comments/{comment_id}:
+    get:
+      tags:
+      - comments
+      summary: Retrieves the comment identified by comment_id and its reply tree
+      description: Returns a comment and its reply tree
+      parameters:
+      - name: comment_id
+        in: path
+        description: ID of the comment to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: Comment does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_comment'
+  
     post:
       tags: 
       - comments
-      summary: Reply the comment identified by commentId
+      summary: Reply the comment identified by comment_id
       description: Returns the comment created
 
       parameters: 
-      - name: commentId
+      - name: comment_id
         in: path
         description: ID of the comment that will be replied
         required: true
@@ -548,14 +580,14 @@ paths:
       security:
       - ApiKeyAuth: []
                 
-  /api/comments/{commentId}/vote:
+  /api/comments/{comment_id}/vote:
     post:
       tags:
       - comments
       summary: Votes a comment
-      description: Returns the comment identified by commentId, with the updated likes
+      description: Returns the comment identified by comment_id, with the updated likes
       parameters:
-      - name: commentId
+      - name: comment_id
         in: path
         description: ID of comment to vote
         required: true
@@ -614,9 +646,9 @@ paths:
       tags:
       - comments
       summary: Unvotes a comment
-      description: Returns the comment identified by commentId, with the updated likes
+      description: Returns the comment identified by comment_id, with the updated likes
       parameters:
-      - name: commentId
+      - name: comment_id
         in: path
         description: ID of comment to unvote
         required: true
