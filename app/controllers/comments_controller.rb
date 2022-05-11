@@ -154,7 +154,7 @@ class CommentsController < ApplicationController
     redirect_to request.referrer
   end
   
-  #POST /api/comments/:commentId/vote
+  #POST /api/comments/:comment_id/vote
   def APIvote_comment
     if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
       respond_to do |format|
@@ -182,7 +182,7 @@ class CommentsController < ApplicationController
       end
       return
     end
-    if (Comment.find_by(id: params[:commentId]).nil?)
+    if (Comment.find_by(id: params[:comment_id]).nil?)
       respond_to do |format|
         format.json{
         render json: {
@@ -195,7 +195,7 @@ class CommentsController < ApplicationController
         end
     return
     end
-    if request.headers["X-API-Key"] == Comment.find_by(id: params[:commentId]).user.APIKey
+    if request.headers["X-API-Key"] == Comment.find_by(id: params[:comment_id]).user.APIKey
       respond_to do |format|
         format.json{
           render json: {
@@ -209,7 +209,7 @@ class CommentsController < ApplicationController
       return
     end
     @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
-    if not Likedcomment.all.find_by(user_id: @user.id, comment_id: params[:commentId]).nil?
+    if not Likedcomment.all.find_by(user_id: @user.id, comment_id: params[:comment_id]).nil?
       respond_to do |format|
         format.json{
           render json: {
@@ -222,7 +222,7 @@ class CommentsController < ApplicationController
       end
       return
     end
-    @comment = Comment.find_by(id: params[:commentId])
+    @comment = Comment.find_by(id: params[:comment_id])
     @comment.likes = @comment.likes+1
     if @comment.save
       @likedcomment = Likedcomments.new(:comment_id => @comment.id, :user_id => @user.id)
@@ -258,7 +258,7 @@ class CommentsController < ApplicationController
     redirect_to request.referrer
   end
   
-  #DELETE /api/comments/:commentId/vote
+  #DELETE /api/comments/:comment_id/vote
   def APIunvote_comment
     if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
       respond_to do |format|
@@ -286,7 +286,7 @@ class CommentsController < ApplicationController
       end
       return
     end
-    if (Comment.find_by(id: params[:commentId]).nil?)
+    if (Comment.find_by(id: params[:comment_id]).nil?)
       respond_to do |format|
         format.json{
         render json: {
@@ -299,7 +299,7 @@ class CommentsController < ApplicationController
         end
     return
     end
-    if request.headers["X-API-Key"] == Comment.find_by(id: params[:commentId]).user.APIKey
+    if request.headers["X-API-Key"] == Comment.find_by(id: params[:comment_id]).user.APIKey
       respond_to do |format|
         format.json{
           render json: {
@@ -313,7 +313,7 @@ class CommentsController < ApplicationController
       return
     end
     @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
-    if Likedcomment.all.find_by(user_id: @user.id, comment_id: params[:commentId]).nil?
+    if Likedcomment.all.find_by(user_id: @user.id, comment_id: params[:comment_id]).nil?
       respond_to do |format|
         format.json{
           render json: {
@@ -326,7 +326,7 @@ class CommentsController < ApplicationController
       end
       return
     end
-    @comment = Comment.find_by(id: params[:commentId])
+    @comment = Comment.find_by(id: params[:comment_id])
     @comment.likes = @comment.likes-1
     if @comment.save
       @likedcomment = Likedcomment.find_by(:comment_id => @comment.id, :user_id => @user.id)
@@ -348,7 +348,42 @@ class CommentsController < ApplicationController
     end
   end
   
+  #GET /api/comments/:comment_id
+  def APIcomment_JSON
+    if (Comment.find_by(id: params[:comment_id]).nil?)
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "Comment not found"
+        },
+        status: 404
+        }
+        end
+    return
+    else
+      @comment = Comment.find_by(:id => params[:comment_id])
+      @replies = Comment.all.where(:parentid => @comment.id).order(:parentid)
+      @repliesAux = @replies.to_a
+      for i in 0..@repliesAux.length-1
+        @repliesAux.push(Comment.all.where(:parentid => @repliesAux[i].id))
+        @replies = @replies + (Comment.all.where(:parentid => @repliesAux[i].id))
+      end
+      
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":200,
+          "comment": @comment,
+          "reply tree": @replies
+        },
+        status: 200
+        }
+        end
   
+    end
+  end
   
   def comment
     params.permit!
