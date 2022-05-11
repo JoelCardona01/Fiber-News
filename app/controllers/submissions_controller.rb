@@ -71,7 +71,7 @@ class SubmissionsController < ApplicationController
   def submFromUserJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
-        format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
+        format.json { render json: {"status": 404, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 404
           return } 
       else 
         @submissions = Submission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
@@ -101,7 +101,7 @@ class SubmissionsController < ApplicationController
   def userUpvotesJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
-        format.json { render json: {"status": 433, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 433
+        format.json { render json: {"status": 404, "error": "User does not exists", "message": "There is no user with same user_id as provided"}, status: 404
           return } 
       else 
         @likedsubmissions = Likedsubmission.all.where(:user_id => params[:user_id]).order(created_at: :desc)
@@ -433,19 +433,19 @@ end
         end
       else 
         respond_to do |format|
-        format.json { render json: @comment.errors, status: :unprocessable_entity }
+        format.json { render json: @submission.errors, status: :unprocessable_entity }
         end
       end
     else
       respond_to do |format|
-      format.json { render json: @comment.errors, status: :unprocessable_entity }
+      format.json { render json: @submission.errors, status: :unprocessable_entity }
       end
     end
   end
   
   #DELETE /api/submissions/:submission_id/vote
   def APIUnvote
-        if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
       respond_to do |format|
         format.json{
          render json: {
@@ -528,7 +528,7 @@ end
       end
     else
       respond_to do |format|
-      format.json { render json: @comment.errors, status: :unprocessable_entity }
+      format.json { render json: @submission.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -577,11 +577,11 @@ end
             if Submission.find_by(:id => params[:submission_id]).nil? then
               format.json{
                  render json: {
-                  "status":432,
+                  "status":404,
                   "error": "Submission not found",
                   "message": "It does not exists any submission with the same id as you provided in the query parameters"
                 },
-                status: 432
+                status: 404
               }
             else
               if @comment.save
@@ -597,6 +597,15 @@ end
               format.json { render json: @comment.errors, status: :unprocessable_entity }
               end
             end
+        else 
+          format.json{
+                 render json: {
+                  "status":400,
+                  "error": "Bad request",
+                  "message": "The text must contain atleast 1 character."
+                },
+                status: 400
+          }
         end
       end
     end

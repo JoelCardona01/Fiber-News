@@ -30,18 +30,16 @@ Rails.application.routes.draw do
     
     #recurs comments
     get '/api/comments/liked/user/:user_id', to: 'comments#userlikedJSON', as: 'user_comments_liked_json'
-    get '/api/comments/user/:user_id', to: 'comments#user_comments_JSON', as: 'user_comments_JSON'
+    get '/api/comments/user/:user_id', to: 'comments#user_comments_JSON', as: 'user_comments_JSON'    
+    post '/api/comments/:commentId/vote', to: "comments#APIvote_comment"
+    delete '/api/comments/:commentId/vote', to: "comments#APIunvote_comment"
     post '/api/comments/comment/:comment_id', to: 'comments#commentJSON'
     post '/api/comments/:comment_id', to: 'comments#commentJSON'
     
     #recurs user
     get '/api/users/:user_id', to: 'users#userJSON', as: 'user_JSON'
     put '/api/users/:user_id', to: 'users#updateAPI', as: 'updateAPI'
-    
-   
-    
-
-    
+     
     #Google login
     get '/auth/:provider/callback' => 'sessions#omniauth'
 
