@@ -789,7 +789,7 @@ paths:
                   example: 'I am not a morning person'
       
       responses:
-        201:
+        200:
           description: successful operation
           content:
             application/json:
