@@ -80,10 +80,21 @@ class CommentsController < ApplicationController
     @comment = Comment.find_by(:id => params[:id])
     @comments = Comment.all.where(:parentid => @comment.id).order(:parentid)
     @commentsAux = @comments.to_a
-    for i in 0..@commentsAux.length-1
-      @commentsAux.push(Comment.all.where(:parentid => @commentsAux[i].id))
+    
+    #Ho he fet amb while pq els agafi tots, si no se'n deixava alguns pq no augmentava el nombre d'iteracions a fer en el for
+    i = 0
+    while i < @commentsAux.length
+      @commentsAux += (Comment.all.where(:parentid => @commentsAux[i].id)).to_a
       @comments = @comments + (Comment.all.where(:parentid => @commentsAux[i].id))
+      i += 1
     end
+    
+    #for i in 0..@commentsAux.length-1
+    #  @commentsAux.push(Comment.all.where(:parentid => @commentsAux[i].id))
+    #  @comments = @comments + (Comment.all.where(:parentid => @commentsAux[i].id))
+    #end
+    
+    
     @submission = Submission.find_by(:id => @comment.postid)
   end
 
@@ -366,10 +377,20 @@ class CommentsController < ApplicationController
       @comment = Comment.find_by(:id => params[:comment_id])
       @replies = Comment.all.where(:parentid => @comment.id).order(:parentid)
       @repliesAux = @replies.to_a
-      for i in 0..@repliesAux.length-1
-        @repliesAux.push(Comment.all.where(:parentid => @repliesAux[i].id))
+      
+  
+      #Ho he fet amb while pq els agafi tots, si no se'n deixava alguns pq no augmentava el nombre d'iteracions a fer en el for
+      i = 0
+      while i < @repliesAux.length
+        @repliesAux += (Comment.all.where(:parentid => @repliesAux[i].id)).to_a
         @replies = @replies + (Comment.all.where(:parentid => @repliesAux[i].id))
+        i += 1
       end
+      
+      #for i in 0..@repliesAux.length-1
+      #  @repliesAux.push(Comment.all.where(:parentid => @repliesAux[i].id))
+      #  @replies = @replies + (Comment.all.where(:parentid => @repliesAux[i].id))
+      #end
       
       respond_to do |format|
         format.json{
