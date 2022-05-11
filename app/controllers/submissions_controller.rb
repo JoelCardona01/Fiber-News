@@ -36,19 +36,50 @@ class SubmissionsController < ApplicationController
 
   # GET /api/submissions/:post_id
   def submission_JSON
-    @submissions = Submission.all.where(:id => params[:post_id])
-  
-    respond_to do |format|
-      format.json { render json: @submissions }
+    if (Submission.find_by(id: params[:post_id]).nil?)
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "There is no submission with the provided post_id"
+        },
+        status: 404
+        }
+        end
+    return
+    else
+      @submission = Submission.find_by(id: params[:post_id])
+      
+      respond_to do |format|
+        format.json { render json: @submission }
+      end
+      
     end
   end
   
   # GET /api/submissions/:post_id/comments
   def sub_comments_JSON
-    @comments= Comment.all.where(:postid => params[:post_id]).order(:parentid)
-  
-    respond_to do |format|
-      format.json { render json: @comments }
+    
+    if (Submission.find_by(id: params[:post_id]).nil?)
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "There is no submission with the provided post_id"
+        },
+        status: 404
+        }
+        end
+    return
+    else
+      @comments= Comment.all.where(:postid => params[:post_id]).order(:parentid)
+    
+      respond_to do |format|
+        format.json { render json: @comments }
+      end
+      
     end
   end
   
