@@ -38,7 +38,7 @@ class CommentsController < ApplicationController
   def userlikedJSON
     respond_to do |format|
       if User.find_by(:id => params[:user_id]).nil?
-        format.json { render json: {"status": 433, "error": "User does not exist", "message": "There is no user with same user_id as provided"}, status: 433
+        format.json { render json: {"status": 404, "error": "User does not exist", "message": "There is no user with same user_id as provided"}, status: 404
           return } 
       else 
         @likedcomments = Likedcomment.all.where(:user_id => params[:user_id]).order(created_at: :desc)
