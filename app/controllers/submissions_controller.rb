@@ -94,22 +94,22 @@ class SubmissionsController < ApplicationController
   end
 
 
-  # GET /api/submissions/:submission_id
+  # GET /api/submissions/:post_id
   def submission_JSON
-    if (Submission.find_by(id: params[:submission_id]).nil?)
+    if (Submission.find_by(id: params[:post_id]).nil?)
       respond_to do |format|
         format.json{
         render json: {
           "status":404,
           "error": "Not Found",
-          "message": "There is no submission with the provided ID"
+          "message": "There is no submission with the provided post_id"
         },
         status: 404
         }
         end
     return
     else
-      @submission = Submission.find_by(id: params[:submission_id])
+      @submission = Submission.find_by(id: params[:post_id])
       
       respond_to do |format|
         format.json { render json: @submission }
@@ -118,23 +118,23 @@ class SubmissionsController < ApplicationController
     end
   end
   
-  # GET /api/submissions/:submission_id/comments
+  # GET /api/submissions/:post_id/comments
   def sub_comments_JSON
     
-    if (Submission.find_by(id: params[:submission_id]).nil?)
+    if (Submission.find_by(id: params[:post_id]).nil?)
       respond_to do |format|
         format.json{
         render json: {
           "status":404,
           "error": "Not Found",
-          "message": "There is no submission with the provided ID"
+          "message": "There is no submission with the provided post_id"
         },
         status: 404
         }
         end
     return
     else
-      @comments= Comment.all.where(:postid => params[:submission_id]).order(:parentid)
+      @comments= Comment.all.where(:postid => params[:post_id]).order(:parentid)
     
       respond_to do |format|
         format.json { render json: @comments }
@@ -335,14 +335,14 @@ class SubmissionsController < ApplicationController
             "submission":@submission,
             "message": "Submission posted",
             },
-            status: 201
+            status: :201
           }
           
       else
         format.json { render json: @submission.errors, status: :unprocessable_entity }
       end
     elsif ((@submission.url!="" or !@submission.url.nil? and Submission.find_by(url: @submission.url).nil?))##Comprovem que no existeixi cap submission amb el mateix url i guardem la nova
-      if @submission.text!="" or !@submission.text.nil?
+      if @submission.text!=""
         text = @submission.text
         @submission.text=""
         if @submission.save
@@ -355,7 +355,7 @@ class SubmissionsController < ApplicationController
               "comment": @comment,
               "message": "Submission posted"
             },
-            status: 201
+            status: :201
          }
          
         else
@@ -369,7 +369,7 @@ class SubmissionsController < ApplicationController
               "submission": @submission,
               "message": "Submission posted",
             },
-            status: 201
+            status: :201
          }
          
         else
@@ -458,11 +458,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":401,
-            "error": "Unauthorized",
+            "status":403,
+            "error": "Forbidden",
             "message": "Your api key (X-API-KEY Header) is not valid"
           },
-          status: 401
+          status: 403
         }
       end
       return
@@ -484,11 +484,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":409,
-            "error": "Conflict",
+            "status":403,
+            "error": "Forbidden",
             "message": "You cannot vote your own submission"
           },
-          status: 409
+          status: 403
         }
       end
       return
@@ -498,11 +498,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":409,
-            "error": "Conflict",
+            "status":403,
+            "error": "Forbidden",
             "message": "You cannot vote twice a submission"
           },
-          status: 409
+          status: 403
         }
       end
       return
@@ -553,11 +553,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":401,
-            "error": "Unauthorized",
+            "status":403,
+            "error": "Forbidden",
             "message": "Your api key (X-API-KEY Header) is not valid"
           },
-          status: 401
+          status: 403
         }
       end
       return
@@ -579,11 +579,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":409,
-            "error": "Conflict",
-            "message": "You cannot unvote your own submission and will never be able to because you can't vote your own submission"
+            "status":403,
+            "error": "Forbidden",
+            "message": "You cannot unvote your own submission and will never be ablo to because you can't vote your own submission"
           },
-          status: 409
+          status: 403
         }
       end
       return
@@ -593,11 +593,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":409,
-            "error": "Conflict",
+            "status":403,
+            "error": "Forbidden",
             "message": "You cannot unvote a submission that you haven't voted"
           },
-          status: 409
+          status: 403
         }
       end
       return
