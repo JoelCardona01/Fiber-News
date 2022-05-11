@@ -1,0 +1,1064 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Fiber News
+  description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
+servers:
+  - url: 'http://54.174.113.202:8080'
+paths:
+  /api/submissions:
+    get:
+      tags:
+      - submissions
+      summary: Retrieves submissions posted on the app
+      description: Returns a set of submissions. By default, if no query params are provided, it returns a set of submissions of all types (ask and url) ordered by the number of votes in descendent order.
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+          description: The type of submission you want to get. It can be "ask", "url" or nothing in order to get both of them.
+        - in: query
+          name: sort_by_time
+          schema:
+            type: string
+          description: To sort the result by time. It can be "true", which orders the submissions by time of creation in descendent order, or it can be "false" or left blank, which orders the submissions by their number of votes in a descendent order.
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        400:
+          description: 'Error: Bad Request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+    post:
+      tags:
+      - submissions
+      summary: Posts a submission with title, url or text values passed by parameter.
+      description: Post an url or ask submissions depending on the parameters received
+      requestBody:
+        description: "TO DO"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              items: 
+                $ref: '#/components/schemas/PostSubmission'
+              example:
+                title: "New Submission"
+           
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        400:
+          description: 'Error: Bad Request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
+      security:
+      - ApiKeyAuth: []
+
+  /api/submissions/{submission_id}:
+    get:
+      tags:
+      - submissions
+      summary: Retrieves the submission identified by submission_id
+      description: Returns a single submission
+      parameters:
+      - name: submission_id
+        in: path
+        description: ID of the submission to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        404:
+          description: Submission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_submission'
+
+  /api/submissions/{submission_id}/comments:
+    get:
+      tags:
+      - comments
+      summary: Retrieves all the comments of the submission identified by submission_id
+      description: Returns a set of comments. If some comment is a reply to another, parentid is different to 0 and corresponds to the ID of the comment which is being replied.
+      parameters:
+      - name: submission_id
+        in: path
+        description: ID of the submission whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: Submission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_submission'
+          
+  /api/submissions/user/{user_id}:
+    get:
+      tags:
+      - submissions
+      summary: Retrieves all the submissions posted from the user with id user_id
+      description: Returns a set of submissions
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        404:
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+                  
+  /api/submissions/upvoted/user/{user_id}:
+    get:
+        tags:
+        - submissions
+        summary: Retrieves all the upvoted submissions from the user with id user_id
+        description: Returns a set of submissions
+        parameters:
+        - name: user_id
+          in: path
+          description: ID of the user
+          required: true
+          schema:
+            type: integer
+            format: int64
+        responses:
+          200:
+            description: successful operation
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Submission'
+          404:
+            description: User does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResult'
+                examples:
+                  errorExample:
+                    $ref: '#/components/examples/error404'
+  
+  /api/submissions/{submission_id}/comment:
+    post:
+      tags:
+      - comments
+      summary: Comments the submission identified with submission_id
+      parameters:
+      - name: submission_id
+        in: path
+        description: ID of the submission whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text: 
+                  type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        400:
+          description: 'Error: Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+                
+        404:
+          description: Submission does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
+      security:
+      - ApiKeyAuth: []
+  
+  /api/submissions/{submission_id}/vote:
+    post:
+      tags:
+      - submissions
+      summary: Votes a submission
+      description: Returns the submission voted with the updated votes
+      parameters:
+      - name: submission_id
+        in: path
+        description: ID of the submission
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
+      security:
+      - ApiKeyAuth: []
+    delete:
+      tags:
+      - submissions
+      summary: Unvotes a submission
+      description: Returns the submission unvoted with the updated votes
+      parameters:
+      - name: submission_id
+        in: path
+        description: ID of the submission
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
+      security:
+      - ApiKeyAuth: []
+      
+  /api/comments/user/{user_id}:
+    get:
+      tags:
+      - comments
+      summary: Retrieves all the comments from the user with id user_id
+      description: Returns a set of comments
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user whose comments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_user'
+      
+  /api/comments/liked/user/{user_id}:
+    get:
+      tags:
+      - comments
+      summary: Retrieves all the liked comments from the user with id user_id
+      description: Returns a set of comments
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+                  
+  /api/comments/{comment_id}:
+    get:
+      tags:
+      - comments
+      summary: Retrieves the comment identified by comment_id and its reply tree
+      description: Returns a comment and its reply tree
+      parameters:
+      - name: comment_id
+        in: path
+        description: ID of the comment to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: Comment does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_comment'
+  
+    post:
+      tags: 
+      - comments
+      summary: Reply the comment identified by comment_id
+      description: Returns the comment created
+
+      parameters: 
+      - name: comment_id
+        in: path
+        description: ID of the comment that will be replied
+        required: true
+        schema:
+          type: integer
+          format: int64
+          
+      requestBody:
+        description: Provide the content of the comment
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - text
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: 'This is an example comment'
+      
+        
+      responses:
+        201:
+          description: object created
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: 'Error: Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+        404:
+          description: 'Error: Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        422:
+          description: 'Error: Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
+      security:
+      - ApiKeyAuth: []
+                
+  /api/comments/{comment_id}/vote:
+    post:
+      tags:
+      - comments
+      summary: Votes a comment
+      description: Returns the comment identified by comment_id, with the updated likes
+      parameters:
+      - name: comment_id
+        in: path
+        description: ID of comment to vote
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        404:
+          description: 'Error: Comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_comment'
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
+      security:
+      - ApiKeyAuth: []
+      
+    delete:
+      tags:
+      - comments
+      summary: Unvotes a comment
+      description: Returns the comment identified by comment_id, with the updated likes
+      parameters:
+      - name: comment_id
+        in: path
+        description: ID of comment to unvote
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        404:
+          description: 'Error: Comment not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_comment'
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
+      security:
+      - ApiKeyAuth: []
+                  
+  /api/users/{userId}:
+    get:
+      tags:
+      - user
+      summary: Retives the information about the user identified with userId. 
+      description: Returns the information stored about the user.
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose information to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        404:
+          description: 'User does not exist'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+    put:
+      tags:
+      - user
+      summary: Allows the user to update his About description
+      description: "TODO"
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose information to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        description: "TO DO"
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - about
+              type: object
+              properties:
+                about:
+                  type: string
+                  example: 'I am not a morning person'
+      
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        400:
+          description: 'Error: Bad Request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
+
+        401:
+          description: 'Error: Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error401'
+        403:
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error403'
+        404:
+          description: 'User does not exist'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404'
+        422:
+          description: 'Error: Unprocessable entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
+        
+        
+      security:
+      - ApiKeyAuth: []
+components:
+  schemas:
+    Submission:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 22
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        url:
+          type: string
+          example: "https://atenea.upc.edu/mod/page/view.php?id=3328883"
+        title:
+          type: string
+          example : "soy un post"
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        votes:
+          type: integer
+          example: 32
+        text:
+          type: string
+          example: "Soy un texto de ejemplo, aqui va el cuerpo de la submission si es de tipo ask"
+    
+    PostSubmission:
+      type: object
+      required: ["title"]
+      properties:
+        url:
+          type: string
+          example: "https://atenea.upc.edu/mod/page/view.php?id=3328883"
+        title:
+          type: string
+          example : "soy un post"
+        text:
+          type: string
+          example: "Soy un texto de ejemplo, aqui va el cuerpo de la submission si es de tipo ask"
+          
+    
+    Likedsubmission:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        submission_id:
+          type: integer
+          format: int64
+          example: 1
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        post_id:
+          type: integer
+          format: int64
+          example: 1
+        parentid:
+          type: integer
+          format: int64
+          example: 2
+        likes:
+          type: integer
+          format: int64
+          example: 10
+        text:
+          type: string
+          example: "Soy un texto de ejemplo, aqui va el cuerpo del comment."
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+    Likedcomment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        comment_id:
+          type: integer
+          format: int64
+          example: 4
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+    User:
+      type: object
+      properties:
+        id: 
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          format: string
+          example: "Quim Motger"
+        email:
+          type: string
+          format: string
+          example: "quim.motger@estudiantat.upc.edu"
+        karma:
+          type: integer
+          format: int64
+          example: 1
+        about:
+          type: string
+          format: string
+          example: "Soc un estudiant de la FIB"
+        created_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+        updated_at:
+          type: string
+          example: "2022/06/23 13:00:000 UTC"
+          
+    ErrorResult:
+      type: object
+      properties:
+        status:
+          type: integer
+          enum: [400, 401, 403, 404, 409, 422]
+        error: 
+          type: string
+          enum: ["Bad Request", "Unauthorized", "Forbidden", "Not Found", "Conflict", "Unprocessable Entity"]
+        message: 
+          type: string
+          
+  examples:
+    error400:
+      value:
+        status: 400
+        error: "Bad Request"
+        message: "The provieded parameters are incorrect or not the ones expected"
+    error401:
+      value:
+        status: 401
+        error: "Unauthorized"
+        message: "You provided no api key (X-API-KEY Header)"
+    error403:
+      value:
+        status: 403
+        error: "Forbidden"
+        message: "Your api key (X-API-KEY Header) is not valid"
+    error404:
+      value:
+        status: 404
+        error: "Not Found"
+        message: "Bad request"
+    error404_submission:
+      value:
+        status: 404
+        error: "Not Found"
+        message: "There is no submission with the provided ID"
+    error404_user:
+      value:
+        status: 404
+        error: "Not Found"
+        message: "There is no user with the provided ID"
+    error404_comment:
+      value:
+        status: 404
+        error: "Not Found"
+        message: "There is no comment with the provided ID"
+    error409:
+      value:
+        status: 409
+        error: "Conflict"
+        message: "There was a conflict"
+    error422:
+      value:
+        status: 422
+        error: "Unprocessable Entity"
+        message: "There was an error saving an entity"
+    
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-KEY #Custom headers in rails apps must have the X- prefix
+      in: header

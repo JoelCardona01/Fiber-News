@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: [:show, :edit, :update, :destroy, :like, :unvote]
-
+  before_action :set_comment, only: [:show, :edit, :update, :destroy, :like, :unvote, :commentAPI]
+  skip_before_action :verify_authenticity_token
   # GET /comments
   # GET /comments.json
   def index
@@ -13,7 +13,7 @@ class CommentsController < ApplicationController
     @submission = Submission.find_by(id: @comment.postid)
      if !session[:user_id].nil?
       @likedcomments = Likedcomments.all.where(:user_id => session[:user_id])
-    end
+     end
   end
 
   # GET /comments/new
@@ -34,6 +34,41 @@ class CommentsController < ApplicationController
     
   end
   
+  #GET /api/comments/liked/user/:user_id
+  def userlikedJSON
+    respond_to do |format|
+      if User.find_by(:id => params[:user_id]).nil?
+        format.json { render json: {"status": 404, "error": "User does not exist", "message": "There is no user with same user_id as provided"}, status: 404
+          return } 
+      else 
+        @likedcomments = Likedcomment.all.where(:user_id => params[:user_id]).order(created_at: :desc)
+        format.json { 
+          comments = []
+          @likedcomments.each do |cs|
+            comments.push(Comment.find_by(:id => cs.comment_id))
+          end
+          render json: comments.to_json, status: :ok
+        }
+      end
+    end
+  end
+  
+  
+  #GET /api/comments/user/:user_id
+  def user_comments_JSON
+    respond_to do |format|
+      if User.find_by(:id => params[:user_id]).nil?
+        format.json { render json: {"status": 404, "error": "Not Found", "message": "There is no user with the provided user_id"}, status: 404
+          return } 
+      else 
+        @comments = Comment.all.where(:user_id => params[:user_id]).order(created_at: :desc)
+        format.json { render json: @comments }
+      end
+    end
+  end
+
+
+  
   # GET /comments/1/edit
   def edit
   end
@@ -45,10 +80,21 @@ class CommentsController < ApplicationController
     @comment = Comment.find_by(:id => params[:id])
     @comments = Comment.all.where(:parentid => @comment.id).order(:parentid)
     @commentsAux = @comments.to_a
-    for i in 0..@commentsAux.length-1
-      @commentsAux.push(Comment.all.where(:parentid => @commentsAux[i].id))
+    
+    #Ho he fet amb while pq els agafi tots, si no se'n deixava alguns pq no augmentava el nombre d'iteracions a fer en el for
+    i = 0
+    while i < @commentsAux.length
+      @commentsAux += (Comment.all.where(:parentid => @commentsAux[i].id)).to_a
       @comments = @comments + (Comment.all.where(:parentid => @commentsAux[i].id))
+      i += 1
     end
+    
+    #for i in 0..@commentsAux.length-1
+    #  @commentsAux.push(Comment.all.where(:parentid => @commentsAux[i].id))
+    #  @comments = @comments + (Comment.all.where(:parentid => @commentsAux[i].id))
+    #end
+    
+    
     @submission = Submission.find_by(:id => @comment.postid)
   end
 
@@ -119,6 +165,101 @@ class CommentsController < ApplicationController
     redirect_to request.referrer
   end
   
+  #POST /api/comments/:comment_id/vote
+  def APIvote_comment
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+      respond_to do |format|
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      end
+      return
+    end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":401,
+            "error": "Unauthorized",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 401
+        }
+      end
+      return
+    end
+    if (Comment.find_by(id: params[:comment_id]).nil?)
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "Comment not found"
+        },
+        status: 404
+        }
+        end
+    return
+    end
+    if request.headers["X-API-Key"] == Comment.find_by(id: params[:comment_id]).user.APIKey
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":409,
+            "error": "Conflict",
+            "message": "You cannot vote your own comment"
+          },
+          status: 409
+        }
+      end
+      return
+    end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+    if not Likedcomment.all.find_by(user_id: @user.id, comment_id: params[:comment_id]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":409,
+            "error": "Conflict",
+            "message": "You cannot vote a comment twice"
+          },
+          status: 409
+        }
+      end
+      return
+    end
+    @comment = Comment.find_by(id: params[:comment_id])
+    @comment.likes = @comment.likes+1
+    if @comment.save
+      @likedcomment = Likedcomments.new(:comment_id => @comment.id, :user_id => @user.id)
+      if @likedcomment.save
+        respond_to do |format|
+        format.json { 
+          render json: {
+          "status":200,
+          "comment":@comment,
+          "message": "Comment voted"
+          },
+          status: 200
+        }
+        end
+      else 
+        respond_to do |format|
+        format.json { render json: @comment.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      respond_to do |format|
+      format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
   def unvote
     @comment.likes = @comment.likes - 1
     if @comment.save
@@ -126,6 +267,143 @@ class CommentsController < ApplicationController
       @likedcomment.destroy
     end
     redirect_to request.referrer
+  end
+  
+  #DELETE /api/comments/:comment_id/vote
+  def APIunvote_comment
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+      respond_to do |format|
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      end
+      return
+    end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":401,
+            "error": "Unauthorized",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 401
+        }
+      end
+      return
+    end
+    if (Comment.find_by(id: params[:comment_id]).nil?)
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "Comment not found"
+        },
+        status: 404
+        }
+        end
+    return
+    end
+    if request.headers["X-API-Key"] == Comment.find_by(id: params[:comment_id]).user.APIKey
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":409,
+            "error": "Conflict",
+            "message": "You cannot unvote your own comment"
+          },
+          status: 409
+        }
+      end
+      return
+    end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+    if Likedcomment.all.find_by(user_id: @user.id, comment_id: params[:comment_id]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":409,
+            "error": "Conflict",
+            "message": "You cannot unvote a comment that you haven't voted before"
+          },
+          status: 409
+        }
+      end
+      return
+    end
+    @comment = Comment.find_by(id: params[:comment_id])
+    @comment.likes = @comment.likes-1
+    if @comment.save
+      @likedcomment = Likedcomment.find_by(:comment_id => @comment.id, :user_id => @user.id)
+      @likedcomment.destroy
+      respond_to do |format|
+        format.json { 
+          render json: {
+          "status":200,
+          "comment":@comment,
+          "message": "Comment unvoted"
+          },
+          status: 200
+        }
+      end
+    else
+      respond_to do |format|
+      format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  #GET /api/comments/:comment_id
+  def APIcomment_JSON
+    if (Comment.find_by(id: params[:comment_id]).nil?)
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":404,
+          "error": "Not Found",
+          "message": "Comment not found"
+        },
+        status: 404
+        }
+        end
+    return
+    else
+      @comment = Comment.find_by(:id => params[:comment_id])
+      @replies = Comment.all.where(:parentid => @comment.id).order(:parentid)
+      @repliesAux = @replies.to_a
+      
+  
+      #Ho he fet amb while pq els agafi tots, si no se'n deixava alguns pq no augmentava el nombre d'iteracions a fer en el for
+      i = 0
+      while i < @repliesAux.length
+        @repliesAux += (Comment.all.where(:parentid => @repliesAux[i].id)).to_a
+        @replies = @replies + (Comment.all.where(:parentid => @repliesAux[i].id))
+        i += 1
+      end
+      
+      #for i in 0..@repliesAux.length-1
+      #  @repliesAux.push(Comment.all.where(:parentid => @repliesAux[i].id))
+      #  @replies = @replies + (Comment.all.where(:parentid => @repliesAux[i].id))
+      #end
+      
+      respond_to do |format|
+        format.json{
+        render json: {
+          "status":200,
+          "comment": @comment,
+          "reply tree": @replies
+        },
+        status: 200
+        }
+        end
+  
+    end
   end
   
   def comment
@@ -143,6 +421,86 @@ class CommentsController < ApplicationController
       end
     end
   end 
+  
+  def APIcomment 
+    if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
+      respond_to do |format|
+        format.json{
+         render json: {
+          "status":401,
+          "error": "Unauthorized",
+          "message": "You provided no api key (X-API-KEY Header)"
+        },
+        status: 401
+        }
+      end
+      return
+    end
+    if User.find_by(:APIKey => request.headers["X-API-Key"]).nil?
+      respond_to do |format|
+        format.json{
+          render json: {
+            "status":401,
+            "error": "Unauthorized",
+            "message": "Your api key (X-API-KEY Header) is not valid"
+          },
+          status: 401
+        }
+      end
+      return
+    end
+      if (Comment.find_by(id: params[:comment_id]).nil?)
+          respond_to do |format|
+            format.json{
+            render json: {
+              "status":404,
+              "error": "Not Found",
+              "message": "Comment not found"
+            },
+            status: 404
+            }
+        end
+        return
+      end
+    if (params[:text].blank?) 
+      respond_to do |format|  
+        format.json{
+           render json: {
+            "status":400,
+            "error": "Bad Request",
+            "message": "Text of the comment not found or too short"
+          },
+          status: 400
+        }
+      end
+      return
+    end
+    @user = User.all.where(:APIKey => request.headers["X-API-Key"]).first()
+    @commentP = Comment.find(params[:comment_id])
+    @comment = Comment.new
+    @comment.user_id = @user.id
+    @comment.text = params[:text]
+    @comment.postid = @commentP.postid
+    @comment.parentid = params[:comment_id]
+    if @comment.save
+      respond_to do |format|
+        format.json { 
+          render json: {
+            "status":201,
+            "comment":@comment,
+            "message": "Comment posted",
+          },
+          status: 201
+        }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
+    end
+
+  end
+
 
 def treecomment
      params.permit!
@@ -168,6 +526,6 @@ end
 
     # Only allow a list of trusted parameters through.
     def comment_params
-      params.require(:comment).permit(:text, :postid, :parentid, :likes, :user_id)
+      params.require(:comment).permit(:text, :postid, :parentid, :likes, :user_id, :comment_id)
     end
 end
