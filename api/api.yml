@@ -105,13 +105,22 @@ paths:
           format: int64
       responses:
         200:
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Submission'
+        404:
+          description: Submission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_submission'
 
   /api/submissions/{post_id}/comments:
     get:
@@ -129,13 +138,22 @@ paths:
           format: int64
       responses:
         200:
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
+        404:
+          description: Submission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error404_submission'
           
   /api/submissions/user/{user_id}:
     get:
@@ -393,7 +411,7 @@ paths:
           format: int64
       responses:
         200:
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
@@ -401,14 +419,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/Comment'
         404:
-          description: User does not exist
+          description: User not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResult'
               examples:
                 errorExample:
-                  $ref: '#/components/examples/error404'
+                  $ref: '#/components/examples/error404_user'
       
   /api/comments/liked/user/{user_id}:
     get:
@@ -855,6 +873,16 @@ components:
         status: 404
         error: "Not Found"
         message: "Bad request"
+    error404_submission:
+      value:
+        status: 404
+        error: "Not Found"
+        message: "There is no submission with the provided post_id"
+    error404_user:
+      value:
+        status: 404
+        error: "Not Found"
+        message: "There is no user with the provided user_id"
     error409:
       value:
         status: 409
