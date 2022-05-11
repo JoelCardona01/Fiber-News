@@ -16,10 +16,70 @@ class SubmissionsController < ApplicationController
   
    # GET /api/submissions
   def indexAPI
-    @submissions = Submission.all.order(votes: :desc)
-  
-     respond_to do |format|
-        format.json { render json: @submissions }
+    
+    if params[:type].nil? and params[:sort_by_time].nil?
+      @submissions = Submission.all.order(votes: :desc)
+      respond_to do |format|
+        format.json{render json: @submissions}
+      end
+    elsif !params[:type].nil? and params[:type]!= "url" and params[:type]!="ask"
+      respond_to do |format|
+        format.json{
+         render json: {
+          "status":400,
+          "error": "Bad Request",
+          "message": "The query param type provided is not one of the expected"
+        },
+        status: 400
+        }
+      end
+    elsif !params[:sort_by_time].nil? and params[:sort_by_time]!="true" and params[:sort_by_time]!="false"
+      respond_to do |format|
+        format.json{
+         render json: {
+          "status":400,
+          "error": "Bad Request",
+          "message": "The query param sort_by_time provided is not one of the expected"
+        },
+        status: 400
+        }
+      end
+    elsif params[:type]=="ask" 
+      if params[:sort_by_time].nil? or params[:sort_by_time]=="false"
+        @submissions = Submission.all.where(:url => "").order(votes: :desc)
+        respond_to do |format|
+          format.json{render json: @submissions}
+        end
+      elsif params[:sort_by_time]=="true"
+         @submissions = Submission.all.where(:url => "").order(created_at: :desc)
+        respond_to do |format|
+          format.json{render json: @submissions}
+        end
+      end
+    elsif  params[:type]=="url"
+      if params[:sort_by_time].nil? or params[:sort_by_time]=="false"
+        @submissions = Submission.all.where.not(:url => "").order(votes: :desc)
+        respond_to do |format|
+          format.json{render json: @submissions}
+        end
+      elsif params[:sort_by_time]=="true"
+        @submissions = Submission.all.where.not(:url => "").order(created_at: :desc)
+        respond_to do |format|
+          format.json{render json: @submissions}
+        end
+      end
+    elsif params[:type].nil?
+      if params[:sort_by_time].nil? or params[:sort_by_time]=="false"
+        @submissions = Submission.all.order(votes: :desc)
+        respond_to do |format|
+          format.json{render json: @submissions}
+        end
+      elsif params[:sort_by_time]=="true"
+        @submissions = Submission.all.order(created_at: :desc)
+        respond_to do |format|
+          format.json{render json: @submissions}
+        end
+      end
     end
   end
 

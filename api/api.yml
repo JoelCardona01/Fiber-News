@@ -10,8 +10,19 @@ paths:
     get:
       tags:
       - submissions
-      summary: Retrieves all the submissions posted on the app
-      description: Returns a set of submissions
+      summary: Retrieves submissions posted on the app
+      description: Returns a set of submissions. By default, if no query params are provided, it returns a set of submissions of all types (ask and url) ordered by the number of votes in descendent order.
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+          description: The type of submission you want to get. It can be "ask", "url" or nothing in order to get both of them.
+        - in: query
+          name: sort_by_time
+          schema:
+            type: string
+          description: To sort the result by time. It can be "true", which orders the submissions by time of creation in descendent order, or it can be "false" or left blank, which orders the submissions by their number of votes in a descendent order.
       responses:
         200:
           description: successful operation
@@ -21,7 +32,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Submission'
-                  
+        400:
+          description: 'Error: Bad Request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error400'
     post:
       tags:
       - submissions
