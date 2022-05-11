@@ -335,7 +335,7 @@ class SubmissionsController < ApplicationController
             "submission":@submission,
             "message": "Submission posted",
             },
-            status: :ok
+            status: 201
           }
           
       else
@@ -355,7 +355,7 @@ class SubmissionsController < ApplicationController
               "comment": @comment,
               "message": "Submission posted"
             },
-            status: :ok
+            status: 201
          }
          
         else
@@ -369,7 +369,7 @@ class SubmissionsController < ApplicationController
               "submission": @submission,
               "message": "Submission posted",
             },
-            status: :ok
+            status: 201
          }
          
         else
@@ -682,7 +682,7 @@ end
                     "comment":@comment,
                     "message": "Comment posted",
                   },
-                  status: :ok
+                  status: 201
                 }
               else
               format.json { render json: @comment.errors, status: :unprocessable_entity }
