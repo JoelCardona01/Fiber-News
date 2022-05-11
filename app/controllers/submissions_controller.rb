@@ -233,7 +233,7 @@ class SubmissionsController < ApplicationController
     
     respond_to do |format|
       
-      if !(@submission.url != "" and  @submission.url=~ /\A#{URI::regexp(['http', 'https'])}\z/) then format.html { redirect_to request.referrer, alert: 'That is not a valid URL.' }
+      if (@submission.url != "" and  !(@submission.url=~ /\A#{URI::regexp(['http', 'https'])}\z/)) then format.html { redirect_to request.referrer, alert: 'That is not a valid URL.' }
       elsif @submission.title=="" then format.html { redirect_to request.referrer, alert: 'That is not a valid title.' } ##Comprovem que el titol no es buit
       elsif (@submission.url=="") 
         if @submission.save
