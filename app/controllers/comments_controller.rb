@@ -366,7 +366,7 @@ class CommentsController < ApplicationController
     end
   end 
   
-  def commentJSON 
+  def APIcomment 
     if request.headers["X-API-KEY"].nil? or request.headers["X-API-KEY"].blank? then
       respond_to do |format|
         format.json{
@@ -384,11 +384,11 @@ class CommentsController < ApplicationController
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":401,
+            "error": "Unauthorized",
             "message": "Your api key (X-API-KEY Header) is not valid"
           },
-          status: 403
+          status: 401
         }
       end
       return
@@ -411,7 +411,7 @@ class CommentsController < ApplicationController
         format.json{
            render json: {
             "status":400,
-            "error": "Not Found",
+            "error": "Bad Request",
             "message": "Text of the comment not found or too short"
           },
           status: 400

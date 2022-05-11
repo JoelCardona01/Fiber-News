@@ -4,7 +4,7 @@ info:
   title: Fiber News
   description: "Aquesta és la documentació Open API per la REST API de la nostra estimada aplicació **Fiber News** publicada a <https://whispering-plains-92135.herokuapp.com/>. <br>Totes les operacions són executables. Les operacions //dir quines xd requereixen d'autentificació per ser executades. Pots obtenir l'api_key si vas a l'apartat d'editar perfil dins de l'aplicació."
 servers:
-  - url: 'http://54.221.120.214:8080'
+  - url: 'http://54.174.113.202:8080'
 paths:
   /api/submissions:
     get:
@@ -341,15 +341,6 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error401'
-        403:
-          description: 'Error: Forbidden'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error403'
         404:
           description: 'Error: Not Found'
           content:
@@ -359,6 +350,24 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
       - ApiKeyAuth: []
     delete:
@@ -392,15 +401,6 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error401'
-        403:
-          description: 'Error: Forbidden'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResult'
-              examples:
-                errorExample:
-                  $ref: '#/components/examples/error403'
         404:
           description: 'Error: Not Found'
           content:
@@ -410,6 +410,24 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error404'
+        409:
+          description: 'Error: Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error409'
+        422:
+          description: 'Error: Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
       - ApiKeyAuth: []
       
@@ -544,6 +562,15 @@ paths:
               examples:
                 errorExample:
                   $ref: '#/components/examples/error401'
+        422:
+          description: 'Error: Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+              examples:
+                errorExample:
+                  $ref: '#/components/examples/error422'
       security:
       - ApiKeyAuth: []
                 

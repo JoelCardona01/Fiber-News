@@ -33,8 +33,7 @@ Rails.application.routes.draw do
     get '/api/comments/user/:user_id', to: 'comments#user_comments_JSON', as: 'user_comments_JSON'    
     post '/api/comments/:commentId/vote', to: "comments#APIvote_comment"
     delete '/api/comments/:commentId/vote', to: "comments#APIunvote_comment"
-    post '/api/comments/comment/:comment_id', to: 'comments#commentJSON'
-    post '/api/comments/:comment_id', to: 'comments#commentJSON'
+    post '/api/comments/:comment_id', to: 'comments#APIcomment'
     
     #recurs user
     get '/api/users/:user_id', to: 'users#userJSON', as: 'user_JSON'
