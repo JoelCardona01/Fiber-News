@@ -484,11 +484,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":409,
+            "error": "Conflict",
             "message": "You cannot vote your own submission"
           },
-          status: 403
+          status: 409
         }
       end
       return
@@ -498,11 +498,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
+            "status":409,
             "error": "Forbidden",
             "message": "You cannot vote twice a submission"
           },
-          status: 403
+          status: 409
         }
       end
       return
@@ -579,11 +579,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":409,
+            "error": "Conflict",
             "message": "You cannot unvote your own submission and will never be ablo to because you can't vote your own submission"
           },
-          status: 403
+          status: 409
         }
       end
       return
@@ -593,11 +593,11 @@ end
       respond_to do |format|
         format.json{
           render json: {
-            "status":403,
-            "error": "Forbidden",
+            "status":409,
+            "error": "Conflict",
             "message": "You cannot unvote a submission that you haven't voted"
           },
-          status: 403
+          status: 409
         }
       end
       return
