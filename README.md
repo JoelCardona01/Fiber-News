@@ -1,4 +1,6 @@
 # Fiber-News / PROJECTE ASW FIB
+A similar Web Application of Hackernews
+
 ## Members
 
 |Name | Github username | Taiga username |
